@@ -1,0 +1,79 @@
+{
+  "pages": [
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "视唱练耳助手",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/piano/piano",
+      "style": {
+        "navigationBarTitleText": "钢琴弹奏",
+        "navigationStyle": "custom",
+        "pageOrientation": "landscape"
+      }
+    },
+    {
+      "path": "pages/ear-training/ear-training",
+      "style": {
+        "navigationBarTitleText": "视唱练耳",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/recordings/recordings",
+      "style": {
+        "navigationBarTitleText": "我的录音",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/settings/settings",
+      "style": {
+        "navigationBarTitleText": "设置",
+        "navigationStyle": "custom"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "视唱练耳助手",
+    "navigationBarBackgroundColor": "#1a1a2e",
+    "backgroundColor": "#0f0f1a",
+    "backgroundTextStyle": "light"
+  },
+  "tabBar": {
+    "color": "#8a8a8a",
+    "selectedColor": "#667eea",
+    "backgroundColor": "#1a1a2e",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "static/icons/home.png",
+        "selectedIconPath": "static/icons/home-active.png"
+      },
+      {
+        "pagePath": "pages/piano/piano",
+        "text": "钢琴",
+        "iconPath": "static/icons/piano.png",
+        "selectedIconPath": "static/icons/piano-active.png"
+      },
+      {
+        "pagePath": "pages/ear-training/ear-training",
+        "text": "练耳",
+        "iconPath": "static/icons/mic.png",
+        "selectedIconPath": "static/icons/mic-active.png"
+      },
+      {
+        "pagePath": "pages/settings/settings",
+        "text": "设置",
+        "iconPath": "static/icons/settings.png",
+        "selectedIconPath": "static/icons/settings-active.png"
+      }
+    ]
+  }
+}
