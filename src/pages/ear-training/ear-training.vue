@@ -200,7 +200,12 @@ const startPractice = (type: string) => {
     uni.showToast({ title: '功能开发中', icon: 'none' })
     return
   }
-  uni.navigateTo({ url: `/pages/interval-practice/interval-practice?type=${type}` })
+  
+  if (type === 'scale') {
+    uni.navigateTo({ url: '/pages/scale-practice/scale-practice' })
+  } else {
+    uni.navigateTo({ url: `/pages/interval-practice/interval-practice?type=${type}` })
+  }
 }
 
 const toggleMetronome = (e: any) => {

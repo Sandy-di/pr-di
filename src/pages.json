@@ -30,6 +30,13 @@
       }
     },
     {
+      "path": "pages/scale-practice/scale-practice",
+      "style": {
+        "navigationBarTitleText": "音阶练习",
+        "navigationStyle": "custom"
+      }
+    },
+    {
       "path": "pages/recordings/recordings",
       "style": {
         "navigationBarTitleText": "我的录音",
