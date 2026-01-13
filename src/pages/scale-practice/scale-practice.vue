@@ -292,14 +292,16 @@ const goBack = () => uni.navigateBack()
   flex-direction: column;
 }
 
-/* 顶部区域 15% */
+/* 顶部区域 - 固定高度 */
 .top-section {
-  height: 15%;
+  height: 100rpx;
+  min-height: 100rpx;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
   background: #1a1a2e;
   padding: 8rpx 16rpx;
+  padding-top: calc(8rpx + env(safe-area-inset-top));
 }
 
 .navbar {
@@ -360,10 +362,9 @@ const goBack = () => uni.navigateBack()
   color: #fff;
 }
 
-/* 中间区域 70% - 钢琴键盘 */
+/* 中间区域 - 钢琴键盘（填满剩余空间） */
 .keyboard-section {
-  height: 70%;
-  flex-shrink: 0;
+  flex: 1;
   background: #000;
   position: relative;
   overflow: hidden;
@@ -470,45 +471,49 @@ const goBack = () => uni.navigateBack()
   color: #fff;
 }
 
-/* 底部区域 15% - 控制按钮 */
+/* 底部区域 - 控制按钮 */
 .bottom-section {
-  height: 15%;
+  height: 80rpx;
+  min-height: 80rpx;
   flex-shrink: 0;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 12rpx;
-  padding: 8rpx 16rpx;
+  gap: 16rpx;
+  padding: 8rpx 24rpx;
+  padding-bottom: calc(8rpx + env(safe-area-inset-bottom));
   background: #1a1a2e;
 }
 
 .control-btn {
   flex: 1;
-  max-width: 120rpx;
-  height: 80%;
+  max-width: 140rpx;
+  height: 56rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(102, 126, 234, 0.2);
-  border-radius: 12rpx;
+  background: rgba(102, 126, 234, 0.25);
+  border-radius: 28rpx;
+  border: 1px solid rgba(102, 126, 234, 0.4);
 }
 
-.btn-text { font-size: 22rpx; color: #fff; }
+.btn-text { font-size: 24rpx; color: #fff; font-weight: 500; }
 
 .speed-box {
   flex: 1.5;
-  max-width: 180rpx;
-  height: 80%;
+  max-width: 200rpx;
+  height: 56rpx;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
-  background: rgba(102, 126, 234, 0.1);
-  border-radius: 12rpx;
-  padding: 4rpx 8rpx;
+  gap: 8rpx;
+  background: rgba(102, 126, 234, 0.15);
+  border-radius: 28rpx;
+  padding: 0 16rpx;
 }
 
-.speed-value { font-size: 20rpx; color: #667eea; font-weight: 600; }
-.speed-slider { width: 100%; margin: 0; }
+.speed-value { font-size: 22rpx; color: #667eea; font-weight: 600; }
+.speed-slider { flex: 1; margin: 0; }
 </style>

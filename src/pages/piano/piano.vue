@@ -1,35 +1,34 @@
 <template>
   <view class="piano-page">
     <!-- 顶部控制栏 -->
-    <view class="top-bar glass">
-      <view class="back-btn glass-hover" @click="goBack">
-        <svg-icon name="back" size="24rpx" color="#fff" />
+    <view class="top-bar">
+      <!-- 左侧：返回 + 录音 -->
+      <view class="left-controls">
+        <view class="back-btn" @click="goBack">
+          <svg-icon name="back" size="24rpx" color="#fff" />
+        </view>
+        
+        <view class="record-btn" :class="{ 'recording': isRecording }" @click="handleRecordClick">
+          <svg-icon :name="isRecording ? 'stop' : 'record'" size="24rpx" :color="isRecording ? '#fff' : '#ef4444'" />
+          <text class="record-text">{{ isRecording ? formatTime(recordingDuration) : '录' }}</text>
+        </view>
+        
+        <!-- 分享按钮 -->
+        <view class="share-btn" v-if="showShareBtn && !isRecording" @click="shareRecording">
+          <svg-icon name="share" size="20rpx" color="#22c55e" />
+        </view>
       </view>
       
-      <!-- 节拍器开关 + 速度 -->
-      <view class="metronome-group">
-        <view class="metronome-btn glass-hover" :class="{ 'active': metronomeOn }" @click="toggleMetronome">
+      <!-- 中间：节拍器（不会和微信胶囊重叠） -->
+      <view class="center-controls">
+        <view class="metronome-btn" :class="{ 'active': metronomeOn }" @click="toggleMetronome">
           <svg-icon name="metronome" size="24rpx" :color="metronomeOn ? '#22c55e' : '#888'" />
         </view>
         <text class="tempo-text" @click="setTempo">{{ metronomeTempo }}</text>
       </view>
-      <!-- 录音区域 -->
-      <view class="record-section">
-        <view class="record-btn" :class="{ 'recording': isRecording }" @click="handleRecordClick">
-          <view class="record-icon-wrapper" :class="{ 'animate-pulse': isRecording }">
-            <svg-icon :name="isRecording ? 'stop' : 'record'" size="28rpx" :color="isRecording ? '#fff' : '#ef4444'" />
-          </view>
-          <text class="record-text">{{ isRecording ? formatTime(recordingDuration) : '录音' }}</text>
-        </view>
-        
-        <!-- 分享按钮 - 录音结束后显示 -->
-        <view class="share-btn" v-if="showShareBtn && !isRecording" @click="shareRecording">
-          <svg-icon name="share" size="24rpx" color="#22c55e" />
-          <text class="share-text">分享</text>
-        </view>
-      </view>
       
-      <view class="spacer"></view>
+      <!-- 右侧留空给微信胶囊 -->
+      <view class="right-spacer"></view>
     </view>
     
     <!-- 钢琴键盘区域 -->
@@ -322,45 +321,82 @@ const formatTime = (ms: number) => { const s = Math.floor(ms / 1000); return `${
 }
 
 .top-bar {
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 4rpx 12rpx;
-  padding-top: calc(4rpx + env(safe-area-inset-top));
-  background: rgba(30, 30, 30, 0.9);
-  backdrop-filter: blur(10px);
+  padding: 8rpx 16rpx;
+  padding-top: calc(8rpx + env(safe-area-inset-top));
+  background: rgba(30, 30, 30, 0.95);
   border-bottom: 1px solid rgba(255,255,255,0.1);
   flex-shrink: 0;
   z-index: 100;
 }
 
-.back-btn {
-  width: 40rpx; /* 再缩小30% */
-  height: 40rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255,255,255,0.1);
-  border-radius: 50%;
-}
-
-.metronome-group {
+/* 左侧控制区 */
+.left-controls {
   display: flex;
   align-items: center;
   gap: 8rpx;
-  margin-left: 12rpx;
 }
 
-.metronome-btn {
-  width: 40rpx; /* 再缩小30% */
-  height: 40rpx;
+.back-btn {
+  width: 48rpx;
+  height: 48rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   background: rgba(255,255,255,0.1);
   border-radius: 50%;
-  transition: all 0.3s ease;
+}
+
+.record-btn {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  padding: 8rpx 16rpx;
+  background: rgba(255,255,255,0.1);
+  border-radius: 100rpx;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+
+.record-btn.recording {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: rgba(239, 68, 68, 0.5);
+}
+
+.record-text {
+  font-size: 20rpx;
+  font-weight: 500;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+}
+
+.share-btn {
+  width: 40rpx;
+  height: 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(34, 197, 94, 0.2);
+  border-radius: 50%;
+  border: 1px solid rgba(34, 197, 94, 0.4);
+}
+
+/* 中间控制区 */
+.center-controls {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.metronome-btn {
+  width: 44rpx;
+  height: 44rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.1);
+  border-radius: 50%;
 }
 
 .metronome-btn.active {
@@ -369,78 +405,16 @@ const formatTime = (ms: number) => { const s = Math.floor(ms / 1000); return `${
 }
 
 .tempo-text {
-  font-size: 20rpx;
+  font-size: 22rpx;
   color: #888;
-  min-width: 48rpx;
+  min-width: 50rpx;
   text-align: center;
 }
 
-/* 录音区域 - 居中 */
-.record-section {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  gap: 12rpx;
+/* 右侧留空给微信胶囊按钮 */
+.right-spacer {
+  width: 180rpx;
 }
-
-.record-btn {
-  display: flex;
-  align-items: center;
-  gap: 10rpx;
-  padding: 10rpx 20rpx;
-  background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
-  border-radius: 100rpx;
-  transition: all 0.3s ease;
-  border: 1px solid rgba(255,255,255,0.1);
-}
-
-.record-btn.recording {
-  background: linear-gradient(135deg, rgba(239, 68, 68, 0.3), rgba(239, 68, 68, 0.1));
-  border: 1px solid rgba(239, 68, 68, 0.5);
-  box-shadow: 0 0 20rpx rgba(239, 68, 68, 0.3);
-}
-
-.record-icon-wrapper {
-  width: 32rpx;
-  height: 32rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.record-text {
-  font-size: 22rpx;
-  font-weight: 500;
-  color: #fff;
-  font-variant-numeric: tabular-nums;
-}
-
-/* 分享按钮 */
-.share-btn {
-  display: flex;
-  align-items: center;
-  gap: 6rpx;
-  padding: 10rpx 16rpx;
-  background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.1));
-  border-radius: 100rpx;
-  border: 1px solid rgba(34, 197, 94, 0.4);
-  transition: all 0.3s ease;
-}
-
-.share-btn:active {
-  background: rgba(34, 197, 94, 0.3);
-  transform: scale(0.95);
-}
-
-.share-text {
-  font-size: 20rpx;
-  color: #22c55e;
-  font-weight: 500;
-}
-
-.spacer { width: 12rpx; }
 
 /* 键盘区域 */
 .keyboard-area {
