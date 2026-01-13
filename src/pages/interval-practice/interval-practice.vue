@@ -107,8 +107,8 @@ const isPlaying = ref(false)
 const isCorrect = ref(false)
 
 onMounted(async () => {
-  const systemInfo = uni.getSystemInfoSync()
-  statusBarHeight.value = systemInfo.statusBarHeight || 20
+  const windowInfo = uni.getWindowInfo()
+  statusBarHeight.value = windowInfo.statusBarHeight || 20
   await AudioManager.init()
   generateQuestion()
 })

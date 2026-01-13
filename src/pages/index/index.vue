@@ -161,7 +161,7 @@ const loadStats = () => {
 // 页面跳转
 const navigateTo = (url: string) => {
   // tabBar 页面列表
-  const tabBarPages = ['/pages/index/index', '/pages/piano/piano', '/pages/recordings/recordings', '/pages/settings/settings']
+  const tabBarPages = ['/pages/index/index', '/pages/piano/piano', '/pages/ear-training/ear-training', '/pages/settings/settings']
   
   // 检查是否是 tabBar 页面（不带参数时）
   const basePath = url.split('?')[0]
