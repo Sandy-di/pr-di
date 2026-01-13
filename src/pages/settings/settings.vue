@@ -2,112 +2,121 @@
   <view class="container safe-area-top">
     <!-- 自定义导航栏 -->
     <view class="custom-navbar" :style="{ paddingTop: statusBarHeight + 'px' }">
-      <text class="navbar-title">⚙️ 设置</text>
+      <view class="navbar-content">
+        <text class="navbar-title">设置</text>
+        <view class="navbar-badge">选项</view>
+      </view>
     </view>
     
-    <!-- 设置列表 -->
-    <scroll-view class="settings-list" scroll-y>
+    <!-- 设置内容 -->
+    <scroll-view class="content" scroll-y>
       <!-- 音频设置 -->
-      <view class="settings-section">
-        <text class="section-title">🔊 音频设置</text>
+      <view class="setting-group glass animate-fade-in">
+        <view class="group-header">
+          <svg-icon name="piano" size="32rpx" color="var(--accent-blue)" />
+          <text class="group-title">声音设置</text>
+        </view>
         
         <view class="setting-item">
-          <text class="setting-label">主音量</text>
+          <view class="setting-label-box">
+            <text class="setting-label">钢琴音量</text>
+            <text class="setting-value">{{ settings.pianoVolume }}%</text>
+          </view>
           <slider 
-            :value="settings.volume * 100" 
-            @change="changeVolume"
-            activeColor="#667eea"
-            backgroundColor="rgba(255,255,255,0.2)"
+            :value="settings.pianoVolume" 
+            @change="updateVolume" 
+            activeColor="var(--accent-blue)" 
+            backgroundColor="rgba(255,255,255,0.1)"
             block-size="20"
-            class="volume-slider"
+            block-color="#ffffff"
+            class="custom-slider"
           />
-          <text class="setting-value">{{ Math.round(settings.volume * 100) }}%</text>
         </view>
         
-        <view class="setting-item">
-          <text class="setting-label">节拍器音量</text>
-          <slider 
-            :value="settings.metronomeVolume * 100" 
-            @change="changeMetronomeVolume"
-            activeColor="#667eea"
-            backgroundColor="rgba(255,255,255,0.2)"
-            block-size="20"
-            class="volume-slider"
+        <view class="setting-item no-border">
+          <view class="setting-label-box">
+            <text class="setting-label">按键震动</text>
+          </view>
+          <switch 
+            :checked="settings.enableVibration" 
+            @change="toggleVibration" 
+            color="#3B82F6" 
+            style="transform: scale(0.8)" 
           />
-          <text class="setting-value">{{ Math.round(settings.metronomeVolume * 100) }}%</text>
-        </view>
-      </view>
-      
-      <!-- 钢琴设置 -->
-      <view class="settings-section">
-        <text class="section-title">🎹 钢琴设置</text>
-        
-        <view class="setting-item">
-          <text class="setting-label">显示简谱</text>
-          <switch :checked="settings.showNotation" @change="toggleNotation" color="#667eea" />
-        </view>
-        
-        <view class="setting-item">
-          <text class="setting-label">显示八度数</text>
-          <picker :value="settings.octaveIndex" :range="octaveOptions" @change="changeOctaves">
-            <view class="setting-picker">{{ octaveOptions[settings.octaveIndex] }} 组</view>
-          </picker>
         </view>
       </view>
       
       <!-- 练耳设置 -->
-      <view class="settings-section">
-        <text class="section-title">👂 练耳设置</text>
-        
-        <view class="setting-item">
-          <text class="setting-label">难度等级</text>
-          <picker :value="settings.difficultyIndex" :range="difficultyOptions" @change="changeDifficulty">
-            <view class="setting-picker">{{ difficultyOptions[settings.difficultyIndex] }}</view>
-          </picker>
+      <view class="setting-group glass animate-fade-in" style="animation-delay: 0.1s">
+        <view class="group-header">
+          <svg-icon name="ear" size="32rpx" color="var(--accent-purple)" />
+          <text class="group-title">练耳偏好</text>
         </view>
         
         <view class="setting-item">
-          <text class="setting-label">每日练习目标</text>
-          <picker :value="settings.dailyGoalIndex" :range="dailyGoalOptions" @change="changeDailyGoal">
-            <view class="setting-picker">{{ dailyGoalOptions[settings.dailyGoalIndex] }} 题</view>
-          </picker>
+          <view class="setting-label-box">
+            <text class="setting-label">自动播放下一题</text>
+          </view>
+          <switch 
+            :checked="settings.autoNext" 
+            @change="toggleAutoNext" 
+            color="#8B5CF6" 
+            style="transform: scale(0.8)" 
+          />
+        </view>
+        
+        <view class="setting-item no-border">
+          <view class="setting-label-box">
+            <text class="setting-label">显示答案提示</text>
+          </view>
+          <switch 
+            :checked="settings.showHint" 
+            @change="toggleShowHint" 
+            color="#8B5CF6" 
+            style="transform: scale(0.8)" 
+          />
         </view>
       </view>
       
       <!-- 数据管理 -->
-      <view class="settings-section">
-        <text class="section-title">📊 数据管理</text>
-        
-        <view class="setting-item clickable" @click="exportData">
-          <text class="setting-label">导出练习数据</text>
-          <text class="setting-arrow">›</text>
+      <view class="setting-group glass animate-fade-in" style="animation-delay: 0.2s">
+        <view class="group-header">
+          <svg-icon name="chart" size="32rpx" color="var(--accent-cyan)" />
+          <text class="group-title">数据管理</text>
         </view>
         
-        <view class="setting-item clickable danger" @click="clearData">
-          <text class="setting-label">清除所有数据</text>
-          <text class="setting-arrow">›</text>
+        <view class="setting-item" @click="clearStatistics">
+          <text class="setting-label">重置统计数据</text>
+          <svg-icon name="arrow-right" size="28rpx" color="var(--text-muted)" />
+        </view>
+        
+        <view class="setting-item no-border" @click="clearRecordings">
+          <text class="setting-label">清空所有录音</text>
+          <svg-icon name="arrow-right" size="28rpx" color="var(--text-muted)" />
+        </view>
+      </view>
+      
+      <!-- 危险区域 -->
+      <view class="setting-group glass danger-zone animate-fade-in" style="animation-delay: 0.3s">
+        <view class="group-header">
+          <svg-icon name="settings" size="32rpx" color="var(--error-color)" />
+          <text class="group-title" style="color: var(--error-color)">危险区域</text>
+        </view>
+        
+        <view class="setting-item no-border" @click="resetAll">
+          <text class="setting-label" style="color: var(--error-color)">恢复出厂设置</text>
+          <svg-icon name="lightning" size="28rpx" color="var(--error-color)" />
         </view>
       </view>
       
       <!-- 关于 -->
-      <view class="settings-section">
-        <text class="section-title">ℹ️ 关于</text>
-        
-        <view class="setting-item clickable" @click="showHelp">
-          <text class="setting-label">使用帮助</text>
-          <text class="setting-arrow">›</text>
+      <view class="about-section animate-fade-in" style="animation-delay: 0.4s">
+        <view class="app-logo-box">
+          <svg-icon name="piano" size="64rpx" color="var(--text-muted)" />
         </view>
-        
-        <view class="setting-item">
-          <text class="setting-label">版本</text>
-          <text class="setting-value">1.0.0</text>
-        </view>
-      </view>
-      
-      <!-- 底部说明 -->
-      <view class="footer">
-        <text class="footer-text">视唱练耳助手 🎵</text>
-        <text class="footer-subtext">让音乐学习更简单</text>
+        <text class="app-name">视唱练耳助手</text>
+        <text class="app-version">Version 1.0.0 Beta</text>
+        <text class="app-slogan">让音乐练习更简单</text>
       </view>
     </scroll-view>
   </view>
@@ -115,108 +124,107 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
-import AudioManager from '@/utils/audio-manager'
+import SvgIcon from '@/components/SvgIcon.vue'
 
 const statusBarHeight = ref(20)
 
 const settings = reactive({
-  volume: 0.8,
-  metronomeVolume: 0.5,
-  showNotation: true,
-  octaveIndex: 1,
-  difficultyIndex: 1,
-  dailyGoalIndex: 1
+  pianoVolume: 80,
+  enableVibration: true,
+  autoNext: true,
+  showHint: false
 })
 
-const octaveOptions = ['1', '2', '3']
-const difficultyOptions = ['入门', '中级', '高级']
-const dailyGoalOptions = ['5', '10', '20', '30']
-
 onMounted(() => {
-  const systemInfo = uni.getSystemInfoSync()
-  statusBarHeight.value = systemInfo.statusBarHeight || 20
+  const windowInfo = uni.getWindowInfo()
+  statusBarHeight.value = windowInfo.statusBarHeight || 20
   loadSettings()
 })
 
 const loadSettings = () => {
-  try {
-    const saved = uni.getStorageSync('user_settings')
-    if (saved) {
-      Object.assign(settings, saved)
-    }
-  } catch (e) {
-    console.error('加载设置失败:', e)
+  const saved = uni.getStorageSync('appSettings')
+  if (saved) {
+    Object.assign(settings, saved)
   }
 }
 
 const saveSettings = () => {
-  try {
-    uni.setStorageSync('user_settings', settings)
-  } catch (e) {
-    console.error('保存设置失败:', e)
-  }
+  uni.setStorageSync('appSettings', settings)
 }
 
-const changeVolume = (e: any) => {
-  settings.volume = e.detail.value / 100
-  AudioManager.setVolume(settings.volume)
+const updateVolume = (e: any) => {
+  settings.pianoVolume = e.detail.value
   saveSettings()
 }
 
-const changeMetronomeVolume = (e: any) => {
-  settings.metronomeVolume = e.detail.value / 100
+const toggleVibration = (e: any) => {
+  settings.enableVibration = e.detail.value
   saveSettings()
 }
 
-const toggleNotation = (e: any) => {
-  settings.showNotation = e.detail.value
+const toggleAutoNext = (e: any) => {
+  settings.autoNext = e.detail.value
   saveSettings()
 }
 
-const changeOctaves = (e: any) => {
-  settings.octaveIndex = e.detail.value
+const toggleShowHint = (e: any) => {
+  settings.showHint = e.detail.value
   saveSettings()
 }
 
-const changeDifficulty = (e: any) => {
-  settings.difficultyIndex = e.detail.value
-  saveSettings()
-}
-
-const changeDailyGoal = (e: any) => {
-  settings.dailyGoalIndex = e.detail.value
-  saveSettings()
-}
-
-const exportData = () => {
-  uni.showToast({ title: '功能开发中', icon: 'none' })
-}
-
-const clearData = () => {
+const clearStatistics = () => {
   uni.showModal({
-    title: '确认清除',
-    content: '这将清除所有练习记录和录音，此操作不可恢复！',
-    confirmText: '清除',
-    confirmColor: '#ef4444',
+    title: '重置统计',
+    content: '确定要清空所有练习统计数据吗？此操作无法撤销。',
+    confirmColor: '#EF4444',
     success: (res) => {
       if (res.confirm) {
-        try {
-          uni.clearStorageSync()
-          uni.showToast({ title: '数据已清除', icon: 'success' })
-        } catch (e) {
-          uni.showToast({ title: '清除失败', icon: 'error' })
-        }
+        uni.removeStorageSync('statistics')
+        uni.showToast({ title: '已重置', icon: 'success' })
       }
     }
   })
 }
 
-const showHelp = () => {
+const clearRecordings = () => {
   uni.showModal({
-    title: '使用帮助',
-    content: '🎹 钢琴弹奏：点击或滑动琴键发声\n👂 视唱练耳：选择练习类型开始训练\n🎤 录音：在钢琴页面点击录音按钮\n📤 分享：录音列表中选择录音分享',
-    showCancel: false,
-    confirmText: '知道了'
+    title: '清空录音',
+    content: '确定要删除所有本地录音文件吗？此操作无法撤销。',
+    confirmColor: '#EF4444',
+    success: (res) => {
+      if (res.confirm) {
+        // 清除录音数据逻辑 (需调用 RecorderService)
+        uni.removeStorageSync('recordings')
+        uni.showToast({ title: '已清空', icon: 'success' })
+      }
+    }
+  })
+}
+
+const resetAll = () => {
+  uni.showModal({
+    title: '恢复出厂',
+    content: '确定要将所有设置恢复默认并清空数据吗？',
+    confirmColor: '#EF4444',
+    success: (res) => {
+      if (res.confirm) {
+        uni.clearStorageSync()
+        // 恢复默认设置
+        Object.assign(settings, {
+          pianoVolume: 80,
+          enableVibration: true,
+          autoNext: true,
+          showHint: false
+        })
+        saveSettings()
+        uni.showToast({ title: '已恢复', icon: 'success' })
+        
+        // 重启应用
+        setTimeout(() => {
+          uni.reLaunch({ url: '/pages/index/index' })
+        }, 1500)
+      }
+    }
   })
 }
 </script>
@@ -226,114 +234,148 @@ const showHelp = () => {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: linear-gradient(180deg, #0f0f1a 0%, #1a1a2e 100%);
+  background: var(--bg-dark);
+  background-image: 
+    radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 40%),
+    radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 40%);
 }
 
 .custom-navbar {
+  height: 88rpx;
+  background: rgba(15, 15, 26, 0.8);
+  backdrop-filter: blur(20px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.navbar-content {
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 88rpx;
-  background: rgba(26, 26, 46, 0.95);
-  backdrop-filter: blur(10px);
+  gap: 16rpx;
 }
 
 .navbar-title {
-  font-size: 36rpx;
+  font-size: 34rpx;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--text-primary);
+  letter-spacing: 2rpx;
 }
 
-.settings-list {
+.navbar-badge {
+  font-size: 18rpx;
+  font-weight: 700;
+  color: var(--bg-dark);
+  background: var(--accent-orange);
+  padding: 2rpx 8rpx;
+  border-radius: 8rpx;
+}
+
+.content {
   flex: 1;
-  padding: 24rpx;
-  padding-bottom: 180rpx;
+  padding: 32rpx;
 }
 
-.settings-section {
-  background: #1a1a2e;
-  border-radius: 24rpx;
-  padding: 24rpx;
-  margin-bottom: 24rpx;
+.setting-group {
+  padding: 0 32rpx;
+  border-radius: var(--radius-lg);
+  margin-bottom: 32rpx;
+  overflow: hidden;
 }
 
-.section-title {
-  font-size: 30rpx;
+.group-header {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 24rpx 0;
+  border-bottom: 1px solid var(--glass-border);
+  margin-bottom: 16rpx;
+}
+
+.group-title {
+  font-size: 28rpx;
   font-weight: 600;
-  color: #ffffff;
-  margin-bottom: 20rpx;
-  display: block;
+  color: var(--text-primary);
 }
 
 .setting-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20rpx 0;
-  border-bottom: 2rpx solid rgba(255, 255, 255, 0.05);
+  padding: 24rpx 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.setting-item:last-child {
+.setting-item.no-border {
   border-bottom: none;
 }
 
-.setting-item.clickable {
-  cursor: pointer;
-}
-
-.setting-item.clickable:active {
-  opacity: 0.7;
-}
-
-.setting-item.danger .setting-label {
-  color: #ef4444;
+.setting-label-box {
+  display: flex;
+  flex-direction: column;
 }
 
 .setting-label {
-  font-size: 28rpx;
-  color: #ffffff;
-  flex-shrink: 0;
+  font-size: 30rpx;
+  color: var(--text-primary);
 }
 
 .setting-value {
-  font-size: 28rpx;
-  color: #b0b0c0;
+  font-size: 24rpx;
+  color: var(--text-muted);
+  margin-top: 4rpx;
 }
 
-.setting-arrow {
-  font-size: 36rpx;
-  color: #6a6a7a;
+.custom-slider {
+  width: 240rpx;
+  margin: 0;
 }
 
-.setting-picker {
-  padding: 12rpx 24rpx;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 12rpx;
-  font-size: 28rpx;
-  color: #ffffff;
+/* 危险区域 */
+.danger-zone {
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.05);
 }
 
-.volume-slider {
-  flex: 1;
-  margin: 0 24rpx;
-}
-
-.footer {
+/* 关于 */
+.about-section {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 60rpx 0;
+  padding: 64rpx 0 120rpx;
 }
 
-.footer-text {
+.app-logo-box {
+  width: 120rpx;
+  height: 120rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 32rpx;
+  margin-bottom: 24rpx;
+  border: 1px solid var(--glass-border);
+}
+
+.app-name {
   font-size: 32rpx;
   font-weight: 600;
-  color: #667eea;
+  color: var(--text-primary);
   margin-bottom: 8rpx;
 }
 
-.footer-subtext {
+.app-version {
   font-size: 24rpx;
-  color: #6a6a7a;
+  color: var(--text-muted);
+  margin-bottom: 16rpx;
+}
+
+.app-slogan {
+  font-size: 24rpx;
+  color: var(--text-secondary);
+  letter-spacing: 4rpx;
 }
 </style>

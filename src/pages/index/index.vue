@@ -2,78 +2,112 @@
   <view class="container safe-area-top">
     <!-- 自定义导航栏 -->
     <view class="custom-navbar" :style="{ paddingTop: statusBarHeight + 'px' }">
-      <text class="navbar-title">🎵 视唱练耳助手</text>
+      <view class="navbar-content">
+        <text class="navbar-title">视唱练耳助手</text>
+        <view class="navbar-badge">BETA</view>
+      </view>
     </view>
     
     <!-- 主内容区 -->
     <view class="content">
-      <!-- 欢迎横幅 -->
+      <!-- 欢迎横幅 (Glassmorphism + Gradient) -->
       <view class="hero-banner animate-fade-in">
-        <view class="hero-icon">🎹</view>
-        <view class="hero-text">
-          <text class="hero-title">开始今日练习</text>
-          <text class="hero-subtitle">每天坚持，音乐之路更进一步</text>
+        <view class="hero-bg-glow"></view>
+        <view class="hero-content">
+          <view class="hero-text">
+            <text class="hero-title">开始今日练习</text>
+            <text class="hero-subtitle">每天坚持，音乐之路更进一步</text>
+          </view>
+          <view class="hero-icon-wrapper animate-float">
+            <svg-icon name="piano" size="120rpx" color="rgba(255,255,255,0.9)" />
+          </view>
         </view>
       </view>
       
       <!-- 功能入口 -->
       <view class="feature-grid">
-        <view class="feature-card" @click="navigateTo('/pages/piano/piano')">
-          <view class="feature-icon">🎹</view>
+        <view class="feature-card glass glass-hover" @click="navigateTo('/pages/piano/piano')">
+          <view class="card-glow" style="background: var(--accent-blue);"></view>
+          <view class="feature-icon-box" style="background: rgba(59, 130, 246, 0.2); color: var(--accent-blue);">
+            <svg-icon name="piano" size="48rpx" />
+          </view>
           <text class="feature-title">自由弹奏</text>
           <text class="feature-desc">真实钢琴音色</text>
         </view>
         
-        <view class="feature-card" @click="navigateTo('/pages/ear-training/ear-training')">
-          <view class="feature-icon">👂</view>
+        <view class="feature-card glass glass-hover" @click="navigateTo('/pages/ear-training/ear-training')">
+          <view class="card-glow" style="background: var(--accent-purple);"></view>
+          <view class="feature-icon-box" style="background: rgba(139, 92, 246, 0.2); color: var(--accent-purple);">
+            <svg-icon name="ear" size="48rpx" />
+          </view>
           <text class="feature-title">视唱练耳</text>
           <text class="feature-desc">音程与音阶训练</text>
         </view>
         
-        <view class="feature-card" @click="navigateTo('/pages/recordings/recordings')">
-          <view class="feature-icon">🎤</view>
+        <view class="feature-card glass glass-hover" @click="navigateTo('/pages/recordings/recordings')">
+          <view class="card-glow" style="background: var(--accent-cyan);"></view>
+          <view class="feature-icon-box" style="background: rgba(6, 182, 212, 0.2); color: var(--accent-cyan);">
+            <svg-icon name="mic" size="48rpx" />
+          </view>
           <text class="feature-title">录音管理</text>
           <text class="feature-desc">查看练习记录</text>
         </view>
         
-        <view class="feature-card" @click="navigateTo('/pages/settings/settings')">
-          <view class="feature-icon">⚙️</view>
+        <view class="feature-card glass glass-hover" @click="navigateTo('/pages/settings/settings')">
+          <view class="card-glow" style="background: var(--accent-orange);"></view>
+          <view class="feature-icon-box" style="background: rgba(249, 115, 22, 0.2); color: var(--accent-orange);">
+            <svg-icon name="settings" size="48rpx" />
+          </view>
           <text class="feature-title">设置</text>
           <text class="feature-desc">个性化配置</text>
         </view>
       </view>
       
       <!-- 快速开始 -->
-      <view class="quick-start card">
-        <text class="card-title">⚡ 快速开始</text>
-        <view class="quick-actions">
-          <view class="quick-btn" @click="navigateTo('/pages/piano/piano')">
-            <text class="quick-btn-icon">🎹</text>
+      <view class="section-header">
+        <text class="section-title">快捷操作</text>
+      </view>
+      
+      <view class="quick-actions">
+        <view class="quick-btn glass glass-hover" @click="navigateTo('/pages/piano/piano')">
+          <view class="quick-btn-content">
+            <svg-icon name="lightning" size="40rpx" color="var(--accent-blue)" />
             <text class="quick-btn-text">弹奏练习</text>
           </view>
-          <view class="quick-btn" @click="startRecording">
-            <text class="quick-btn-icon">🎤</text>
+          <svg-icon name="arrow-right" size="32rpx" color="var(--text-muted)" />
+        </view>
+        <view class="quick-btn glass glass-hover" @click="startRecording">
+          <view class="quick-btn-content">
+            <svg-icon name="mic" size="40rpx" color="var(--accent-pink)" />
             <text class="quick-btn-text">开始录音</text>
           </view>
+          <div class="recording-dot animate-pulse"></div>
         </view>
       </view>
       
       <!-- 今日统计 -->
-      <view class="stats-card card">
-        <text class="card-title">📊 今日统计</text>
+      <view class="stats-card glass">
+        <view class="stats-header">
+          <view class="stats-title-box">
+            <svg-icon name="chart" size="36rpx" color="var(--accent-cyan)" />
+            <text class="card-title">今日统计</text>
+          </view>
+          <text class="stats-date">{{ currentDate }}</text>
+        </view>
+        
         <view class="stats-row">
           <view class="stat-item">
-            <text class="stat-value">{{ stats.practiceTime }}</text>
+            <text class="stat-value" style="color: var(--accent-blue);">{{ stats.practiceTime }}</text>
             <text class="stat-label">练习时长</text>
           </view>
           <view class="stat-divider"></view>
           <view class="stat-item">
-            <text class="stat-value">{{ stats.recordCount }}</text>
+            <text class="stat-value" style="color: var(--accent-purple);">{{ stats.recordCount }}</text>
             <text class="stat-label">录音数</text>
           </view>
           <view class="stat-divider"></view>
           <view class="stat-item">
-            <text class="stat-value">{{ stats.streak }}</text>
+            <text class="stat-value" style="color: var(--accent-orange);">{{ stats.streak }}</text>
             <text class="stat-label">连续天数</text>
           </view>
         </view>
@@ -83,10 +117,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
+import SvgIcon from '@/components/SvgIcon.vue'
 
 // 状态栏高度
 const statusBarHeight = ref(0)
+const currentDate = computed(() => {
+  const date = new Date()
+  return `${date.getMonth() + 1}月${date.getDate()}日`
+})
 
 // 统计数据
 const stats = reactive({
@@ -97,8 +136,8 @@ const stats = reactive({
 
 onMounted(() => {
   // 获取状态栏高度
-  const systemInfo = uni.getSystemInfoSync()
-  statusBarHeight.value = systemInfo.statusBarHeight || 20
+  const windowInfo = uni.getWindowInfo()
+  statusBarHeight.value = windowInfo.statusBarHeight || 20
   
   // 加载统计数据
   loadStats()
@@ -134,13 +173,10 @@ const navigateTo = (url: string) => {
 }
 
 // 开始录音（跳转到钢琴页并自动开始录音）
-// 注意：带参数时需要使用 reLaunch 或其他方式
 const startRecording = () => {
-  // 由于 switchTab 不支持参数，先跳转再通过事件触发
   uni.switchTab({ 
     url: '/pages/piano/piano',
     success: () => {
-      // 使用全局事件或存储传递参数
       uni.setStorageSync('autoStartRecording', true)
     }
   })
@@ -150,60 +186,101 @@ const startRecording = () => {
 <style scoped>
 .container {
   min-height: 100vh;
-  background: linear-gradient(180deg, #0f0f1a 0%, #1a1a2e 100%);
+  background: var(--bg-dark);
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(236, 72, 153, 0.15) 0%, transparent 40%);
 }
 
 .custom-navbar {
+  height: 88rpx;
+  background: rgba(15, 15, 26, 0.8);
+  backdrop-filter: blur(20px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.navbar-content {
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 88rpx;
-  background: rgba(26, 26, 46, 0.95);
-  backdrop-filter: blur(10px);
+  gap: 16rpx;
 }
 
 .navbar-title {
-  font-size: 36rpx;
+  font-size: 34rpx;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--text-primary);
+  letter-spacing: 2rpx;
+}
+
+.navbar-badge {
+  font-size: 18rpx;
+  font-weight: 700;
+  color: var(--bg-dark);
+  background: var(--accent-cyan);
+  padding: 2rpx 8rpx;
+  border-radius: 8rpx;
 }
 
 .content {
-  padding: 24rpx;
+  padding: 32rpx;
   padding-bottom: 180rpx;
 }
 
 /* 英雄横幅 */
 .hero-banner {
+  position: relative;
+  height: 300rpx;
+  background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+  border-radius: var(--radius-xl);
+  margin-bottom: 48rpx;
+  overflow: hidden;
+  box-shadow: 0 12rpx 40rpx rgba(79, 70, 229, 0.3);
   display: flex;
   align-items: center;
-  padding: 40rpx;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 32rpx;
-  margin-bottom: 32rpx;
-  box-shadow: 0 8rpx 32rpx rgba(102, 126, 234, 0.4);
+  padding: 0 48rpx;
 }
 
-.hero-icon {
-  font-size: 80rpx;
-  margin-right: 32rpx;
+.hero-bg-glow {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+  animation: shine 8s linear infinite;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .hero-text {
-  display: flex;
-  flex-direction: column;
+  flex: 1;
 }
 
 .hero-title {
-  font-size: 40rpx;
-  font-weight: 700;
+  font-size: 44rpx;
+  font-weight: 800;
   color: #ffffff;
-  margin-bottom: 8rpx;
+  display: block;
+  margin-bottom: 12rpx;
+  text-shadow: 0 4rpx 12rpx rgba(0,0,0,0.2);
 }
 
 .hero-subtitle {
   font-size: 26rpx;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.9);
+  display: block;
 }
 
 /* 功能网格 */
@@ -211,92 +288,135 @@ const startRecording = () => {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 24rpx;
-  margin-bottom: 32rpx;
+  margin-bottom: 48rpx;
 }
 
 .feature-card {
+  position: relative;
+  padding: 32rpx;
+  border-radius: var(--radius-lg);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 40rpx 24rpx;
-  background: #1a1a2e;
+  overflow: hidden;
+}
+
+.card-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 6rpx;
+  opacity: 0.8;
+}
+
+.feature-icon-box {
+  width: 88rpx;
+  height: 88rpx;
   border-radius: 24rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.3);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.feature-card:active {
-  transform: scale(0.98);
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.2);
-}
-
-.feature-icon {
-  font-size: 64rpx;
-  margin-bottom: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24rpx;
 }
 
 .feature-title {
-  font-size: 32rpx;
+  font-size: 30rpx;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--text-primary);
   margin-bottom: 8rpx;
 }
 
 .feature-desc {
-  font-size: 24rpx;
-  color: #b0b0c0;
+  font-size: 22rpx;
+  color: var(--text-muted);
+  line-height: 1.4;
 }
 
-/* 卡片通用样式 */
-.card {
-  background: #1a1a2e;
-  border-radius: 24rpx;
-  padding: 32rpx;
+/* 分区标题 */
+.section-header {
   margin-bottom: 24rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.3);
+  padding-left: 8rpx;
+  border-left: 6rpx solid var(--accent-blue);
 }
 
-.card-title {
+.section-title {
   font-size: 32rpx;
-  font-weight: 600;
-  color: #ffffff;
-  margin-bottom: 24rpx;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-left: 16rpx;
 }
 
-/* 快速开始 */
+/* 快速操作 */
 .quick-actions {
-  display: flex;
-  gap: 24rpx;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20rpx;
+  margin-bottom: 48rpx;
 }
 
 .quick-btn {
-  flex: 1;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  padding: 32rpx;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
-  border: 2rpx solid rgba(102, 126, 234, 0.3);
-  border-radius: 20rpx;
-  transition: all 0.2s ease;
+  justify-content: space-between;
+  padding: 24rpx 32rpx;
+  border-radius: var(--radius-lg);
 }
 
-.quick-btn:active {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.4) 0%, rgba(118, 75, 162, 0.4) 100%);
-  transform: scale(0.98);
-}
-
-.quick-btn-icon {
-  font-size: 48rpx;
-  margin-bottom: 12rpx;
+.quick-btn-content {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
 }
 
 .quick-btn-text {
   font-size: 28rpx;
-  color: #ffffff;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.recording-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  background: var(--error-color);
+  box-shadow: 0 0 10rpx var(--error-color);
 }
 
 /* 统计卡片 */
+.stats-card {
+  padding: 32rpx;
+  border-radius: var(--radius-lg);
+}
+
+.stats-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.stats-title-box {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.card-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.stats-date {
+  font-size: 24rpx;
+  color: var(--text-muted);
+  background: rgba(255,255,255,0.05);
+  padding: 4rpx 12rpx;
+  border-radius: 100rpx;
+}
+
 .stats-row {
   display: flex;
   align-items: center;
@@ -307,24 +427,23 @@ const startRecording = () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  flex: 1;
 }
 
 .stat-value {
-  font-size: 44rpx;
-  font-weight: 700;
-  color: #667eea;
+  font-size: 40rpx;
+  font-weight: 800;
   margin-bottom: 8rpx;
+  font-family: 'SF Pro Display', sans-serif;
 }
 
 .stat-label {
-  font-size: 24rpx;
-  color: #b0b0c0;
+  font-size: 22rpx;
+  color: var(--text-muted);
 }
 
 .stat-divider {
   width: 2rpx;
-  height: 60rpx;
-  background: rgba(255, 255, 255, 0.1);
+  height: 50rpx;
+  background: var(--glass-border);
 }
 </style>

@@ -1,11 +1,23 @@
 <template>
   <view class="piano-page">
     <!-- 顶部控制栏 -->
-    <view class="top-bar">
-      <view class="back-btn" @click="goBack"><text>←</text></view>
+    <view class="top-bar glass">
+      <view class="back-btn glass-hover" @click="goBack">
+        <svg-icon name="back" size="24rpx" color="#fff" />
+      </view>
       
-      <view class="record-btn" :class="{ 'recording': isRecording }" @click="toggleRecording">
-        <text class="record-icon">{{ isRecording ? '⏹' : '🎤' }}</text>
+      <!-- 节拍器开关 + 速度 -->
+      <view class="metronome-group">
+        <view class="metronome-btn glass-hover" :class="{ 'active': metronomeOn }" @click="toggleMetronome">
+          <svg-icon name="metronome" size="24rpx" :color="metronomeOn ? '#22c55e' : '#888'" />
+        </view>
+        <text class="tempo-text" @click="setTempo">{{ metronomeTempo }}</text>
+      </view>
+      
+      <view class="record-btn glass-hover" :class="{ 'recording': isRecording }" @click="handleRecordClick">
+        <view class="record-icon-wrapper" :class="{ 'animate-pulse': isRecording }">
+          <svg-icon :name="isRecording ? 'stop' : 'record'" size="24rpx" :color="isRecording ? '#fff' : '#ef4444'" />
+        </view>
         <text class="record-text">{{ isRecording ? formatTime(recordingDuration) : '录音' }}</text>
       </view>
       
@@ -16,13 +28,15 @@
     <view class="keyboard-area">
       <scroll-view class="keyboard-scroll" scroll-x>
         <view class="keyboard" :style="{ width: totalWidth + 'px' }">
+          <view class="keyboard-shadow"></view>
+          
           <!-- 白键 -->
           <view 
             v-for="key in whiteKeys" 
             :key="key.midi"
             class="white-key"
             :class="{ pressed: pressedKeys.has(key.midi) }"
-            :style="{ left: key.x + 'px' }"
+            :style="{ left: key.x + 'px', width: WHITE_KEY_WIDTH + 'px' }"
             @touchstart.prevent="onKeyPress(key)"
             @touchend.prevent="onKeyRelease(key)"
           >
@@ -43,21 +57,13 @@
             :key="key.midi"
             class="black-key"
             :class="{ pressed: pressedKeys.has(key.midi) }"
-            :style="{ left: key.x + 'px' }"
+            :style="{ left: key.x + 'px', width: BLACK_KEY_WIDTH + 'px' }"
             @touchstart.prevent.stop="onKeyPress(key)"
             @touchend.prevent.stop="onKeyRelease(key)"
           >
+            <view class="key-highlight"></view>
             <view class="key-label">
-              <view class="dots-above">
-                <text v-for="n in (key.dotCount > 0 ? key.dotCount : 0)" :key="n" class="dot">•</text>
-              </view>
-              <view class="note-row">
-                <text class="sharp">#</text>
-                <text class="notation">{{ key.baseNote }}</text>
-              </view>
-              <view class="dots-below">
-                <text v-for="n in (key.dotCount < 0 ? Math.abs(key.dotCount) : 0)" :key="n" class="dot">•</text>
-              </view>
+              <!-- 黑键标记暂时隐藏，保持简洁 -->
             </view>
           </view>
         </view>
@@ -71,6 +77,7 @@ import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
 import AudioManager from '@/utils/audio-manager'
 import RecorderService from '@/utils/recorder-manager'
+import SvgIcon from '@/components/SvgIcon.vue'
 
 const currentOctave = ref(2)  // 从C2开始
 const numOctaves = ref(5)     // 显示5个八度 (C2-B6)
@@ -83,7 +90,11 @@ const activeNoteHandles = reactive<Map<number, any>>(new Map())
 const isRecording = ref(false)
 const isPaused = ref(false)
 const recordingDuration = ref(0)
+const metronomeOn = ref(false)
+const metronomeTempo = ref(120) // BPM
 let recordingTimer: any = null
+let metronomeTimer: any = null
+let metronomeAudioContext: any = null
 
 interface KeyData {
   midi: number
@@ -146,10 +157,13 @@ onMounted(async () => {
 
 onShow(() => {
   const autoStart = uni.getStorageSync('autoStartRecording')
-  if (autoStart) { uni.removeStorageSync('autoStartRecording'); setTimeout(() => toggleRecording(), 500) }
+  if (autoStart) { uni.removeStorageSync('autoStartRecording'); setTimeout(() => handleRecordClick(), 500) }
 })
 
-onUnmounted(() => stopRecordingTimer())
+onUnmounted(() => {
+  stopRecordingTimer()
+  stopMetronome()
+})
 
 const onKeyPress = (key: KeyData) => {
   if (pressedKeys.has(key.midi)) return
@@ -168,9 +182,82 @@ const onKeyRelease = (key: KeyData) => {
 
 const goBack = () => uni.switchTab({ url: '/pages/index/index' })
 
-const toggleRecording = () => {
-  if (isRecording.value) { RecorderService.stop() }
-  else { uni.authorize({ scope: 'scope.record', success: () => RecorderService.start({ mode: 'voice-only' }), fail: () => uni.showModal({ title: '需要录音权限', confirmText: '去设置', success: (r) => { if (r.confirm) uni.openSetting({}) } }) }) }
+const toggleMetronome = () => {
+  metronomeOn.value = !metronomeOn.value
+  if (metronomeOn.value) {
+    startMetronome()
+  } else {
+    stopMetronome()
+  }
+}
+
+const setTempo = () => {
+  uni.showModal({
+    title: '设置节拍器速度',
+    editable: true,
+    placeholderText: '输入 BPM (40-240)',
+    success: (res) => {
+      if (res.confirm && res.content) {
+        const tempo = parseInt(res.content)
+        if (tempo >= 40 && tempo <= 240) {
+          metronomeTempo.value = tempo
+          if (metronomeOn.value) {
+            stopMetronome()
+            startMetronome()
+          }
+        } else {
+          uni.showToast({ title: '请输入40-240之间的数字', icon: 'none' })
+        }
+      }
+    }
+  })
+}
+
+const startMetronome = () => {
+  playMetronomeClick()
+  const interval = 60000 / metronomeTempo.value
+  metronomeTimer = setInterval(() => {
+    playMetronomeClick()
+  }, interval)
+  uni.showToast({ title: `节拍器 ${metronomeTempo.value} BPM`, icon: 'none' })
+}
+
+const stopMetronome = () => {
+  if (metronomeTimer) {
+    clearInterval(metronomeTimer)
+    metronomeTimer = null
+  }
+}
+
+const playMetronomeClick = () => {
+  // 使用 AudioManager 播放一个短促的高音作为节拍器声音
+  const handle = AudioManager.playNote(84, 0.5, 0) // C6，短促的点击声
+  if (handle) {
+    setTimeout(() => AudioManager.releaseNote(handle), 50)
+  }
+  uni.vibrateShort({ type: 'light' })
+}
+
+const handleRecordClick = () => {
+  if (isRecording.value) {
+    RecorderService.stop()
+  } else {
+    uni.showActionSheet({
+      itemList: ['只录人声', '录钢琴+人声'],
+      success: (res) => {
+        const mode = res.tapIndex === 0 ? 'voice-only' : 'piano-voice'
+        uni.authorize({
+          scope: 'scope.record',
+          success: () => RecorderService.start({ mode }),
+          fail: () => uni.showModal({
+            title: '需要录音权限',
+            confirmText: '去设置',
+            success: (r) => { if (r.confirm) uni.openSetting({}) }
+          })
+        })
+      }
+    })
+  }
 }
 
 const startRecordingTimer = () => { recordingDuration.value = 0; recordingTimer = setInterval(() => { if (!isPaused.value) recordingDuration.value += 1000 }, 1000) }
@@ -183,7 +270,7 @@ const formatTime = (ms: number) => { const s = Math.floor(ms / 1000); return `${
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background: #0f0f1a;
+  background: #111;
   overflow: hidden;
 }
 
@@ -191,37 +278,78 @@ const formatTime = (ms: number) => { const s = Math.floor(ms / 1000); return `${
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16rpx 24rpx;
-  padding-top: calc(16rpx + env(safe-area-inset-top));
-  background: #1a1a2e;
+  padding: 4rpx 12rpx; /* 再缩小30% */
+  padding-top: calc(4rpx + env(safe-area-inset-top));
+  background: rgba(30, 30, 30, 0.9);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
   flex-shrink: 0;
+  z-index: 100;
 }
 
 .back-btn {
-  width: 64rpx;
-  height: 64rpx;
+  width: 40rpx; /* 再缩小30% */
+  height: 40rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   background: rgba(255,255,255,0.1);
   border-radius: 50%;
-  color: #fff;
-  font-size: 32rpx;
+}
+
+.metronome-group {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  margin-left: 12rpx;
+}
+
+.metronome-btn {
+  width: 40rpx; /* 再缩小30% */
+  height: 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.1);
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.metronome-btn.active {
+  background: rgba(34, 197, 94, 0.2);
+  border: 1px solid rgba(34, 197, 94, 0.5);
+}
+
+.tempo-text {
+  font-size: 20rpx;
+  color: #888;
+  min-width: 48rpx;
+  text-align: center;
 }
 
 .record-btn {
   display: flex;
   align-items: center;
-  gap: 10rpx;
-  padding: 14rpx 28rpx;
+  gap: 8rpx; /* 再缩小30% */
+  padding: 6rpx 18rpx; /* 再缩小30% */
   background: rgba(255,255,255,0.1);
-  border-radius: 36rpx;
+  border-radius: 100rpx;
+  transition: all 0.3s ease;
 }
-.record-btn.recording { background: #ef4444; }
-.record-icon { font-size: 32rpx; }
-.record-text { font-size: 26rpx; color: #fff; }
 
-.spacer { width: 64rpx; }
+.record-btn.recording {
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+}
+
+.record-text {
+  font-size: 20rpx; /* 再缩小30% */
+  font-weight: 500;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+}
+
+.spacer { width: 40rpx; } /* 再缩小30% */
 
 /* 键盘区域 */
 .keyboard-area {
@@ -229,6 +357,8 @@ const formatTime = (ms: number) => { const s = Math.floor(ms / 1000); return `${
   display: flex;
   align-items: stretch;
   overflow: hidden;
+  position: relative;
+  background: #000;
 }
 
 .keyboard-scroll {
@@ -239,122 +369,155 @@ const formatTime = (ms: number) => { const s = Math.floor(ms / 1000); return `${
 .keyboard {
   position: relative;
   height: 100%;
+  padding-top: 24rpx; /* 顶部留白增加立体感 */
+}
+
+.keyboard-shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 24rpx;
+  background: #000;
+  z-index: 0;
 }
 
 /* 白键 */
 .white-key {
   position: absolute;
   top: 0;
-  width: 50px;
   height: 100%;
-  background: linear-gradient(180deg, #fff 0%, #f0f0f0 90%, #ddd 100%);
-  border-left: 1px solid #aaa;
-  border-right: 1px solid #aaa;
-  border-bottom: 3px solid #999;
+  background: #ffffff; /* Fallback */
+  background: var(--key-white, #ffffff);
+  border-radius: 0 0 12rpx 12rpx;
+  box-shadow: 
+    inset 0 0 0 1px rgba(0,0,0,0.1),
+    0 4rpx 0 #bbb,
+    inset 0 -8rpx 12rpx rgba(0,0,0,0.1);
   box-sizing: border-box;
   display: flex;
   align-items: flex-end;
   justify-content: center;
+  z-index: 1;
+  transform-origin: top center;
+  transition: background 0.1s, transform 0.05s;
 }
 
 .white-key.pressed {
-  background: linear-gradient(180deg, #ddd 0%, #ccc 100%);
-  border-bottom: 1px solid #999;
+  background: #e8e8e8; /* Fallback */
+  background: var(--key-white-pressed, #e8e8e8);
+  box-shadow: 
+    inset 0 0 0 1px rgba(0,0,0,0.1),
+    0 1rpx 0 #bbb,
+    inset 0 -4rpx 20rpx rgba(0,0,0,0.2);
+  transform: translateY(2rpx);
+}
+
+.white-key::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 0 0 12rpx 12rpx;
+  box-shadow: 0 0 30rpx var(--primary-color, #667eea);
+  opacity: 0;
+  transition: opacity 0.1s;
+  pointer-events: none;
+}
+
+.white-key.pressed::after {
+  opacity: 0.4;
 }
 
 .white-key .key-label {
+  position: absolute;
+  bottom: 2rpx; /* 最小底部边距 */
+  left: 0;
+  right: 0;
+  top: 62%; /* 进一步下移，确保低音点有空间 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* 在剩余空间中居中 */
+  padding: 0;
+  opacity: 0.7;
+  overflow: visible; /* 允许内容溢出 */
+}
+
+.white-key.pressed .key-label {
+  opacity: 1;
+}
+
+.white-key .dot {
+  font-size: 12rpx; /* 进一步缩小点的尺寸 */
+  color: #333;
+  line-height: 6rpx;
+  height: 6rpx;
+  margin: 0;
+  display: block;
+}
+
+.dots-above {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
-  padding-bottom: 6rpx;
+  min-height: 12rpx; /* 紧凑的高度 */
 }
 
-.white-key .dots-above,
-.white-key .dots-below {
+.dots-below {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rpx;
-}
-
-.white-key .dot {
-  font-size: 16rpx;
-  color: #667eea;
-  line-height: 0.5;
+  justify-content: flex-start;
+  min-height: 12rpx; /* 紧凑的高度 */
 }
 
 .white-key .notation {
-  font-size: 28rpx;
+  font-size: 18rpx; /* 稍微减小字号 */
   font-weight: 700;
-  color: #667eea;
+  color: #333;
   line-height: 1;
-  height: 28rpx;
+  margin: 1rpx 0; /* 极小的上下间距 */
 }
 
 /* 黑键 */
 .black-key {
   position: absolute;
   top: 0;
-  width: 32px;
-  height: 58%;
-  background: linear-gradient(180deg, #444 0%, #222 60%, #111 90%, #333 100%);
-  border-radius: 0 0 6rpx 6rpx;
-  box-shadow: 0 6rpx 10rpx rgba(0,0,0,0.6);
+  height: 60%;
+  background: #2a2a2a; /* Fallback */
+  background: var(--key-black, #2a2a2a);
+  border-radius: 0 0 8rpx 8rpx;
+  box-shadow: 
+    0 4rpx 8rpx rgba(0,0,0,0.5),
+    0 6rpx 0 #000,
+    inset 2rpx -2rpx 4rpx rgba(255,255,255,0.1);
   display: flex;
   align-items: flex-end;
   justify-content: center;
   z-index: 10;
+  transform-origin: top center;
 }
 
 .black-key.pressed {
-  height: 56%;
-  background: linear-gradient(180deg, #333 0%, #111 100%);
-  box-shadow: 0 2rpx 4rpx rgba(0,0,0,0.4);
+  background: var(--key-black-pressed);
+  box-shadow: 
+    0 2rpx 4rpx rgba(0,0,0,0.5),
+    0 2rpx 0 #000,
+    inset 1rpx -1rpx 2rpx rgba(255,255,255,0.1);
+  transform: translateY(2rpx);
 }
 
-.black-key .key-label {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-end;
-  padding-bottom: 4rpx;
-}
-
-.black-key .dots-above,
-.black-key .dots-below {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rpx;
-}
-
-.black-key .dot {
-  font-size: 10rpx;
-  color: #fff;
-  line-height: 0.5;
-}
-
-.black-key .note-row {
-  display: flex;
-  align-items: flex-start;
-  position: relative;
-  height: 18rpx;
-}
-
-.black-key .sharp {
-  font-size: 9rpx;
-  font-weight: 600;
-  color: #fff;
+.key-highlight {
   position: absolute;
-  left: -8rpx;
-  top: -2rpx;
-}
-
-.black-key .notation {
-  font-size: 18rpx;
-  font-weight: 600;
-  color: #fff;
-  line-height: 1;
+  top: 10rpx;
+  left: 10rpx;
+  right: 10rpx;
+  height: 40rpx;
+  background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 100%);
+  border-radius: 4rpx;
 }
 </style>
