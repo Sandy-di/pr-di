@@ -118,7 +118,22 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted, computed } from 'vue'
+import { onShareAppMessage, onShareTimeline } from '@dcloudio/uni-app'
 import SvgIcon from '@/components/SvgIcon.vue'
+
+// 分享给好友
+onShareAppMessage(() => ({
+  title: '🎵 视唱练耳助手 - 提升你的音乐听力',
+  path: '/pages/index/index',
+  imageUrl: '/static/share-cover.png'
+}))
+
+// 分享到朋友圈
+onShareTimeline(() => ({
+  title: '🎵 视唱练耳助手 - 提升你的音乐听力',
+  query: '',
+  imageUrl: '/static/share-cover.png'
+}))
 
 // 状态栏高度
 const statusBarHeight = ref(0)

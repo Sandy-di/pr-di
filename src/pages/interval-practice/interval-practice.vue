@@ -77,7 +77,14 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { onShareAppMessage } from '@dcloudio/uni-app'
 import AudioManager from '@/utils/audio-manager'
+
+// 分享
+onShareAppMessage(() => ({
+  title: '🎵 音程听辨练习 - 来测试你的听力',
+  path: '/pages/interval-practice/interval-practice'
+}))
 
 const statusBarHeight = ref(20)
 

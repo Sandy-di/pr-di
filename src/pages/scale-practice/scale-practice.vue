@@ -123,7 +123,14 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
+import { onShareAppMessage } from '@dcloudio/uni-app'
 import AudioManager from '@/utils/audio-manager'
+
+// 分享
+onShareAppMessage(() => ({
+  title: '🎼 音阶练习 - 练习大调、小调和五声音阶',
+  path: '/pages/scale-practice/scale-practice'
+}))
 
 const statusBarHeight = ref(20)
 
