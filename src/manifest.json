@@ -2,8 +2,8 @@
     "name": "视唱练耳助手",
     "appid": "",
     "description": "专业的视唱练耳训练工具，集成虚拟钢琴、练耳练习、录音分享功能",
-    "versionName": "1.0.0",
-    "versionCode": "100",
+    "versionName": "1.2.0",
+    "versionCode": "120",
     "transformPx": false,
     "app-plus": {
         "usingComponents": true,
