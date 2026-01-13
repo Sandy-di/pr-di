@@ -98,7 +98,7 @@
         <view class="stats-row">
           <view class="stat-item">
             <text class="stat-value" style="color: var(--accent-blue);">{{ stats.practiceTime }}</text>
-            <text class="stat-label">练习时长</text>
+            <text class="stat-label">练习量</text>
           </view>
           <view class="stat-divider"></view>
           <view class="stat-item">
@@ -107,8 +107,8 @@
           </view>
           <view class="stat-divider"></view>
           <view class="stat-item">
-            <text class="stat-value" style="color: var(--accent-orange);">{{ stats.streak }}</text>
-            <text class="stat-label">连续天数</text>
+            <text class="stat-value" style="color: var(--accent-orange);">{{ stats.streak }}%</text>
+            <text class="stat-label">正确率</text>
           </view>
         </view>
       </view>
@@ -162,12 +162,22 @@ onMounted(() => {
 const loadStats = () => {
   try {
     const savedStats = uni.getStorageSync('statistics')
+    const recordings = uni.getStorageSync('recordings') || []
+    
     if (savedStats) {
-      stats.recordCount = savedStats.totalRecordings || 0
-      stats.streak = savedStats.streakDays || 0
-      const minutes = Math.floor((savedStats.totalPracticeTime || 0) / 60000)
-      stats.practiceTime = `${minutes}分钟`
+      // 显示练习总数
+      const total = savedStats.totalPractices || 0
+      stats.practiceTime = `${total}题`
+      
+      // 显示正确率
+      const correct = savedStats.correctCount || 0
+      if (total > 0) {
+        stats.streak = Math.round((correct / total) * 100)
+      }
     }
+    
+    // 录音数量
+    stats.recordCount = recordings.length
   } catch (e) {
     console.error('加载统计数据失败:', e)
   }

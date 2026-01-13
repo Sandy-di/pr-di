@@ -115,7 +115,7 @@
           <svg-icon name="piano" size="64rpx" color="var(--text-muted)" />
         </view>
         <text class="app-name">视唱练耳助手</text>
-        <text class="app-version">Version 1.0.0 Beta</text>
+        <text class="app-version">Version 1.2.0</text>
         <text class="app-slogan">让音乐练习更简单</text>
       </view>
     </scroll-view>
@@ -124,7 +124,14 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
+import { onShareAppMessage } from '@dcloudio/uni-app'
 import SvgIcon from '@/components/SvgIcon.vue'
+
+// 分享
+onShareAppMessage(() => ({
+  title: '🎵 视唱练耳助手 - 提升你的音乐听力',
+  path: '/pages/index/index'
+}))
 
 const statusBarHeight = ref(20)
 
