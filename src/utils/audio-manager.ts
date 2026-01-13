@@ -234,19 +234,28 @@ class AudioManager {
     if (!noteHandle) return
     
     const { gainNode, oscillator, source } = noteHandle
+    
+    if (!this.audioContext) return
     const now = this.audioContext.currentTime
     
-    // 快速淡出
+    // 使用指数衰减淡出，避免爆破噪音
     if (gainNode) {
       gainNode.gain.cancelScheduledValues(now)
-      gainNode.gain.linearRampToValueAtTime(0, now + 0.1)
+      // 先设置当前值，再平滑过渡到0
+      gainNode.gain.setValueAtTime(gainNode.gain.value, now)
+      gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.2)
+      gainNode.gain.setValueAtTime(0, now + 0.21)
     }
     
-    // 停止振荡器/源
+    // 延迟停止振荡器/源，确保淡出完成
     setTimeout(() => {
-      if (oscillator) oscillator.stop()
-      if (source) source.stop()
-    }, 150)
+      try {
+        if (oscillator) oscillator.stop()
+        if (source) source.stop()
+      } catch (e) {
+        // 忽略已停止的错误
+      }
+    }, 250)
   }
   
   /**

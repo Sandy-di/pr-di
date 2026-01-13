@@ -113,6 +113,9 @@ const hasPlayed = ref(false)
 const isPlaying = ref(false)
 const isCorrect = ref(false)
 
+// 保存当前播放的音符引用
+let currentNoteHandles: any[] = []
+
 onMounted(async () => {
   const windowInfo = uni.getWindowInfo()
   statusBarHeight.value = windowInfo.statusBarHeight || 20
@@ -122,6 +125,9 @@ onMounted(async () => {
 
 // 生成新题目
 const generateQuestion = () => {
+  // 停止之前的音符
+  stopAllNotes()
+  
   const randomIndex = Math.floor(Math.random() * intervals.length)
   correctAnswer.value = intervals[randomIndex].id
   baseMidi.value = 48 + Math.floor(Math.random() * 24) // C3-B4 范围
@@ -132,9 +138,20 @@ const generateQuestion = () => {
   isCorrect.value = false
 }
 
+// 停止所有正在播放的音符
+const stopAllNotes = () => {
+  currentNoteHandles.forEach(handle => {
+    if (handle) AudioManager.releaseNote(handle)
+  })
+  currentNoteHandles = []
+}
+
 // 播放音程
 const playInterval = async () => {
   if (isPlaying.value) return
+  
+  // 先停止之前的音符
+  stopAllNotes()
   
   isPlaying.value = true
   hasPlayed.value = true
@@ -142,15 +159,17 @@ const playInterval = async () => {
   const interval = intervals.find(i => i.id === correctAnswer.value)
   if (!interval) return
   
-  // 播放第一个音
-  AudioManager.playNote(baseMidi.value, 0.8, 0)
+  // 播放第一个音（设置固定时长0.5秒）
+  const handle1 = AudioManager.playNote(baseMidi.value, 0.8, 0.5)
+  if (handle1) currentNoteHandles.push(handle1)
   
   // 延迟后播放第二个音
   setTimeout(() => {
-    AudioManager.playNote(baseMidi.value + interval.semitones, 0.8, 0)
+    const handle2 = AudioManager.playNote(baseMidi.value + interval.semitones, 0.8, 0.5)
+    if (handle2) currentNoteHandles.push(handle2)
     setTimeout(() => {
       isPlaying.value = false
-    }, 500)
+    }, 600)
   }, 600)
 }
 

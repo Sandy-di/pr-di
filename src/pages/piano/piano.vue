@@ -26,7 +26,7 @@
     
     <!-- 钢琴键盘区域 -->
     <view class="keyboard-area">
-      <scroll-view class="keyboard-scroll" scroll-x>
+      <scroll-view class="keyboard-scroll" scroll-x enable-flex>
         <view class="keyboard" :style="{ width: totalWidth + 'px' }">
           <view class="keyboard-shadow"></view>
           
@@ -37,8 +37,8 @@
             class="white-key"
             :class="{ pressed: pressedKeys.has(key.midi) }"
             :style="{ left: key.x + 'px', width: WHITE_KEY_WIDTH + 'px' }"
-            @touchstart.prevent="onKeyPress(key)"
-            @touchend.prevent="onKeyRelease(key)"
+            @touchstart="onKeyPress(key)"
+            @touchend="onKeyRelease(key)"
           >
             <view class="key-label">
               <view class="dots-above">
@@ -58,8 +58,8 @@
             class="black-key"
             :class="{ pressed: pressedKeys.has(key.midi) }"
             :style="{ left: key.x + 'px', width: BLACK_KEY_WIDTH + 'px' }"
-            @touchstart.prevent.stop="onKeyPress(key)"
-            @touchend.prevent.stop="onKeyRelease(key)"
+            @touchstart.stop="onKeyPress(key)"
+            @touchend.stop="onKeyRelease(key)"
           >
             <view class="key-highlight"></view>
             <view class="key-label">
