@@ -209,21 +209,24 @@ class AudioManager {
     const now = this.audioContext.currentTime
     const attack = 0.01
     const decay = 0.1
-    const sustain = 0.7
-    const release = 0.3
+    const sustain = 0.6
+    const release = 0.2
     
     const maxGain = velocity * this.masterVolume
     
-    // Attack
-    gainNode.gain.setValueAtTime(0, now)
-    gainNode.gain.linearRampToValueAtTime(maxGain, now + attack)
+    // Attack - 从极小值开始（指数函数不能从0开始）
+    gainNode.gain.setValueAtTime(0.001, now)
+    gainNode.gain.exponentialRampToValueAtTime(maxGain, now + attack)
     
     // Decay to Sustain
-    gainNode.gain.linearRampToValueAtTime(maxGain * sustain, now + attack + decay)
+    gainNode.gain.exponentialRampToValueAtTime(maxGain * sustain, now + attack + decay)
     
-    // Release
+    // Release - 如果有时长限制，使用指数衰减到接近0
     if (duration > 0) {
-      gainNode.gain.linearRampToValueAtTime(0, now + duration + release)
+      const releaseStart = now + duration
+      gainNode.gain.setValueAtTime(maxGain * sustain, releaseStart)
+      gainNode.gain.exponentialRampToValueAtTime(0.001, releaseStart + release)
+      gainNode.gain.setValueAtTime(0, releaseStart + release + 0.01)
     }
   }
   

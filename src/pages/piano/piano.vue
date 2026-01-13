@@ -26,8 +26,11 @@
     
     <!-- 钢琴键盘区域 -->
     <view class="keyboard-area">
-      <scroll-view class="keyboard-scroll" scroll-x enable-flex>
+      <scroll-view class="keyboard-scroll" scroll-x :scroll-left="scrollLeft" @scroll="onScroll">
         <view class="keyboard" :style="{ width: totalWidth + 'px' }">
+          <!-- 滑动控制条 - 在键盘顶部，方便滑动 -->
+          <view class="scroll-handle"></view>
+          
           <view class="keyboard-shadow"></view>
           
           <!-- 白键 -->
@@ -68,6 +71,11 @@
           </view>
         </view>
       </scroll-view>
+      
+      <!-- 滑动提示 -->
+      <view class="scroll-hint" v-if="showScrollHint">
+        <text>← 滑动上方区域查看更多键 →</text>
+      </view>
     </view>
   </view>
 </template>
@@ -92,9 +100,19 @@ const isPaused = ref(false)
 const recordingDuration = ref(0)
 const metronomeOn = ref(false)
 const metronomeTempo = ref(120) // BPM
+const scrollLeft = ref(0)
+const showScrollHint = ref(true)
 let recordingTimer: any = null
 let metronomeTimer: any = null
 let metronomeAudioContext: any = null
+
+const onScroll = (e: any) => {
+  scrollLeft.value = e.detail.scrollLeft
+  // 滑动后隐藏提示
+  if (showScrollHint.value) {
+    showScrollHint.value = false
+  }
+}
 
 interface KeyData {
   midi: number
@@ -519,5 +537,33 @@ const formatTime = (ms: number) => { const s = Math.floor(ms / 1000); return `${
   height: 40rpx;
   background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 100%);
   border-radius: 4rpx;
+}
+
+/* 滑动控制条 */
+.scroll-handle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40rpx;
+  background: linear-gradient(180deg, rgba(102, 126, 234, 0.3) 0%, transparent 100%);
+  z-index: 100;
+}
+
+/* 滑动提示 */
+.scroll-hint {
+  position: absolute;
+  bottom: 20rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12rpx 24rpx;
+  background: rgba(0,0,0,0.7);
+  border-radius: 24rpx;
+  z-index: 50;
+}
+
+.scroll-hint text {
+  font-size: 22rpx;
+  color: rgba(255,255,255,0.8);
 }
 </style>
