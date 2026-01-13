@@ -278,7 +278,7 @@ const onKeyPress = (key: KeyData) => {
   pressedKeys.add(key.midi)
   const handle = AudioManager.playNote(key.midi, 0.8, 0)
   if (handle) activeNoteHandles.set(key.midi, handle)
-  uni.vibrateShort({ type: 'light' })
+  uni.vibrateShort({})
 }
 
 const onKeyRelease = (key: KeyData) => {

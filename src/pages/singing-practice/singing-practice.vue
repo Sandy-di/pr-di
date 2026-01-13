@@ -224,7 +224,7 @@ const startRecording = () => {
         numberOfChannels: 1,
         format: 'mp3'
       })
-      uni.vibrateShort({ type: 'medium' })
+      uni.vibrateShort({})
     },
     fail: () => {
       uni.showModal({
@@ -245,7 +245,7 @@ const stopRecording = () => {
   
   isRecording.value = false
   recorderManager.stop()
-  uni.vibrateShort({ type: 'light' })
+  uni.vibrateShort({})
 }
 
 // 模拟评分（实际应用中需要音频分析）
