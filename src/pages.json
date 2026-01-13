@@ -103,15 +103,5 @@
         "selectedIconPath": "static/icons/settings-active.png"
       }
     ]
-  },
-  "preloadRule": {
-    "pages/index/index": {
-      "network": "all",
-      "packages": ["pages/piano/piano", "pages/ear-training/ear-training"]
-    },
-    "pages/ear-training/ear-training": {
-      "network": "all",
-      "packages": ["pages/interval-practice/interval-practice", "pages/scale-practice/scale-practice"]
-    }
   }
 }
