@@ -94,8 +94,15 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { onShareAppMessage } from '@dcloudio/uni-app'
 import RecorderService, { type Recording } from '@/utils/recorder-manager'
 import SvgIcon from '@/components/SvgIcon.vue'
+
+// 分享
+onShareAppMessage(() => ({
+  title: '🎵 我的练习录音 - 视唱练耳助手',
+  path: '/pages/recordings/recordings'
+}))
 
 const statusBarHeight = ref(20)
 const recordings = ref<Recording[]>([])
@@ -192,9 +199,14 @@ const seekTo = (e: any) => {
 }
 
 const shareRecording = (recording: Recording) => {
-  uni.shareAppMessage({
-    title: `🎵 ${recording.name} | ${formatDuration(recording.duration)}`,
-    path: `/pages/recordings/recordings?play=${recording.id}`
+  // 微信小程序中需要使用 showShareMenu 触发分享
+  uni.showShareMenu({
+    withShareTicket: true,
+    menus: ['shareAppMessage']
+  })
+  uni.showToast({
+    title: '点击右上角分享',
+    icon: 'none'
   })
 }
 
