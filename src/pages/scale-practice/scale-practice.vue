@@ -257,7 +257,7 @@ const playScale = async (direction: 'up' | 'down' | 'both') => {
     }
     
     currentNote.value = notes[i]
-    AudioManager.playNote(notes[i], 0.8, 0)
+    AudioManager.playNote(notes[i], 0.8, 0.3)
     
     await new Promise(resolve => {
       playTimer = setTimeout(resolve, interval)

@@ -166,9 +166,9 @@ const playChord = async () => {
   const notes = chord.intervals.map(interval => baseNote.value + interval)
   
   if (playMode.value === 'together') {
-    // 同时播放
+    // 同时播放 - 设置固定时长
     notes.forEach(note => {
-      AudioManager.playNote(note, 0.7, 0)
+      AudioManager.playNote(note, 0.7, 0.8)
     })
     setTimeout(() => {
       isPlaying.value = false
@@ -176,13 +176,13 @@ const playChord = async () => {
   } else {
     // 分解播放
     for (let i = 0; i < notes.length; i++) {
-      AudioManager.playNote(notes[i], 0.7, 0)
+      AudioManager.playNote(notes[i], 0.7, 0.5)
       await new Promise(resolve => setTimeout(resolve, 300))
     }
     // 最后同时播放一次
     await new Promise(resolve => setTimeout(resolve, 200))
     notes.forEach(note => {
-      AudioManager.playNote(note, 0.7, 0)
+      AudioManager.playNote(note, 0.7, 0.8)
     })
     setTimeout(() => {
       isPlaying.value = false

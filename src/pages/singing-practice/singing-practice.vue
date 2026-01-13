@@ -201,7 +201,7 @@ const playNotes = async () => {
     if (!isPlaying.value) break
     
     playProgress.value = i
-    AudioManager.playNote(currentNotes.value[i], 0.8, 0)
+    AudioManager.playNote(currentNotes.value[i], 0.8, 0.5)
     
     await new Promise(resolve => setTimeout(resolve, interval))
   }
