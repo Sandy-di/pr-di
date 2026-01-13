@@ -196,15 +196,12 @@ const loadStats = () => {
 }
 
 const startPractice = (type: string) => {
-  if (type === 'chord') {
-    uni.showToast({ title: '功能开发中', icon: 'none' })
-    return
-  }
-  
   if (type === 'scale') {
     uni.navigateTo({ url: '/pages/scale-practice/scale-practice' })
   } else if (type === 'singing') {
     uni.navigateTo({ url: '/pages/singing-practice/singing-practice' })
+  } else if (type === 'chord') {
+    uni.navigateTo({ url: '/pages/chord-practice/chord-practice' })
   } else {
     uni.navigateTo({ url: `/pages/interval-practice/interval-practice?type=${type}` })
   }
