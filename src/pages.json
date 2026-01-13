@@ -37,6 +37,13 @@
       }
     },
     {
+      "path": "pages/singing-practice/singing-practice",
+      "style": {
+        "navigationBarTitleText": "跟唱练习",
+        "navigationStyle": "custom"
+      }
+    },
+    {
       "path": "pages/recordings/recordings",
       "style": {
         "navigationBarTitleText": "我的录音",

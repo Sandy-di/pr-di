@@ -203,6 +203,8 @@ const startPractice = (type: string) => {
   
   if (type === 'scale') {
     uni.navigateTo({ url: '/pages/scale-practice/scale-practice' })
+  } else if (type === 'singing') {
+    uni.navigateTo({ url: '/pages/singing-practice/singing-practice' })
   } else {
     uni.navigateTo({ url: `/pages/interval-practice/interval-practice?type=${type}` })
   }
