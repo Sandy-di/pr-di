@@ -299,6 +299,8 @@ const changeBeats = (e: any) => {
   flex-direction: column;
   min-height: 100vh;
   background: var(--bg-dark);
+  overflow-x: hidden;
+  box-sizing: border-box;
   background-image: 
     radial-gradient(circle at 100% 0%, rgba(139, 92, 246, 0.1) 0%, transparent 30%),
     radial-gradient(circle at 0% 100%, rgba(6, 182, 212, 0.1) 0%, transparent 30%);

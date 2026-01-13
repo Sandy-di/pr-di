@@ -374,11 +374,12 @@ const goBack = () => uni.navigateBack()
   color: #fff;
 }
 
-/* 主体区域：键盘 + 右侧控制 */
+/* 主体区域：键盘 + 底部控制 */
 .main-area {
   flex: 1;
   display: flex;
-  gap: 16rpx;
+  flex-direction: column;
+  gap: 12rpx;
   overflow: hidden;
 }
 
@@ -476,48 +477,54 @@ const goBack = () => uni.navigateBack()
 .black-key .sharp { font-size: 10rpx; font-weight: 600; color: #fff; position: absolute; left: -10rpx; top: -2rpx; }
 .black-key .notation { font-size: 20rpx; font-weight: 600; color: #fff; }
 
-/* 右侧控制面板 */
+/* 底部控制面板 */
 .controls {
-  width: 180rpx;
   flex-shrink: 0;
   display: flex;
-  flex-direction: column;
-  gap: 16rpx;
+  flex-direction: row;
+  gap: 12rpx;
+  padding: 8rpx 0;
 }
 
 .control-panel {
+  flex: 2;
   background: #1a1a2e;
   border-radius: 12rpx;
-  padding: 16rpx;
+  padding: 12rpx;
   display: flex;
-  flex-direction: column;
-  gap: 16rpx;
-}
-
-.control-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 16rpx;
-  background: rgba(102, 126, 234, 0.2);
-  border-radius: 12rpx;
-}
-
-.btn-icon { font-size: 32rpx; margin-bottom: 4rpx; }
-.btn-text { font-size: 22rpx; color: #fff; }
-
-.speed-control {
-  background: #1a1a2e;
-  border-radius: 12rpx;
-  padding: 16rpx;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-direction: row;
+  justify-content: space-around;
   gap: 8rpx;
 }
 
-.speed-label { font-size: 22rpx; color: #b0b0c0; }
-.speed-value { font-size: 24rpx; color: #667eea; font-weight: 600;}
+.control-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8rpx;
+  background: rgba(102, 126, 234, 0.2);
+  border-radius: 10rpx;
+}
+
+.btn-icon { font-size: 28rpx; margin-bottom: 2rpx; }
+.btn-text { font-size: 20rpx; color: #fff; }
+
+.speed-control {
+  flex: 1;
+  background: #1a1a2e;
+  border-radius: 12rpx;
+  padding: 12rpx 16rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8rpx;
+}
+
+.speed-label { font-size: 20rpx; color: #b0b0c0; }
+.speed-value { font-size: 22rpx; color: #667eea; font-weight: 600; min-width: 90rpx;}
 
 .hint-area {
   position: absolute;

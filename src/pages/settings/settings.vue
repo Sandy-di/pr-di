@@ -242,6 +242,8 @@ const resetAll = () => {
   flex-direction: column;
   min-height: 100vh;
   background: var(--bg-dark);
+  overflow-x: hidden;
+  box-sizing: border-box;
   background-image: 
     radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 40%),
     radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 40%);

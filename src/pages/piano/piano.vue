@@ -13,12 +13,20 @@
         </view>
         <text class="tempo-text" @click="setTempo">{{ metronomeTempo }}</text>
       </view>
-      
-      <view class="record-btn glass-hover" :class="{ 'recording': isRecording }" @click="handleRecordClick">
-        <view class="record-icon-wrapper" :class="{ 'animate-pulse': isRecording }">
-          <svg-icon :name="isRecording ? 'stop' : 'record'" size="24rpx" :color="isRecording ? '#fff' : '#ef4444'" />
+      <!-- 录音区域 -->
+      <view class="record-section">
+        <view class="record-btn" :class="{ 'recording': isRecording }" @click="handleRecordClick">
+          <view class="record-icon-wrapper" :class="{ 'animate-pulse': isRecording }">
+            <svg-icon :name="isRecording ? 'stop' : 'record'" size="28rpx" :color="isRecording ? '#fff' : '#ef4444'" />
+          </view>
+          <text class="record-text">{{ isRecording ? formatTime(recordingDuration) : '录音' }}</text>
         </view>
-        <text class="record-text">{{ isRecording ? formatTime(recordingDuration) : '录音' }}</text>
+        
+        <!-- 分享按钮 - 录音结束后显示 -->
+        <view class="share-btn" v-if="showShareBtn && !isRecording" @click="shareRecording">
+          <svg-icon name="share" size="24rpx" color="#22c55e" />
+          <text class="share-text">分享</text>
+        </view>
       </view>
       
       <view class="spacer"></view>
@@ -101,6 +109,8 @@ const recordingDuration = ref(0)
 const metronomeOn = ref(false)
 const metronomeTempo = ref(120) // BPM
 const scrollLeft = ref(0)
+const showShareBtn = ref(false)
+let lastRecordingPath = ''
 const showScrollHint = ref(true)
 let recordingTimer: any = null
 let metronomeTimer: any = null
@@ -167,8 +177,14 @@ onMounted(async () => {
   await AudioManager.init()
   RecorderService.init()
   RecorderService.setCallbacks({
-    onStart: () => { isRecording.value = true; startRecordingTimer() },
-    onStop: () => { isRecording.value = false; stopRecordingTimer(); uni.showToast({ title: '已保存', icon: 'success' }) },
+    onStart: () => { isRecording.value = true; showShareBtn.value = false; startRecordingTimer() },
+    onStop: (res: any) => { 
+      isRecording.value = false
+      stopRecordingTimer()
+      showShareBtn.value = true
+      if (res?.tempFilePath) lastRecordingPath = res.tempFilePath
+      uni.showToast({ title: '已保存', icon: 'success' }) 
+    },
     onError: () => { isRecording.value = false }
   })
 })
@@ -253,7 +269,20 @@ const playMetronomeClick = () => {
   if (handle) {
     setTimeout(() => AudioManager.releaseNote(handle), 50)
   }
-  uni.vibrateShort({})
+  // 移除震动反馈
+}
+
+const shareRecording = () => {
+  if (!lastRecordingPath) {
+    uni.showToast({ title: '没有可分享的录音', icon: 'none' })
+    return
+  }
+  uni.shareFileMessage({
+    filePath: lastRecordingPath,
+    fileName: `钢琴录音_${Date.now()}.mp3`,
+    success: () => uni.showToast({ title: '分享成功', icon: 'success' }),
+    fail: () => uni.showToast({ title: '分享失败', icon: 'none' })
+  })
 }
 
 const handleRecordClick = () => {
@@ -345,29 +374,71 @@ const formatTime = (ms: number) => { const s = Math.floor(ms / 1000); return `${
   text-align: center;
 }
 
+/* 录音区域 */
+.record-section {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-left: auto;
+  margin-right: 12rpx;
+}
+
 .record-btn {
   display: flex;
   align-items: center;
-  gap: 8rpx; /* 再缩小30% */
-  padding: 6rpx 18rpx; /* 再缩小30% */
-  background: rgba(255,255,255,0.1);
+  gap: 10rpx;
+  padding: 10rpx 20rpx;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
   border-radius: 100rpx;
   transition: all 0.3s ease;
+  border: 1px solid rgba(255,255,255,0.1);
 }
 
 .record-btn.recording {
-  background: rgba(239, 68, 68, 0.2);
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.3), rgba(239, 68, 68, 0.1));
   border: 1px solid rgba(239, 68, 68, 0.5);
+  box-shadow: 0 0 20rpx rgba(239, 68, 68, 0.3);
+}
+
+.record-icon-wrapper {
+  width: 32rpx;
+  height: 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .record-text {
-  font-size: 20rpx; /* 再缩小30% */
+  font-size: 22rpx;
   font-weight: 500;
   color: #fff;
   font-variant-numeric: tabular-nums;
 }
 
-.spacer { width: 40rpx; } /* 再缩小30% */
+/* 分享按钮 */
+.share-btn {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  padding: 10rpx 16rpx;
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.1));
+  border-radius: 100rpx;
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  transition: all 0.3s ease;
+}
+
+.share-btn:active {
+  background: rgba(34, 197, 94, 0.3);
+  transform: scale(0.95);
+}
+
+.share-text {
+  font-size: 20rpx;
+  color: #22c55e;
+  font-weight: 500;
+}
+
+.spacer { width: 12rpx; }
 
 /* 键盘区域 */
 .keyboard-area {
