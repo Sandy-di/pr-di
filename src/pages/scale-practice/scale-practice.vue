@@ -22,100 +22,105 @@
         </view>
       </view>
 
-      <!-- 钢琴键盘区域 -->
-      <view class="keyboard-area">
-        <scroll-view class="keyboard-scroll" scroll-x>
-          <view class="keyboard" :style="{ width: totalWidth + 'px' }">
-            <!-- 白键 -->
-            <view 
-              v-for="key in whiteKeys" 
-              :key="key.midi"
-              class="white-key"
-              :class="{ 
-                pressed: pressedKeys.has(key.midi),
-                highlight: highlightKeys.includes(key.midi),
-                current: currentNote === key.midi
-              }"
-              :style="{ left: key.x + 'px' }"
-              @touchstart.prevent="onKeyPress(key)"
-              @touchend.prevent="onKeyRelease(key)"
-            >
-              <view class="key-label">
-                <view class="dots-above">
-                  <text v-for="n in (key.dotCount > 0 ? key.dotCount : 0)" :key="n" class="dot">•</text>
-                </view>
-                <text class="notation">{{ key.baseNote }}</text>
-                <view class="dots-below">
-                  <text v-for="n in (key.dotCount < 0 ? Math.abs(key.dotCount) : 0)" :key="n" class="dot">•</text>
-                </view>
-              </view>
-            </view>
-            
-            <!-- 黑键 -->
-            <view 
-              v-for="key in blackKeys" 
-              :key="key.midi"
-              class="black-key"
-              :class="{ 
-                pressed: pressedKeys.has(key.midi),
-                highlight: highlightKeys.includes(key.midi),
-                current: currentNote === key.midi
-              }"
-              :style="{ left: key.x + 'px' }"
-              @touchstart.prevent.stop="onKeyPress(key)"
-              @touchend.prevent.stop="onKeyRelease(key)"
-            >
-              <view class="key-label">
-                <view class="dots-above">
-                  <text v-for="n in (key.dotCount > 0 ? key.dotCount : 0)" :key="n" class="dot">•</text>
-                </view>
-                <view class="note-row">
-                  <text class="sharp">#</text>
+      <!-- 主区域：键盘 + 右侧控制 -->
+      <view class="main-area">
+        <!-- 钢琴键盘区域 -->
+        <view class="keyboard-area">
+          <scroll-view class="keyboard-scroll" scroll-x enable-flex>
+            <view class="keyboard" :style="{ width: totalWidth + 'px' }">
+              <!-- 白键 -->
+              <view 
+                v-for="key in whiteKeys" 
+                :key="key.midi"
+                class="white-key"
+                :class="{ 
+                  pressed: pressedKeys.has(key.midi),
+                  highlight: highlightKeys.includes(key.midi),
+                  current: currentNote === key.midi
+                }"
+                :style="{ left: key.x + 'px' }"
+                @touchstart="onKeyPress(key)"
+                @touchend="onKeyRelease(key)"
+              >
+                <view class="key-label">
+                  <view class="dots-above">
+                    <text v-for="n in (key.dotCount > 0 ? key.dotCount : 0)" :key="n" class="dot">•</text>
+                  </view>
                   <text class="notation">{{ key.baseNote }}</text>
+                  <view class="dots-below">
+                    <text v-for="n in (key.dotCount < 0 ? Math.abs(key.dotCount) : 0)" :key="n" class="dot">•</text>
+                  </view>
                 </view>
-                <view class="dots-below">
-                  <text v-for="n in (key.dotCount < 0 ? Math.abs(key.dotCount) : 0)" :key="n" class="dot">•</text>
+              </view>
+              
+              <!-- 黑键 -->
+              <view 
+                v-for="key in blackKeys" 
+                :key="key.midi"
+                class="black-key"
+                :class="{ 
+                  pressed: pressedKeys.has(key.midi),
+                  highlight: highlightKeys.includes(key.midi),
+                  current: currentNote === key.midi
+                }"
+                :style="{ left: key.x + 'px' }"
+                @touchstart.stop="onKeyPress(key)"
+                @touchend.stop="onKeyRelease(key)"
+              >
+                <view class="key-label">
+                  <view class="dots-above">
+                    <text v-for="n in (key.dotCount > 0 ? key.dotCount : 0)" :key="n" class="dot">•</text>
+                  </view>
+                  <view class="note-row">
+                    <text class="sharp">#</text>
+                    <text class="notation">{{ key.baseNote }}</text>
+                  </view>
+                  <view class="dots-below">
+                    <text v-for="n in (key.dotCount < 0 ? Math.abs(key.dotCount) : 0)" :key="n" class="dot">•</text>
+                  </view>
                 </view>
               </view>
             </view>
-          </view>
-        </scroll-view>
-      </view>
-
-      <!-- 控制面板 -->
-      <view class="controls">
-        <view class="control-row">
-          <view class="control-btn" @click="playScale('up')">
-            <text class="btn-icon">🎵</text>
-            <text class="btn-text">上行</text>
-          </view>
-          <view class="control-btn" @click="playScale('down')">
-            <text class="btn-icon">🎵</text>
-            <text class="btn-text">下行</text>
-          </view>
-          <view class="control-btn" @click="playScale('both')">
-            <text class="btn-icon">🎵</text>
-            <text class="btn-text">上下行</text>
+          </scroll-view>
+          
+          <!-- 提示区域 (移到键盘区域内) -->
+          <view class="hint-area" v-if="isPlaying">
+            <text class="hint">{{ playingHint }}</text>
           </view>
         </view>
-        
-        <view class="speed-control">
-          <text class="speed-label">速度</text>
-          <slider 
-            :value="speed" 
-            :min="60" 
-            :max="180" 
-            :step="10"
-            activeColor="#667eea"
-            @change="onSpeedChange"
-          />
-          <text class="speed-value">{{ speed }} BPM</text>
-        </view>
-      </view>
 
-      <!-- 提示区域 -->
-      <view class="hint-area" v-if="isPlaying">
-        <text class="hint">{{ playingHint }}</text>
+        <!-- 右侧控制面板 -->
+        <view class="controls">
+          <view class="control-panel">
+            <view class="control-btn" @click="playScale('up')">
+              <text class="btn-icon">🎵</text>
+              <text class="btn-text">上行</text>
+            </view>
+            <view class="control-btn" @click="playScale('down')">
+              <text class="btn-icon">🎵</text>
+              <text class="btn-text">下行</text>
+            </view>
+            <view class="control-btn" @click="playScale('both')">
+              <text class="btn-icon">🎵</text>
+              <text class="btn-text">上下行</text>
+            </view>
+          </view>
+          
+          <view class="speed-control">
+            <text class="speed-label">速度</text>
+            <text class="speed-value">{{ speed }} BPM</text>
+            <slider 
+              style="width: 100%; margin: 0;"
+              :value="speed" 
+              :min="60" 
+              :max="180" 
+              :step="10"
+              activeColor="#667eea"
+              block-size="16"
+              @change="onSpeedChange"
+            />
+          </view>
+        </view>
       </view>
     </view>
   </view>
@@ -150,8 +155,8 @@ const currentNote = ref(-1)
 // 键盘参数
 const currentOctave = ref(3)
 const numOctaves = ref(3)
-const WHITE_KEY_WIDTH = 45
-const BLACK_KEY_WIDTH = 28
+const WHITE_KEY_WIDTH = 50
+const BLACK_KEY_WIDTH = 30
 
 const pressedKeys = reactive<Set<number>>(new Set())
 const activeNoteHandles = reactive<Map<number, any>>(new Map())
@@ -292,21 +297,26 @@ const goBack = () => uni.navigateBack()
 
 <style scoped>
 .practice-page {
-  min-height: 100vh;
-  background: linear-gradient(180deg, #0f0f1a 0%, #1a1a2e 100%);
+  width: 100vw;
+  height: 100vh;
+  background: #0f0f1a;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .navbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16rpx 32rpx;
+  padding: 8rpx 32rpx;
   background: #1a1a2e;
+  flex-shrink: 0;
 }
 
 .nav-back {
-  width: 64rpx;
-  height: 64rpx;
+  width: 56rpx;
+  height: 56rpx;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -317,7 +327,7 @@ const goBack = () => uni.navigateBack()
 }
 
 .nav-title {
-  font-size: 36rpx;
+  font-size: 32rpx;
   font-weight: 600;
   color: #fff;
 }
@@ -325,27 +335,33 @@ const goBack = () => uni.navigateBack()
 .nav-mode {
   font-size: 26rpx;
   color: #667eea;
-  font-weight: 500;
+  background: rgba(102, 126, 234, 0.1);
+  padding: 4rpx 16rpx;
+  border-radius: 20rpx;
 }
 
 .content {
-  padding: 24rpx;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 16rpx;
+  gap: 16rpx;
+  overflow: hidden;
 }
 
-/* 音阶选择器 */
+/* 音阶选择 - 横排 */
 .scale-selector {
   display: flex;
+  justify-content: center;
   gap: 16rpx;
-  margin-bottom: 32rpx;
+  flex-shrink: 0;
 }
 
 .scale-btn {
-  flex: 1;
-  padding: 20rpx;
+  padding: 12rpx 32rpx;
   background: rgba(255,255,255,0.1);
-  border-radius: 16rpx;
-  text-align: center;
-  border: 2rpx solid transparent;
+  border-radius: 30rpx;
+  border: 1px solid transparent;
 }
 
 .scale-btn.active {
@@ -354,19 +370,29 @@ const goBack = () => uni.navigateBack()
 }
 
 .scale-btn text {
-  font-size: 26rpx;
+  font-size: 24rpx;
   color: #fff;
+}
+
+/* 主体区域：键盘 + 右侧控制 */
+.main-area {
+  flex: 1;
+  display: flex;
+  gap: 16rpx;
+  overflow: hidden;
 }
 
 /* 键盘区域 */
 .keyboard-area {
-  height: 300rpx;
-  margin-bottom: 32rpx;
-  border-radius: 16rpx;
+  flex: 1;
+  background: #000;
+  border-radius: 12rpx;
   overflow: hidden;
+  position: relative;
 }
 
 .keyboard-scroll {
+  width: 100%;
   height: 100%;
 }
 
@@ -378,7 +404,7 @@ const goBack = () => uni.navigateBack()
 .white-key {
   position: absolute;
   top: 0;
-  width: 45px;
+  width: 50px; /* 加宽 */
   height: 100%;
   background: linear-gradient(180deg, #fff 0%, #f0f0f0 90%, #ddd 100%);
   border-left: 1px solid #aaa;
@@ -388,6 +414,7 @@ const goBack = () => uni.navigateBack()
   display: flex;
   align-items: flex-end;
   justify-content: center;
+  border-radius: 0 0 8rpx 8rpx;
 }
 
 .white-key.pressed { background: linear-gradient(180deg, #ddd 0%, #ccc 100%); }
@@ -398,7 +425,7 @@ const goBack = () => uni.navigateBack()
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-bottom: 6rpx;
+  padding-bottom: 12rpx;
 }
 
 .white-key .dots-above, .white-key .dots-below {
@@ -409,14 +436,14 @@ const goBack = () => uni.navigateBack()
 }
 
 .white-key .dot { font-size: 16rpx; color: #667eea; line-height: 0.5; }
-.white-key .notation { font-size: 24rpx; font-weight: 700; color: #667eea; }
+.white-key .notation { font-size: 28rpx; font-weight: 700; color: #667eea; margin: 2rpx 0; }
 .white-key.current .notation { color: #fff; }
 
 .black-key {
   position: absolute;
   top: 0;
-  width: 28px;
-  height: 58%;
+  width: 30px; /* 加宽 */
+  height: 60%;
   background: linear-gradient(180deg, #444 0%, #222 60%, #111 90%, #333 100%);
   border-radius: 0 0 6rpx 6rpx;
   box-shadow: 0 6rpx 10rpx rgba(0,0,0,0.6);
@@ -434,7 +461,7 @@ const goBack = () => uni.navigateBack()
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-bottom: 4rpx;
+  padding-bottom: 8rpx;
 }
 
 .black-key .dots-above, .black-key .dots-below {
@@ -445,55 +472,66 @@ const goBack = () => uni.navigateBack()
 }
 
 .black-key .dot { font-size: 10rpx; color: #fff; line-height: 0.5; }
-.black-key .note-row { display: flex; align-items: flex-start; position: relative; height: 18rpx; }
-.black-key .sharp { font-size: 9rpx; font-weight: 600; color: #fff; position: absolute; left: -8rpx; top: -2rpx; }
-.black-key .notation { font-size: 18rpx; font-weight: 600; color: #fff; }
+.black-key .note-row { display: flex; align-items: flex-start; position: relative; height: 20rpx; }
+.black-key .sharp { font-size: 10rpx; font-weight: 600; color: #fff; position: absolute; left: -10rpx; top: -2rpx; }
+.black-key .notation { font-size: 20rpx; font-weight: 600; color: #fff; }
 
-/* 控制面板 */
+/* 右侧控制面板 */
 .controls {
-  background: #1a1a2e;
-  border-radius: 24rpx;
-  padding: 32rpx;
-  margin-bottom: 24rpx;
-}
-
-.control-row {
-  display: flex;
-  gap: 20rpx;
-  margin-bottom: 32rpx;
-}
-
-.control-btn {
-  flex: 1;
+  width: 180rpx;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 24rpx;
-  background: rgba(102, 126, 234, 0.2);
-  border-radius: 16rpx;
-}
-
-.btn-icon { font-size: 40rpx; margin-bottom: 8rpx; }
-.btn-text { font-size: 26rpx; color: #fff; }
-
-.speed-control {
-  display: flex;
-  align-items: center;
   gap: 16rpx;
 }
 
-.speed-label { font-size: 26rpx; color: #b0b0c0; }
-.speed-value { font-size: 26rpx; color: #667eea; min-width: 100rpx; }
+.control-panel {
+  background: #1a1a2e;
+  border-radius: 12rpx;
+  padding: 16rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
 
-/* 提示区域 */
+.control-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16rpx;
+  background: rgba(102, 126, 234, 0.2);
+  border-radius: 12rpx;
+}
+
+.btn-icon { font-size: 32rpx; margin-bottom: 4rpx; }
+.btn-text { font-size: 22rpx; color: #fff; }
+
+.speed-control {
+  background: #1a1a2e;
+  border-radius: 12rpx;
+  padding: 16rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.speed-label { font-size: 22rpx; color: #b0b0c0; }
+.speed-value { font-size: 24rpx; color: #667eea; font-weight: 600;}
+
 .hint-area {
-  text-align: center;
-  padding: 24rpx;
+  position: absolute;
+  top: 16rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.5);
+  padding: 8rpx 24rpx;
+  border-radius: 20rpx;
+  pointer-events: none;
 }
 
 .hint {
-  font-size: 32rpx;
-  color: #667eea;
-  font-weight: 600;
+  font-size: 24rpx;
+  color: #fff;
 }
 </style>

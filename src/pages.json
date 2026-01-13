@@ -33,6 +33,7 @@
       "path": "pages/scale-practice/scale-practice",
       "style": {
         "navigationBarTitleText": "音阶练习",
+        "pageOrientation": "landscape",
         "navigationStyle": "custom"
       }
     },

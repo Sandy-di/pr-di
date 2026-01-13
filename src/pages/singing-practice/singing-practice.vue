@@ -22,7 +22,15 @@
               'current': index === playProgress && isPlaying
             }"
           >
-            <text class="note-text">{{ getNoteDisplay(note) }}</text>
+            <view class="note-content">
+              <view class="dots-above">
+                 <text v-for="n in (getNoteDisplay(note).dotCount > 0 ? getNoteDisplay(note).dotCount : 0)" :key="n" class="dot">•</text>
+              </view>
+              <text class="note-text">{{ getNoteDisplay(note).base }}</text>
+              <view class="dots-below">
+                 <text v-for="n in (getNoteDisplay(note).dotCount < 0 ? Math.abs(getNoteDisplay(note).dotCount) : 0)" :key="n" class="dot">•</text>
+              </view>
+            </view>
           </view>
         </view>
       </view>
@@ -176,12 +184,14 @@ const generateNotes = () => {
   const noteCount = diffConfig?.noteCount || 3
   
   const notes: number[] = []
+  // C大调自然音阶 (C4-C5)
+  // C4(60), D(62), E(64), F(65), G(67), A(69), B(71), C5(72)
+  const scale = [0, 2, 4, 5, 7, 9, 11, 12] 
   const baseNote = 60 // C4
   
   for (let i = 0; i < noteCount; i++) {
-    // 在 C4 到 C5 范围内生成音符
-    const offset = Math.floor(Math.random() * 8)
-    notes.push(baseNote + offset)
+    const scaleIndex = Math.floor(Math.random() * scale.length)
+    notes.push(baseNote + scale[scaleIndex])
   }
   
   currentNotes.value = notes
@@ -283,10 +293,23 @@ const nextRound = () => {
 }
 
 // 获取音符显示
-const getNoteDisplay = (midi: number): string => {
-  const noteNames = ['1', '2·', '2', '3·', '3', '4', '4·', '5', '5·', '6', '6·', '7']
-  const index = (midi - 60) % 12
-  return noteNames[index] || String(midi)
+const getNoteDisplay = (midi: number) => {
+  // 映射关系：相对于C的半音差 -> 简谱数字
+  // 0->1, 2->2, 4->3, 5->4, 7->5, 9->6, 11->7
+  const map: Record<number, string> = {
+      0: '1', 1: '#1', 2: '2', 3: '#3', 4: '3', 5: '4', 6: '#4', 7: '5', 8: '#5', 9: '6', 10: '#6', 11: '7'
+  }
+  
+  const relative = midi % 12
+  const base = map[relative] || '?'
+  
+  // 计算八度 (相对于 C4=60)
+  // 60-71: 0 (无点)
+  // 72-83: 1 (上点)
+  // 48-59: -1 (下点)
+  const octave = Math.floor(midi / 12) - 5
+  
+  return { base, dotCount: octave }
 }
 
 // 设置难度
@@ -372,7 +395,7 @@ const goBack = () => uni.navigateBack()
 
 .note-item {
   width: 80rpx;
-  height: 80rpx;
+  height: 100rpx;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -391,10 +414,38 @@ const goBack = () => uni.navigateBack()
   transform: scale(1.1);
 }
 
+.note-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .note-text {
   font-size: 36rpx;
   font-weight: 700;
   color: #fff;
+  line-height: 1;
+  margin: 4rpx 0;
+}
+
+.dots-above, .dots-below {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rpx;
+  height: 20rpx;
+  justify-content: flex-end;
+}
+
+.dots-below {
+  justify-content: flex-start;
+}
+
+.dot {
+  font-size: 20rpx;
+  color: #fff;
+  line-height: 0.5;
 }
 
 /* 播放区域 */

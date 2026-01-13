@@ -321,8 +321,10 @@ const resetAll = () => {
 }
 
 .setting-label-box {
+  flex: 1;
   display: flex;
   flex-direction: column;
+  padding-right: 20rpx;
 }
 
 .setting-label {
@@ -337,8 +339,9 @@ const resetAll = () => {
 }
 
 .custom-slider {
-  width: 240rpx;
+  width: 300rpx; /* 稍微加宽 */
   margin: 0;
+  flex-shrink: 0;
 }
 
 /* 危险区域 */
