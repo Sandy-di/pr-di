@@ -220,8 +220,9 @@ const startRecording = () => {
       isRecording.value = true
       recorderManager!.start({
         duration: 30000,
-        sampleRate: 44100,
+        sampleRate: 16000,
         numberOfChannels: 1,
+        encodeBitRate: 128000,
         format: 'mp3'
       })
       uni.vibrateShort({})
