@@ -298,6 +298,8 @@ const changeBeats = (e: any) => {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  width: 100%;
+  max-width: 100vw;
   background: var(--bg-dark);
   overflow-x: hidden;
   box-sizing: border-box;
@@ -344,6 +346,10 @@ const changeBeats = (e: any) => {
   flex: 1;
   padding: 32rpx;
   padding-bottom: 180rpx;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 /* 进度卡片 */

@@ -178,11 +178,11 @@ onMounted(async () => {
   RecorderService.init()
   RecorderService.setCallbacks({
     onStart: () => { isRecording.value = true; showShareBtn.value = false; startRecordingTimer() },
-    onStop: (res: any) => { 
+    onStop: (recording) => { 
       isRecording.value = false
       stopRecordingTimer()
       showShareBtn.value = true
-      if (res?.tempFilePath) lastRecordingPath = res.tempFilePath
+      if (recording?.voicePath) lastRecordingPath = recording.voicePath
       uni.showToast({ title: '已保存', icon: 'success' }) 
     },
     onError: () => { isRecording.value = false }
@@ -292,7 +292,7 @@ const handleRecordClick = () => {
     uni.showActionSheet({
       itemList: ['只录人声', '录钢琴+人声'],
       success: (res) => {
-        const mode = res.tapIndex === 0 ? 'voice-only' : 'piano-voice'
+        const mode = res.tapIndex === 0 ? 'voice-only' : 'mixed'
         uni.authorize({
           scope: 'scope.record',
           success: () => RecorderService.start({ mode }),
@@ -322,10 +322,11 @@ const formatTime = (ms: number) => { const s = Math.floor(ms / 1000); return `${
 }
 
 .top-bar {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 4rpx 12rpx; /* 再缩小30% */
+  padding: 4rpx 12rpx;
   padding-top: calc(4rpx + env(safe-area-inset-top));
   background: rgba(30, 30, 30, 0.9);
   backdrop-filter: blur(10px);
@@ -374,13 +375,14 @@ const formatTime = (ms: number) => { const s = Math.floor(ms / 1000); return `${
   text-align: center;
 }
 
-/* 录音区域 */
+/* 录音区域 - 居中 */
 .record-section {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   align-items: center;
   gap: 12rpx;
-  margin-left: auto;
-  margin-right: 12rpx;
 }
 
 .record-btn {

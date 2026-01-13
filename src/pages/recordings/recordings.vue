@@ -3,6 +3,9 @@
     <!-- 自定义导航栏 -->
     <view class="custom-navbar" :style="{ paddingTop: statusBarHeight + 'px' }">
       <view class="navbar-content">
+        <view class="nav-back" @click="goBack">
+          <svg-icon name="back" size="24rpx" color="#fff" />
+        </view>
         <text class="navbar-title">我的录音</text>
         <view class="navbar-badge">记录</view>
       </view>
@@ -126,6 +129,10 @@ onMounted(() => {
   loadRecordings()
 })
 
+const goBack = () => {
+  uni.navigateBack({ fail: () => uni.switchTab({ url: '/pages/index/index' }) })
+}
+
 onUnmounted(() => {
   stopPlaying()
 })
@@ -199,14 +206,24 @@ const seekTo = (e: any) => {
 }
 
 const shareRecording = (recording: Recording) => {
-  // 微信小程序中需要使用 showShareMenu 触发分享
-  uni.showShareMenu({
-    withShareTicket: true,
-    menus: ['shareAppMessage']
-  })
-  uni.showToast({
-    title: '点击右上角分享',
-    icon: 'none'
+  if (!recording.voicePath) {
+    uni.showToast({ title: '录音文件不存在', icon: 'none' })
+    return
+  }
+  
+  uni.shareFileMessage({
+    filePath: recording.voicePath,
+    fileName: `${recording.name}.mp3`,
+    success: () => uni.showToast({ title: '分享成功', icon: 'success' }),
+    fail: (err) => {
+      console.error('分享失败:', err)
+      // 如果 shareFileMessage 失败，回退到传统方式
+      uni.showShareMenu({
+        withShareTicket: true,
+        menus: ['shareAppMessage']
+      })
+      uni.showToast({ title: '点击右上角分享', icon: 'none' })
+    }
   })
 }
 
@@ -307,8 +324,18 @@ const formatDate = (isoString: string): string => {
   height: 100%;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  padding: 0 32rpx;
+}
+
+.nav-back {
+  width: 56rpx;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
   justify-content: center;
-  gap: 16rpx;
+  background: rgba(255,255,255,0.1);
+  border-radius: 50%;
 }
 
 .navbar-title {
