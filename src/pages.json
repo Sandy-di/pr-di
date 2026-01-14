@@ -8,6 +8,13 @@
       }
     },
     {
+      "path": "pages/metronome/metronome",
+      "style": {
+        "navigationBarTitleText": "节拍器",
+        "navigationStyle": "custom"
+      }
+    },
+    {
       "path": "pages/piano/piano",
       "style": {
         "navigationBarTitleText": "钢琴弹奏",

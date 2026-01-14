@@ -44,6 +44,15 @@
           <text class="feature-desc">音程与音阶训练</text>
         </view>
         
+        <view class="feature-card glass glass-hover" @click="navigateTo('/pages/metronome/metronome')">
+          <view class="card-glow" style="background: var(--divine-gold);"></view>
+          <view class="feature-icon-box" style="background: rgba(212, 175, 55, 0.15); color: var(--divine-gold);">
+            <svg-icon name="metronome" size="48rpx" />
+          </view>
+          <text class="feature-title">节拍器</text>
+          <text class="feature-desc">跟拍练习录音</text>
+        </view>
+        
         <view class="feature-card glass glass-hover" @click="navigateTo('/pages/recordings/recordings')">
           <view class="card-glow" style="background: var(--divine-gold);"></view>
           <view class="feature-icon-box" style="background: rgba(212, 175, 55, 0.15); color: var(--divine-gold);">
