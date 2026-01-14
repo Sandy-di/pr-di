@@ -278,24 +278,32 @@ const goToPiano = () => {
   uni.switchTab({ url: '/pages/piano/piano' })
 }
 
-const formatDuration = (ms: number): string => {
+const formatDuration = (ms: number | undefined): string => {
+  if (!ms || isNaN(ms)) return '0:00'
   const seconds = Math.floor(ms / 1000)
   const minutes = Math.floor(seconds / 60)
   const secs = seconds % 60
   return `${minutes}:${secs.toString().padStart(2, '0')}`
 }
 
-const formatDate = (isoString: string): string => {
-  const date = new Date(isoString)
-  const now = new Date()
-  const diff = now.getTime() - date.getTime()
-  
-  if (diff < 60000) return '刚刚'
-  if (diff < 3600000) return `${Math.floor(diff / 60000)}分钟前`
-  if (diff < 86400000) return `${Math.floor(diff / 3600000)}小时前`
-  if (diff < 604800000) return `${Math.floor(diff / 86400000)}天前`
-  
-  return `${date.getMonth() + 1}月${date.getDate()}日`
+const formatDate = (isoString: string | undefined): string => {
+  if (!isoString) return '未知日期'
+  try {
+    const date = new Date(isoString)
+    if (isNaN(date.getTime())) return '未知日期'
+    
+    const now = new Date()
+    const diff = now.getTime() - date.getTime()
+    
+    if (diff < 60000) return '刚刚'
+    if (diff < 3600000) return `${Math.floor(diff / 60000)}分钟前`
+    if (diff < 86400000) return `${Math.floor(diff / 3600000)}小时前`
+    if (diff < 604800000) return `${Math.floor(diff / 86400000)}天前`
+    
+    return `${date.getMonth() + 1}月${date.getDate()}日`
+  } catch {
+    return '未知日期'
+  }
 }
 </script>
 
