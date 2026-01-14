@@ -36,7 +36,7 @@
       >
         <view class="recording-info" @click="playRecording(recording)">
           <view class="recording-icon-box">
-            <svg-icon :name="playingId === recording.id ? 'pause' : 'play'" size="32rpx" :color="playingId === recording.id ? '#fff' : 'var(--accent-cyan)'" />
+            <svg-icon :name="playingId === recording.id ? 'pause' : 'play'" size="32rpx" :color="playingId === recording.id ? '#fff' : 'var(--divine-gold)'" />
             <view v-if="playingId === recording.id" class="playing-indicator">
               <view class="bar"></view>
               <view class="bar"></view>

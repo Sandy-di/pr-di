@@ -13,7 +13,7 @@
       <!-- 音频设置 -->
       <view class="setting-group glass animate-fade-in">
         <view class="group-header">
-          <svg-icon name="piano" size="32rpx" color="var(--accent-blue)" />
+          <svg-icon name="piano" size="32rpx" color="var(--divine-gold)" />
           <text class="group-title">声音设置</text>
         </view>
         
@@ -25,7 +25,7 @@
           <slider 
             :value="settings.pianoVolume" 
             @change="updateVolume" 
-            activeColor="var(--accent-blue)" 
+            activeColor="#d4af37" 
             backgroundColor="rgba(255,255,255,0.1)"
             block-size="20"
             block-color="#ffffff"
@@ -40,7 +40,7 @@
           <switch 
             :checked="settings.enableVibration" 
             @change="toggleVibration" 
-            color="#3B82F6" 
+            color="#d4af37" 
             style="transform: scale(0.8)" 
           />
         </view>
@@ -49,7 +49,7 @@
       <!-- 练耳设置 -->
       <view class="setting-group glass animate-fade-in" style="animation-delay: 0.1s">
         <view class="group-header">
-          <svg-icon name="ear" size="32rpx" color="var(--accent-purple)" />
+          <svg-icon name="ear" size="32rpx" color="var(--divine-gold)" />
           <text class="group-title">练耳偏好</text>
         </view>
         

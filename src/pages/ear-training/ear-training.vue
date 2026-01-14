@@ -15,7 +15,7 @@
         <view class="progress-glow"></view>
         <view class="progress-header">
           <view class="progress-info">
-            <svg-icon name="chart" size="32rpx" color="var(--accent-blue)" />
+            <svg-icon name="chart" size="32rpx" color="var(--divine-gold)" />
             <text class="progress-title">今日目标</text>
           </view>
           <text class="progress-count">{{ progress.completed }}/{{ progress.total }}</text>
@@ -34,8 +34,8 @@
       
       <view class="module-grid">
         <view class="module-card glass glass-hover" @click="startPractice('interval')">
-          <view class="card-glow" style="background: var(--accent-blue);"></view>
-          <view class="module-icon-box" style="background: rgba(59, 130, 246, 0.2); color: var(--accent-blue);">
+          <view class="card-glow" style="background: var(--divine-gold);"></view>
+          <view class="module-icon-box" style="background: rgba(212, 175, 55, 0.15); color: var(--divine-gold);">
             <svg-icon name="music-note" size="48rpx" />
           </view>
           <text class="module-title">音程听辨</text>
@@ -44,8 +44,8 @@
         </view>
         
         <view class="module-card glass glass-hover" @click="startPractice('scale')">
-          <view class="card-glow" style="background: var(--accent-purple);"></view>
-          <view class="module-icon-box" style="background: rgba(139, 92, 246, 0.2); color: var(--accent-purple);">
+          <view class="card-glow" style="background: var(--divine-gold);"></view>
+          <view class="module-icon-box" style="background: rgba(212, 175, 55, 0.15); color: var(--divine-gold);">
             <svg-icon name="piano" size="48rpx" />
           </view>
           <text class="module-title">音阶练习</text>
@@ -53,8 +53,8 @@
         </view>
         
         <view class="module-card glass glass-hover" @click="startPractice('singing')">
-          <view class="card-glow" style="background: var(--accent-pink);"></view>
-          <view class="module-icon-box" style="background: rgba(236, 72, 153, 0.2); color: var(--accent-pink);">
+          <view class="card-glow" style="background: var(--divine-gold);"></view>
+          <view class="module-icon-box" style="background: rgba(212, 175, 55, 0.15); color: var(--divine-gold);">
             <svg-icon name="mic" size="48rpx" />
           </view>
           <text class="module-title">跟唱模式</text>
@@ -78,10 +78,10 @@
         
         <view class="metronome-header">
           <view class="metronome-title-box">
-            <svg-icon name="metronome" size="40rpx" color="var(--accent-orange)" />
+            <svg-icon name="metronome" size="40rpx" color="var(--divine-gold)" />
             <text class="metronome-title">节拍器</text>
           </view>
-          <switch :checked="metronomeOn" @change="toggleMetronome" color="#F97316" style="transform: scale(0.8)" />
+          <switch :checked="metronomeOn" @change="toggleMetronome" color="#d4af37" style="transform: scale(0.8)" />
         </view>
         
         <view class="metronome-controls">
