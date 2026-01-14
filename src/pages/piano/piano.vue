@@ -276,11 +276,39 @@ const shareRecording = () => {
     uni.showToast({ title: '没有可分享的录音', icon: 'none' })
     return
   }
-  uni.shareFileMessage({
-    filePath: lastRecordingPath,
-    fileName: `钢琴录音_${Date.now()}.mp3`,
-    success: () => uni.showToast({ title: '分享成功', icon: 'success' }),
-    fail: () => uni.showToast({ title: '分享失败', icon: 'none' })
+  
+  // 先尝试直接分享
+  const fileName = `钢琴录音_${new Date().toLocaleString('zh-CN').replace(/[\/\s:]/g, '_')}.mp3`
+  
+  // 保存到本地后再分享
+  const fs = uni.getFileSystemManager()
+  // @ts-ignore
+  const userDataPath = wx.env?.USER_DATA_PATH || `${uni.getStorageInfoSync().keys ? '' : ''}`
+  const savedPath = `${userDataPath}/${fileName}`
+  
+  fs.copyFile({
+    srcPath: lastRecordingPath,
+    destPath: savedPath,
+    success: () => {
+      uni.shareFileMessage({
+        filePath: savedPath,
+        fileName: fileName,
+        success: () => uni.showToast({ title: '分享成功', icon: 'success' }),
+        fail: (err) => {
+          console.error('分享失败:', err)
+          // 回退方案：提示用户手动分享
+          uni.showModal({
+            title: '分享提示',
+            content: '文件已保存到录音列表，您可以从录音管理页面分享',
+            showCancel: false
+          })
+        }
+      })
+    },
+    fail: (err) => {
+      console.error('保存文件失败:', err)
+      uni.showToast({ title: '保存文件失败', icon: 'none' })
+    }
   })
 }
 

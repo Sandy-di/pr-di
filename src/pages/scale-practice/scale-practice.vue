@@ -4,8 +4,11 @@
     <view class="top-section">
       <view class="navbar">
         <view class="nav-back" @click="goBack"><text>←</text></view>
-        <text class="nav-title">音阶练习</text>
-        <text class="nav-mode">{{ currentScale.name }}</text>
+        <view class="nav-center">
+          <text class="nav-title">音阶练习</text>
+          <text class="nav-mode">{{ currentScale.name }}</text>
+        </view>
+        <view class="nav-spacer"></view>
       </view>
       <view class="scale-selector">
         <view 
@@ -323,6 +326,14 @@ const goBack = () => uni.navigateBack()
   font-size: 28rpx;
 }
 
+.nav-center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+}
+
 .nav-title {
   font-size: 28rpx;
   font-weight: 600;
@@ -330,11 +341,16 @@ const goBack = () => uni.navigateBack()
 }
 
 .nav-mode {
-  font-size: 22rpx;
+  font-size: 20rpx;
   color: #667eea;
-  background: rgba(102, 126, 234, 0.1);
+  background: rgba(102, 126, 234, 0.15);
   padding: 4rpx 12rpx;
   border-radius: 16rpx;
+}
+
+/* 右侧留空给微信胶囊 */
+.nav-spacer {
+  width: 180rpx;
 }
 
 .scale-selector {
