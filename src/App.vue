@@ -15,60 +15,72 @@ onHide(() => {
 </script>
 
 <style>
-/* 全局样式变量 */
+/* ========================================
+   神圣主题 - Divine Theme
+   配色: 深邃蓝 #2c3e50 | 圣洁金 #d4af37 | 纯净白 #fcfcfc
+   ======================================== */
+
 page {
-  color: #ffffff;
+  color: #fcfcfc;
   
-  --primary-color: #667eea;
-  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --secondary-color: #f093fb;
+  /* 神圣配色 */
+  --divine-blue: #2c3e50;
+  --divine-gold: #d4af37;
+  --divine-white: #fcfcfc;
+  --divine-gold-light: #f4e4bc;
   
-  /* Glassmorphism System */
-  --bg-dark: #0f0f1a;
-  --bg-card: rgba(26, 26, 46, 0.6);
-  --bg-card-hover: rgba(37, 37, 64, 0.8);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --glass-blur: 16px;
-  --glass-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.3);
+  /* 渐变 */
+  --gold-gradient: linear-gradient(135deg, #d4af37 0%, #f4e4bc 100%);
+  --blue-gradient: linear-gradient(135deg, #2c3e50 0%, #3d566e 100%);
+  --divine-gradient: linear-gradient(180deg, #1a2634 0%, #2c3e50 100%);
   
-  /* Text System */
-  --text-primary: #ffffff;
-  --text-secondary: rgba(255, 255, 255, 0.7);
-  --text-muted: rgba(255, 255, 255, 0.4);
+  /* 背景 */
+  --bg-dark: #1a2634;
+  --bg-card: rgba(44, 62, 80, 0.6);
+  --bg-card-hover: rgba(44, 62, 80, 0.85);
   
-  /* Accent Colors */
-  --accent-blue: #3B82F6;
-  --accent-cyan: #06B6D4;
-  --accent-pink: #EC4899;
-  --accent-purple: #8B5CF6;
-  --accent-orange: #F97316;
+  /* 无边框设计 - 使用柔和阴影 */
+  --glass-border: rgba(212, 175, 55, 0.15);
+  --glass-blur: 20px;
+  --glass-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.25);
   
-  --success-color: #10b981;
-  --warning-color: #f59e0b;
-  --error-color: #ef4444;
+  /* 文字 */
+  --text-primary: #fcfcfc;
+  --text-secondary: rgba(252, 252, 252, 0.75);
+  --text-muted: rgba(252, 252, 252, 0.45);
+  --text-gold: #d4af37;
   
-  /* Piano Keys */
-  --key-white: linear-gradient(180deg, #ffffff 0%, #e8e8e8 100%);
+  /* 金色强调 */
+  --accent-gold: #d4af37;
+  --accent-gold-glow: rgba(212, 175, 55, 0.4);
+  
+  /* 状态色 */
+  --success-color: #27ae60;
+  --warning-color: #f39c12;
+  --error-color: #e74c3c;
+  
+  /* 钢琴键 */
+  --key-white: linear-gradient(180deg, #fcfcfc 0%, #e8e8e8 90%, #d0d0d0 100%);
   --key-white-pressed: linear-gradient(180deg, #d0d0d0 0%, #b8b8b8 100%);
-  --key-black: linear-gradient(180deg, #2a2a2a 0%, #0a0a0a 100%);
-  --key-black-pressed: linear-gradient(180deg, #1a1a1a 0%, #000000 100%);
+  --key-black: linear-gradient(180deg, #2c3e50 0%, #1a2634 100%);
+  --key-black-pressed: linear-gradient(180deg, #1a2634 0%, #0d1318 100%);
   
-  /* Spacing */
+  /* 圆角 */
   --radius-sm: 8rpx;
   --radius-md: 16rpx;
   --radius-lg: 24rpx;
   --radius-xl: 32rpx;
   
-  /* Shadows */
-  --shadow-sm: 0 2rpx 8rpx rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4rpx 16rpx rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 8rpx 32rpx rgba(0, 0, 0, 0.5);
-  --shadow-glow: 0 0 20rpx rgba(102, 126, 234, 0.4);
+  /* 阴影 - 柔和分层 */
+  --shadow-sm: 0 2rpx 12rpx rgba(0, 0, 0, 0.15);
+  --shadow-md: 0 6rpx 24rpx rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 12rpx 40rpx rgba(0, 0, 0, 0.25);
+  --shadow-gold: 0 0 24rpx rgba(212, 175, 55, 0.35);
   
-  background-color: #0f0f1a; /* 确保背景色生效 */
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  background: var(--divine-gradient);
+  font-family: 'PingFang SC', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 28rpx;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 .safe-area-top {
@@ -83,7 +95,7 @@ page {
 
 .container {
   min-height: 100vh;
-  background: #0f0f1a;
+  background: var(--divine-gradient);
 }
 
 .custom-navbar {
@@ -92,66 +104,86 @@ page {
   justify-content: center;
   height: 88rpx;
   padding: 0 32rpx;
-  background: #1a1a2e;
+  background: var(--bg-dark);
   position: relative;
 }
 
 .navbar-title {
   font-size: 36rpx;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--divine-white);
+  letter-spacing: 2rpx;
 }
 
+/* 无边框卡片 - 柔和阴影分层 */
 .card {
-  background: #1a1a2e;
-  border-radius: 24rpx;
+  background: var(--bg-card);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-radius: var(--radius-xl);
   padding: 32rpx;
   margin: 24rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.4);
+  box-shadow: var(--shadow-md);
+  border: none;
 }
 
+/* 按钮 */
 .btn {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 88rpx;
-  border-radius: 16rpx;
+  border-radius: var(--radius-lg);
   font-size: 32rpx;
   font-weight: 500;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  box-shadow: 0 0 20rpx rgba(102, 126, 234, 0.4);
+  background: var(--gold-gradient);
+  color: var(--divine-blue);
+  box-shadow: var(--shadow-gold);
+}
+
+.btn-primary:active {
+  transform: translateY(-4rpx);
+  box-shadow: 0 8rpx 32rpx rgba(212, 175, 55, 0.5);
 }
 
 .btn-secondary {
-  background: #252540;
-  color: #ffffff;
-  border: 2rpx solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-card);
+  color: var(--divine-white);
+  border: 1px solid var(--glass-border);
+}
+
+/* 动画 */
+@keyframes goldenGlow {
+  0%, 100% { box-shadow: 0 0 16rpx rgba(212, 175, 55, 0.3); }
+  50% { box-shadow: 0 0 32rpx rgba(212, 175, 55, 0.6); }
+}
+
+@keyframes graceFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8rpx); }
 }
 
 @keyframes pulse {
   0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.05); opacity: 0.8; }
+  50% { transform: scale(1.03); opacity: 0.9; }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20rpx); }
+  from { opacity: 0; transform: translateY(16rpx); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10rpx); }
+.animate-golden-glow {
+  animation: goldenGlow 2s ease-in-out infinite;
 }
 
-@keyframes shine {
-  0% { left: -100%; opacity: 0; }
-  50% { opacity: 0.5; }
-  100% { left: 100%; opacity: 0; }
+.animate-grace-float {
+  animation: graceFloat 3s ease-in-out infinite;
 }
 
 .animate-pulse {
@@ -162,25 +194,33 @@ page {
   animation: fadeIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-}
-
-/* Glassmorphism Utilities */
+/* 玻璃拟态 - 无边框设计 */
 .glass {
   background: var(--bg-card);
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--glass-shadow);
+  box-shadow: var(--shadow-md);
+  border: none;
 }
 
+/* 恩典上浮效果 */
 .glass-hover {
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .glass-hover:active {
+  transform: translateY(-4rpx);
+  box-shadow: var(--shadow-gold);
   background: var(--bg-card-hover);
-  transform: scale(0.98);
+}
+
+/* 金色强调边框 */
+.gold-accent {
+  border-left: 3rpx solid var(--divine-gold);
+}
+
+/* 金色文字 */
+.text-gold {
+  color: var(--divine-gold);
 }
 </style>

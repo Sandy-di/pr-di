@@ -382,9 +382,9 @@ const formatTime = (ms: number) => { const s = Math.floor(ms / 1000); return `${
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
+  background: linear-gradient(135deg, rgba(44, 62, 80, 0.8), rgba(44, 62, 80, 0.5));
   border-radius: 26rpx;
-  border: 1px solid rgba(255,255,255,0.15);
+  border: 1px solid rgba(212, 175, 55, 0.25);
 }
 
 /* 返回按钮 */
@@ -405,10 +405,10 @@ const formatTime = (ms: number) => { const s = Math.floor(ms / 1000); return `${
   border-color: rgba(239, 68, 68, 0.5);
 }
 
-/* 分享按钮 */
+/* 分享按钮 - 金色 */
 .share-btn {
-  background: linear-gradient(135deg, rgba(34, 197, 94, 0.25), rgba(34, 197, 94, 0.1));
-  border-color: rgba(34, 197, 94, 0.4);
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.25), rgba(212, 175, 55, 0.1));
+  border-color: rgba(212, 175, 55, 0.5);
 }
 
 /* 节拍器按钮 */
@@ -417,8 +417,9 @@ const formatTime = (ms: number) => { const s = Math.floor(ms / 1000); return `${
 }
 
 .metronome-btn.active {
-  background: linear-gradient(135deg, rgba(34, 197, 94, 0.3), rgba(34, 197, 94, 0.15));
-  border-color: rgba(34, 197, 94, 0.5);
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.35), rgba(212, 175, 55, 0.15));
+  border-color: rgba(212, 175, 55, 0.6);
+  box-shadow: 0 0 12rpx rgba(212, 175, 55, 0.3);
 }
 
 .btn-text {

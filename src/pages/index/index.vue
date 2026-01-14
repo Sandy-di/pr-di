@@ -27,8 +27,8 @@
       <!-- 功能入口 -->
       <view class="feature-grid">
         <view class="feature-card glass glass-hover" @click="navigateTo('/pages/piano/piano')">
-          <view class="card-glow" style="background: var(--accent-blue);"></view>
-          <view class="feature-icon-box" style="background: rgba(59, 130, 246, 0.2); color: var(--accent-blue);">
+          <view class="card-glow" style="background: var(--divine-gold);"></view>
+          <view class="feature-icon-box" style="background: rgba(212, 175, 55, 0.15); color: var(--divine-gold);">
             <svg-icon name="piano" size="48rpx" />
           </view>
           <text class="feature-title">自由弹奏</text>
@@ -36,8 +36,8 @@
         </view>
         
         <view class="feature-card glass glass-hover" @click="navigateTo('/pages/ear-training/ear-training')">
-          <view class="card-glow" style="background: var(--accent-purple);"></view>
-          <view class="feature-icon-box" style="background: rgba(139, 92, 246, 0.2); color: var(--accent-purple);">
+          <view class="card-glow" style="background: var(--divine-gold);"></view>
+          <view class="feature-icon-box" style="background: rgba(212, 175, 55, 0.15); color: var(--divine-gold);">
             <svg-icon name="ear" size="48rpx" />
           </view>
           <text class="feature-title">视唱练耳</text>
@@ -45,8 +45,8 @@
         </view>
         
         <view class="feature-card glass glass-hover" @click="navigateTo('/pages/recordings/recordings')">
-          <view class="card-glow" style="background: var(--accent-cyan);"></view>
-          <view class="feature-icon-box" style="background: rgba(6, 182, 212, 0.2); color: var(--accent-cyan);">
+          <view class="card-glow" style="background: var(--divine-gold);"></view>
+          <view class="feature-icon-box" style="background: rgba(212, 175, 55, 0.15); color: var(--divine-gold);">
             <svg-icon name="mic" size="48rpx" />
           </view>
           <text class="feature-title">录音管理</text>
@@ -54,8 +54,8 @@
         </view>
         
         <view class="feature-card glass glass-hover" @click="navigateTo('/pages/settings/settings')">
-          <view class="card-glow" style="background: var(--accent-orange);"></view>
-          <view class="feature-icon-box" style="background: rgba(249, 115, 22, 0.2); color: var(--accent-orange);">
+          <view class="card-glow" style="background: var(--divine-gold);"></view>
+          <view class="feature-icon-box" style="background: rgba(212, 175, 55, 0.15); color: var(--divine-gold);">
             <svg-icon name="settings" size="48rpx" />
           </view>
           <text class="feature-title">设置</text>
@@ -211,20 +211,16 @@ const startRecording = () => {
 <style scoped>
 .container {
   min-height: 100vh;
-  background: var(--bg-dark);
-  background-image: 
-    radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, rgba(236, 72, 153, 0.15) 0%, transparent 40%);
+  background: var(--divine-gradient);
 }
 
 .custom-navbar {
   height: 88rpx;
-  background: rgba(15, 15, 26, 0.8);
+  background: rgba(26, 38, 52, 0.9);
   backdrop-filter: blur(20px);
   position: sticky;
   top: 0;
   z-index: 100;
-  border-bottom: 1px solid var(--glass-border);
 }
 
 .navbar-content {
@@ -245,9 +241,9 @@ const startRecording = () => {
 .navbar-badge {
   font-size: 18rpx;
   font-weight: 700;
-  color: var(--bg-dark);
-  background: var(--accent-cyan);
-  padding: 2rpx 8rpx;
+  color: var(--divine-blue);
+  background: var(--divine-gold);
+  padding: 2rpx 12rpx;
   border-radius: 8rpx;
 }
 
@@ -260,11 +256,11 @@ const startRecording = () => {
 .hero-banner {
   position: relative;
   height: 300rpx;
-  background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+  background: linear-gradient(135deg, #2c3e50 0%, #3d566e 100%);
   border-radius: var(--radius-xl);
   margin-bottom: 48rpx;
   overflow: hidden;
-  box-shadow: 0 12rpx 40rpx rgba(79, 70, 229, 0.3);
+  box-shadow: var(--shadow-gold);
   display: flex;
   align-items: center;
   padding: 0 48rpx;
