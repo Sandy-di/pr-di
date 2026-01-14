@@ -93,6 +93,14 @@ import { onShow } from '@dcloudio/uni-app'
 import AudioManager from '@/utils/audio-manager'
 import RecorderService from '@/utils/recorder-manager'
 import SvgIcon from '@/components/SvgIcon.vue'
+import { onShareAppMessage } from '@dcloudio/uni-app'
+
+// 分享配置
+onShareAppMessage(() => ({
+  title: '🎹 来和我一起弹钢琴吧！ - 视唱练耳助手',
+  path: '/pages/piano/piano',
+  imageUrl: '/static/share-cover.png'
+}))
 
 const currentOctave = ref(2)  // 从C2开始
 const numOctaves = ref(5)     // 显示5个八度 (C2-B6)

@@ -139,7 +139,15 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
+import { onShareAppMessage } from '@dcloudio/uni-app'
 import SvgIcon from '@/components/SvgIcon.vue'
+
+// 分享配置
+onShareAppMessage(() => ({
+  title: '🎵 来练习音乐听力吧！ - 视唱练耳助手',
+  path: '/pages/ear-training/ear-training',
+  imageUrl: '/static/share-cover.png'
+}))
 
 const statusBarHeight = ref(20)
 
