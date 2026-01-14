@@ -13,9 +13,9 @@
           <text class="btn-text">{{ isRecording ? formatTime(recordingDuration) : '录' }}</text>
         </view>
         
-        <!-- 录音管理按钮 -->
-        <view class="capsule-btn share-btn" v-if="!isRecording" @click="shareRecording">
-          <svg-icon name="mic" size="22rpx" color="#d4af37" />
+        <!-- 分享按钮 - 只在录音结束后显示 -->
+        <view class="capsule-btn share-btn" v-if="showShareBtn && !isRecording" @click="shareRecording">
+          <svg-icon name="share" size="22rpx" color="#d4af37" />
         </view>
       </view>
       
