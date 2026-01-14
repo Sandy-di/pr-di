@@ -60,7 +60,7 @@
           <switch 
             :checked="settings.autoNext" 
             @change="toggleAutoNext" 
-            color="#8B5CF6" 
+            color="#d4af37" 
             style="transform: scale(0.8)" 
           />
         </view>
@@ -72,7 +72,7 @@
           <switch 
             :checked="settings.showHint" 
             @change="toggleShowHint" 
-            color="#8B5CF6" 
+            color="#d4af37" 
             style="transform: scale(0.8)" 
           />
         </view>
@@ -81,7 +81,7 @@
       <!-- 数据管理 -->
       <view class="setting-group glass animate-fade-in" style="animation-delay: 0.2s">
         <view class="group-header">
-          <svg-icon name="chart" size="32rpx" color="var(--accent-cyan)" />
+          <svg-icon name="chart" size="32rpx" color="var(--divine-gold)" />
           <text class="group-title">数据管理</text>
         </view>
         
@@ -279,9 +279,9 @@ const resetAll = () => {
 .navbar-badge {
   font-size: 18rpx;
   font-weight: 700;
-  color: var(--bg-dark);
-  background: var(--accent-orange);
-  padding: 2rpx 8rpx;
+  color: var(--divine-blue);
+  background: var(--divine-gold);
+  padding: 2rpx 12rpx;
   border-radius: 8rpx;
 }
 
