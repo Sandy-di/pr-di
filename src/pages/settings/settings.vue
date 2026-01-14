@@ -27,12 +27,10 @@
         <!-- 已登录状态 -->
         <view v-else class="user-info">
           <image class="user-avatar" :src="userInfo.avatarUrl" mode="aspectFill" />
-          <view class="user-details">
+          <view class="user-details" @click="showEditName" hover-class="opacity-hover">
             <view class="user-name-row">
               <text class="user-name">{{ displayName }}</text>
-              <view class="edit-btn" @click="showEditName">
-                <svg-icon name="edit" size="24rpx" color="var(--divine-gold)" />
-              </view>
+              <text class="edit-hint">✎</text>
             </view>
             <text class="user-status">已登录</text>
           </view>
@@ -495,15 +493,14 @@ const resetAll = () => {
   color: var(--text-primary);
 }
 
-.edit-btn {
-  padding: 12rpx;
-  background: rgba(212, 175, 55, 0.1);
-  border-radius: 50%;
-  border: 1px solid rgba(212, 175, 55, 0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: 8rpx;
+.edit-hint {
+  font-size: 32rpx;
+  color: var(--divine-gold);
+  opacity: 0.8;
+}
+
+.opacity-hover {
+  opacity: 0.7;
 }
 
 .user-status {
