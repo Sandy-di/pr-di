@@ -296,21 +296,22 @@ const goBack = () => uni.navigateBack()
 
 /* 顶部区域 - 单行布局 */
 .top-section {
-  height: 60rpx;
+  height: 56rpx;
   flex-shrink: 0;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
   background: #1a1a2e;
-  padding: 8rpx 16rpx;
-  padding-top: calc(8rpx + env(safe-area-inset-top));
-  gap: 16rpx;
+  padding: 6rpx 16rpx;
+  padding-top: calc(6rpx + env(safe-area-inset-top));
+  gap: 12rpx;
+  z-index: 100;
 }
 
 .nav-back {
-  width: 48rpx;
-  height: 48rpx;
+  width: 40rpx;
+  height: 40rpx;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -318,7 +319,7 @@ const goBack = () => uni.navigateBack()
   background: rgba(255,255,255,0.1);
   border-radius: 50%;
   color: #fff;
-  font-size: 24rpx;
+  font-size: 22rpx;
 }
 
 /* 右侧留空给微信胶囊 */
@@ -332,13 +333,13 @@ const goBack = () => uni.navigateBack()
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 16rpx;
+  gap: 12rpx;
 }
 
 .scale-btn {
-  padding: 6rpx 20rpx;
+  padding: 4rpx 16rpx;
   background: rgba(255,255,255,0.08);
-  border-radius: 20rpx;
+  border-radius: 16rpx;
   border: 1px solid rgba(255,255,255,0.15);
 }
 
@@ -348,7 +349,7 @@ const goBack = () => uni.navigateBack()
 }
 
 .scale-btn text {
-  font-size: 20rpx;
+  font-size: 18rpx;
   color: #fff;
 }
 
@@ -441,9 +442,9 @@ const goBack = () => uni.navigateBack()
 }
 
 .black-key .dot { font-size: 10rpx; color: #fff; line-height: 0.5; }
-.black-key .note-row { display: flex; align-items: flex-start; position: relative; height: 20rpx; }
-.black-key .sharp { font-size: 10rpx; font-weight: 600; color: #fff; position: absolute; left: -10rpx; top: -2rpx; }
-.black-key .notation { font-size: 20rpx; font-weight: 600; color: #fff; }
+.black-key .note-row { display: flex; align-items: center; justify-content: center; position: relative; }
+.black-key .sharp { font-size: 10rpx; font-weight: 600; color: #fff; margin-right: 2rpx; }
+.black-key .notation { font-size: 18rpx; font-weight: 600; color: #fff; }
 
 .hint-area {
   position: absolute;

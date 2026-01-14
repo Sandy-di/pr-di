@@ -427,9 +427,6 @@ const formatTime = (ms: number) => { const s = Math.floor(ms / 1000); return `${
   background: linear-gradient(135deg, rgba(34, 197, 94, 0.3), rgba(34, 197, 94, 0.15));
   border-color: rgba(34, 197, 94, 0.5);
 }
-  background: rgba(34, 197, 94, 0.2);
-  border: 1px solid rgba(34, 197, 94, 0.5);
-}
 
 .tempo-text {
   font-size: 22rpx;
