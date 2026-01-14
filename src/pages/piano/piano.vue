@@ -4,24 +4,24 @@
     <view class="top-bar">
       <!-- 左侧：返回 + 录音 -->
       <view class="left-controls">
-        <view class="back-btn" @click="goBack">
+        <view class="capsule-btn back-btn" @click="goBack">
           <svg-icon name="back" size="24rpx" color="#fff" />
         </view>
         
-        <view class="record-btn" :class="{ 'recording': isRecording }" @click="handleRecordClick">
-          <svg-icon :name="isRecording ? 'stop' : 'record'" size="24rpx" :color="isRecording ? '#fff' : '#ef4444'" />
-          <text class="record-text">{{ isRecording ? formatTime(recordingDuration) : '录' }}</text>
+        <view class="capsule-btn record-btn" :class="{ 'recording': isRecording }" @click="handleRecordClick">
+          <svg-icon :name="isRecording ? 'stop' : 'record'" size="22rpx" :color="isRecording ? '#fff' : '#ef4444'" />
+          <text class="btn-text">{{ isRecording ? formatTime(recordingDuration) : '录' }}</text>
         </view>
         
         <!-- 分享按钮 -->
-        <view class="share-btn" v-if="showShareBtn && !isRecording" @click="shareRecording">
-          <svg-icon name="share" size="20rpx" color="#22c55e" />
+        <view class="capsule-btn share-btn" v-if="showShareBtn && !isRecording" @click="shareRecording">
+          <svg-icon name="share" size="22rpx" color="#22c55e" />
         </view>
       </view>
       
-      <!-- 中间：节拍器（不会和微信胶囊重叠） -->
+      <!-- 中间：节拍器 -->
       <view class="center-controls">
-        <view class="metronome-btn" :class="{ 'active': metronomeOn }" @click="toggleMetronome">
+        <view class="capsule-btn metronome-btn" :class="{ 'active': metronomeOn }" @click="toggleMetronome">
           <svg-icon name="metronome" size="24rpx" :color="metronomeOn ? '#22c55e' : '#888'" />
         </view>
         <text class="tempo-text" @click="setTempo">{{ metronomeTempo }}</text>
@@ -364,70 +364,69 @@ const formatTime = (ms: number) => { const s = Math.floor(ms / 1000); return `${
 .left-controls {
   display: flex;
   align-items: center;
+  gap: 12rpx;
+}
+
+/* 统一胶囊按钮样式 */
+.capsule-btn {
+  height: 52rpx;
+  padding: 0 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   gap: 8rpx;
+  background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
+  border-radius: 26rpx;
+  border: 1px solid rgba(255,255,255,0.15);
+  backdrop-filter: blur(10px);
 }
 
 .back-btn {
-  width: 48rpx;
-  height: 48rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255,255,255,0.1);
-  border-radius: 50%;
-}
-
-.record-btn {
-  display: flex;
-  align-items: center;
-  gap: 6rpx;
-  padding: 8rpx 16rpx;
-  background: rgba(255,255,255,0.1);
-  border-radius: 100rpx;
-  border: 1px solid rgba(255,255,255,0.15);
+  width: 52rpx;
+  padding: 0;
 }
 
 .record-btn.recording {
-  background: rgba(239, 68, 68, 0.25);
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.3), rgba(239, 68, 68, 0.15));
   border-color: rgba(239, 68, 68, 0.5);
-}
-
-.record-text {
-  font-size: 20rpx;
-  font-weight: 500;
-  color: #fff;
-  font-variant-numeric: tabular-nums;
+  box-shadow: 0 0 12rpx rgba(239, 68, 68, 0.3);
 }
 
 .share-btn {
-  width: 40rpx;
-  height: 40rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(34, 197, 94, 0.2);
-  border-radius: 50%;
-  border: 1px solid rgba(34, 197, 94, 0.4);
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.25), rgba(34, 197, 94, 0.1));
+  border-color: rgba(34, 197, 94, 0.4);
+}
+
+.btn-text {
+  font-size: 22rpx;
+  font-weight: 500;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
 }
 
 /* 中间控制区 */
 .center-controls {
   display: flex;
   align-items: center;
-  gap: 8rpx;
+  gap: 12rpx;
 }
 
 .metronome-btn {
-  width: 44rpx;
-  height: 44rpx;
+  width: 52rpx;
+  height: 52rpx;
+  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255,255,255,0.1);
-  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
+  border-radius: 26rpx;
+  border: 1px solid rgba(255,255,255,0.15);
 }
 
 .metronome-btn.active {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.3), rgba(34, 197, 94, 0.15));
+  border-color: rgba(34, 197, 94, 0.5);
+}
   background: rgba(34, 197, 94, 0.2);
   border: 1px solid rgba(34, 197, 94, 0.5);
 }

@@ -1,15 +1,11 @@
 <template>
   <view class="practice-page">
-    <!-- 顶部区域 (15%) - 导航 + 音阶选择 -->
+    <!-- 顶部区域 - 单行布局 -->
     <view class="top-section">
-      <view class="navbar">
-        <view class="nav-back" @click="goBack"><text>←</text></view>
-        <view class="nav-center">
-          <text class="nav-title">音阶练习</text>
-          <text class="nav-mode">{{ currentScale.name }}</text>
-        </view>
-        <view class="nav-spacer"></view>
-      </view>
+      <!-- 左侧：返回 -->
+      <view class="nav-back" @click="goBack"><text>←</text></view>
+      
+      <!-- 中间：音阶选择 -->
       <view class="scale-selector">
         <view 
           v-for="scale in scales" 
@@ -21,6 +17,9 @@
           <text>{{ scale.name }}</text>
         </view>
       </view>
+      
+      <!-- 右侧：留空给微信胶囊 -->
+      <view class="nav-spacer"></view>
     </view>
 
     <!-- 中间区域 (70%) - 钢琴键盘 -->
@@ -295,62 +294,37 @@ const goBack = () => uni.navigateBack()
   flex-direction: column;
 }
 
-/* 顶部区域 - 固定高度 */
+/* 顶部区域 - 单行布局 */
 .top-section {
-  height: 100rpx;
-  min-height: 100rpx;
+  height: 60rpx;
   flex-shrink: 0;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
   background: #1a1a2e;
   padding: 8rpx 16rpx;
   padding-top: calc(8rpx + env(safe-area-inset-top));
-}
-
-.navbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 4rpx 0;
+  gap: 16rpx;
 }
 
 .nav-back {
   width: 48rpx;
   height: 48rpx;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   background: rgba(255,255,255,0.1);
   border-radius: 50%;
   color: #fff;
-  font-size: 28rpx;
-}
-
-.nav-center {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12rpx;
-}
-
-.nav-title {
-  font-size: 28rpx;
-  font-weight: 600;
-  color: #fff;
-}
-
-.nav-mode {
-  font-size: 20rpx;
-  color: #667eea;
-  background: rgba(102, 126, 234, 0.15);
-  padding: 4rpx 12rpx;
-  border-radius: 16rpx;
+  font-size: 24rpx;
 }
 
 /* 右侧留空给微信胶囊 */
 .nav-spacer {
   width: 180rpx;
+  flex-shrink: 0;
 }
 
 .scale-selector {
@@ -358,23 +332,23 @@ const goBack = () => uni.navigateBack()
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 12rpx;
+  gap: 16rpx;
 }
 
 .scale-btn {
-  padding: 8rpx 24rpx;
-  background: rgba(255,255,255,0.1);
-  border-radius: 24rpx;
-  border: 1px solid transparent;
+  padding: 6rpx 20rpx;
+  background: rgba(255,255,255,0.08);
+  border-radius: 20rpx;
+  border: 1px solid rgba(255,255,255,0.15);
 }
 
 .scale-btn.active {
-  background: rgba(102, 126, 234, 0.2);
+  background: rgba(102, 126, 234, 0.25);
   border-color: #667eea;
 }
 
 .scale-btn text {
-  font-size: 22rpx;
+  font-size: 20rpx;
   color: #fff;
 }
 
