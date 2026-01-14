@@ -112,14 +112,32 @@
           </view>
         </view>
       </view>
+      <!-- 登录弹窗 -->
+      <view v-if="showLoginModal" class="login-modal-overlay animate-fade-in">
+        <view class="login-modal glass animate-slide-up">
+          <view class="login-icon-large">
+             <svg-icon name="user" size="80rpx" color="var(--divine-gold)" />
+          </view>
+          <text class="login-title">欢迎回来</text>
+          <text class="login-desc">登录以同步您的练习记录和数据</text>
+          
+          <button class="login-btn-wechat" @click="handleLogin">
+            <svg-icon name="wechat" size="40rpx" color="#fff" />
+            <text>微信一键登录</text>
+          </button>
+          
+          <text class="login-skip" @click="closeLoginModal">暂不登录</text>
+        </view>
+      </view>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed } from 'vue'
-import { onShareAppMessage, onShareTimeline } from '@dcloudio/uni-app'
+import { ref, reactive, computed, onMounted } from 'vue'
+import { onShareAppMessage, onShow } from '@dcloudio/uni-app'
 import SvgIcon from '@/components/SvgIcon.vue'
+import UserService from '@/utils/user-service'
 
 // 分享给好友
 onShareAppMessage(() => ({
@@ -128,15 +146,10 @@ onShareAppMessage(() => ({
   imageUrl: '/static/share-cover.png'
 }))
 
-// 分享到朋友圈
-onShareTimeline(() => ({
-  title: '🎵 视唱练耳助手 - 提升你的音乐听力',
-  query: '',
-  imageUrl: '/static/share-cover.png'
-}))
-
 // 状态栏高度
-const statusBarHeight = ref(0)
+const statusBarHeight = ref(20)
+const showLoginModal = ref(false)
+
 const currentDate = computed(() => {
   const date = new Date()
   return `${date.getMonth() + 1}月${date.getDate()}日`
@@ -153,10 +166,40 @@ onMounted(() => {
   // 获取状态栏高度
   const windowInfo = uni.getWindowInfo()
   statusBarHeight.value = windowInfo.statusBarHeight || 20
-  
+})
+
+onShow(() => {
   // 加载统计数据
   loadStats()
+  
+  // 检查登录状态
+  checkLoginStatus()
 })
+
+const checkLoginStatus = () => {
+  UserService.init()
+  if (!UserService.isLoggedIn()) {
+    // 稍微延迟显示，让页面先渲染
+    setTimeout(() => {
+      showLoginModal.value = true
+    }, 500)
+  }
+}
+
+const handleLogin = async () => {
+  try {
+    await UserService.login()
+    uni.showToast({ title: '登录成功', icon: 'success' })
+    showLoginModal.value = false
+  } catch (err) {
+    console.error('登录失败', err)
+    uni.showToast({ title: '登录失败', icon: 'none' })
+  }
+}
+
+const closeLoginModal = () => {
+  showLoginModal.value = false
+}
 
 // 加载统计数据
 const loadStats = () => {
@@ -466,5 +509,102 @@ const startRecording = () => {
   width: 2rpx;
   height: 50rpx;
   background: var(--glass-border);
+}/* 登录弹窗样式 */
+.login-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 999;
+  display: flex;
+  align-items: flex-end; /* 底部弹出 */
+  padding-bottom: 80rpx; /* 距离底部一点距离 */
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+
+.login-modal {
+  width: 680rpx;
+  background: var(--bg-main);
+  border-radius: 40rpx;
+  padding: 60rpx 40rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  box-shadow: 0 20rpx 50rpx rgba(0,0,0,0.5);
+  border: 1px solid var(--divine-gold-alpha);
+}
+
+.login-icon-large {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 40rpx;
+  border: 2rpx solid var(--divine-gold);
+  box-shadow: 0 0 30rpx rgba(212, 175, 55, 0.2);
+}
+
+.login-title {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 16rpx;
+}
+
+.login-desc {
+  font-size: 28rpx;
+  color: var(--text-muted);
+  text-align: center;
+  margin-bottom: 60rpx;
+  max-width: 80%;
+}
+
+.login-btn-wechat {
+  width: 100%;
+  height: 96rpx;
+  background: #07c160;
+  border-radius: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16rpx;
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: 600;
+  margin-bottom: 32rpx;
+  box-shadow: 0 8rpx 20rpx rgba(7, 193, 96, 0.3);
+}
+
+.login-btn-wechat:active {
+  transform: scale(0.98);
+}
+
+.login-skip {
+  font-size: 28rpx;
+  color: var(--text-muted);
+  padding: 20rpx;
+}
+
+/* 动画 */
+.animate-slide-up {
+  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(100rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

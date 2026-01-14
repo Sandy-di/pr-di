@@ -10,6 +10,55 @@
     
     <!-- 设置内容 -->
     <scroll-view class="content" scroll-y>
+      <!-- 用户信息卡片 -->
+      <view class="user-card glass animate-fade-in">
+        <!-- 未登录状态 -->
+        <view v-if="!userInfo" class="login-prompt">
+          <view class="login-icon-box">
+            <svg-icon name="user" size="64rpx" color="var(--divine-gold)" />
+          </view>
+          <text class="login-text">登录后可同步练习记录</text>
+          <view class="login-btn" @click="handleLogin">
+            <svg-icon name="wechat" size="32rpx" color="#fff" />
+            <text>微信一键登录</text>
+          </view>
+        </view>
+        
+        <!-- 已登录状态 -->
+        <view v-else class="user-info">
+          <image class="user-avatar" :src="userInfo.avatarUrl" mode="aspectFill" />
+          <view class="user-details">
+            <view class="user-name-row">
+              <text class="user-name">{{ displayName }}</text>
+              <view class="edit-btn" @click="showEditName">
+                <svg-icon name="edit" size="24rpx" color="var(--divine-gold)" />
+              </view>
+            </view>
+            <text class="user-status">已登录</text>
+          </view>
+          <view class="logout-btn" @click="handleLogout">
+            <text>退出</text>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 编辑用户名弹窗 -->
+      <view v-if="showNameModal" class="modal-overlay" @click="showNameModal = false">
+        <view class="modal-content glass" @click.stop>
+          <text class="modal-title">修改用户名</text>
+          <input 
+            class="name-input" 
+            v-model="newName" 
+            placeholder="请输入新用户名"
+            maxlength="20"
+          />
+          <view class="modal-actions">
+            <view class="modal-btn cancel" @click="showNameModal = false">取消</view>
+            <view class="modal-btn confirm" @click="saveName">确定</view>
+          </view>
+        </view>
+      </view>
+
       <!-- 音频设置 -->
       <view class="setting-group glass animate-fade-in">
         <view class="group-header">
@@ -123,9 +172,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { onShareAppMessage } from '@dcloudio/uni-app'
 import SvgIcon from '@/components/SvgIcon.vue'
+import UserService, { type UserInfo } from '@/utils/user-service'
 
 // 分享
 onShareAppMessage(() => ({
@@ -134,6 +184,11 @@ onShareAppMessage(() => ({
 }))
 
 const statusBarHeight = ref(20)
+const userInfo = ref<UserInfo | null>(null)
+const showNameModal = ref(false)
+const newName = ref('')
+
+const displayName = computed(() => UserService.getDisplayName())
 
 const settings = reactive({
   pianoVolume: 80,
@@ -146,7 +201,53 @@ onMounted(() => {
   const windowInfo = uni.getWindowInfo()
   statusBarHeight.value = windowInfo.statusBarHeight || 20
   loadSettings()
+  
+  // 初始化用户服务
+  UserService.init()
+  userInfo.value = UserService.getUserInfo()
 })
+
+// 微信登录
+const handleLogin = async () => {
+  try {
+    const info = await UserService.login()
+    userInfo.value = info
+    uni.showToast({ title: '登录成功', icon: 'success' })
+  } catch (err) {
+    console.error('登录失败:', err)
+    uni.showToast({ title: '登录失败', icon: 'none' })
+  }
+}
+
+// 登出
+const handleLogout = () => {
+  uni.showModal({
+    title: '确认退出',
+    content: '退出登录后不会清除本地数据',
+    success: (res) => {
+      if (res.confirm) {
+        UserService.logout()
+        userInfo.value = null
+        uni.showToast({ title: '已退出', icon: 'success' })
+      }
+    }
+  })
+}
+
+// 显示编辑名称弹窗
+const showEditName = () => {
+  newName.value = UserService.getDisplayName()
+  showNameModal.value = true
+}
+
+// 保存用户名
+const saveName = () => {
+  if (newName.value.trim()) {
+    UserService.updateNickName(newName.value)
+    showNameModal.value = false
+    uni.showToast({ title: '已保存', icon: 'success' })
+  }
+}
 
 const loadSettings = () => {
   const saved = uni.getStorageSync('appSettings')
@@ -299,6 +400,190 @@ const resetAll = () => {
   border-radius: var(--radius-lg);
   margin-bottom: 32rpx;
   overflow: hidden;
+}
+
+/* 用户信息卡片 */
+.user-card {
+  padding: 40rpx;
+  border-radius: var(--radius-lg);
+  margin-bottom: 32rpx;
+  min-height: 180rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.login-icon-box {
+  width: 120rpx;
+  height: 120rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(212, 175, 55, 0.1);
+  border-radius: 50%;
+  margin-bottom: 24rpx;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.login-text {
+  font-size: 28rpx;
+  color: var(--text-secondary);
+  margin-bottom: 32rpx;
+}
+
+.login-btn {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  background: #07c160;
+  padding: 20rpx 48rpx;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 8rpx 20rpx rgba(7, 193, 96, 0.3);
+  transition: transform 0.2s;
+}
+
+.login-btn:active {
+  transform: scale(0.95);
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 32rpx;
+}
+
+.user-avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  border: 4rpx solid var(--divine-gold);
+  background: var(--bg-card);
+}
+
+.user-details {
+  flex: 1;
+}
+
+.user-name-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 8rpx;
+}
+
+.user-name {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.edit-btn {
+  padding: 8rpx;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8rpx;
+}
+
+.user-status {
+  font-size: 24rpx;
+  color: var(--divine-gold);
+  background: rgba(212, 175, 55, 0.1);
+  padding: 4rpx 12rpx;
+  border-radius: 8rpx;
+  display: inline-block;
+}
+
+.logout-btn {
+  padding: 16rpx 32rpx;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 32rpx;
+  font-size: 26rpx;
+  color: var(--text-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 弹窗样式 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  width: 600rpx;
+  background: var(--bg-main);
+  border-radius: 32rpx;
+  padding: 48rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.modal-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 40rpx;
+}
+
+.name-input {
+  width: 100%;
+  height: 88rpx;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16rpx;
+  padding: 0 24rpx;
+  color: #fff;
+  font-size: 32rpx;
+  margin-bottom: 48rpx;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 32rpx;
+  width: 100%;
+}
+
+.modal-btn {
+  flex: 1;
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 44rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+}
+
+.modal-btn.cancel {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+}
+
+.modal-btn.confirm {
+  background: var(--gold-gradient);
+  color: var(--divine-blue);
+  box-shadow: var(--shadow-gold);
 }
 
 .group-header {
