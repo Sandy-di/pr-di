@@ -167,39 +167,115 @@ class AudioManager {
   }
   
   /**
-   * 使用合成器播放
+   * 使用高级合成器播放 - 模拟真实钢琴音色
+   * 使用多个谐波叠加 + 精细的 ADSR 包络
    */
   private playSynthNote(midi: number, velocity: number, duration: number): any {
     const frequency = this.midiToFrequency(midi)
+    const now = this.audioContext.currentTime
     
-    // 创建振荡器
-    const oscillator = this.audioContext.createOscillator()
-    const gainNode = this.audioContext.createGain()
+    // 主输出增益节点
+    const masterGain = this.audioContext.createGain()
+    masterGain.connect(this.gainNode)
     
-    // 使用多个谐波模拟钢琴音色
-    oscillator.type = 'triangle'
-    oscillator.frequency.value = frequency
+    // 谐波配置 - 模拟钢琴泛音
+    const harmonics = [
+      { ratio: 1, gain: 1.0 },      // 基频
+      { ratio: 2, gain: 0.5 },      // 第2谐波
+      { ratio: 3, gain: 0.25 },     // 第3谐波
+      { ratio: 4, gain: 0.15 },     // 第4谐波
+      { ratio: 5, gain: 0.08 },     // 第5谐波
+      { ratio: 6, gain: 0.04 },     // 第6谐波
+    ]
     
-    // 力度控制
-    gainNode.gain.value = 0
+    const oscillators: any[] = []
+    const gains: any[] = []
     
-    // 连接节点
-    oscillator.connect(gainNode)
-    gainNode.connect(this.gainNode)
+    // 为每个谐波创建振荡器
+    for (const harmonic of harmonics) {
+      const osc = this.audioContext.createOscillator()
+      const gain = this.audioContext.createGain()
+      
+      // 使用正弦波叠加（比三角波更柔和）
+      osc.type = 'sine'
+      osc.frequency.value = frequency * harmonic.ratio
+      
+      // 高频谐波衰减更快（模拟钢琴特性）
+      const harmonicDecay = 1 / (harmonic.ratio * 0.5)
+      
+      gain.gain.value = 0
+      
+      osc.connect(gain)
+      gain.connect(masterGain)
+      
+      oscillators.push(osc)
+      gains.push({ node: gain, baseGain: harmonic.gain, decay: harmonicDecay })
+    }
     
-    // 应用 ADSR 包络
-    this.applyEnvelope(gainNode, velocity, duration)
+    // 应用精细的 ADSR 包络到每个谐波
+    const maxGain = velocity * this.masterVolume * 0.3 // 降低总音量避免失真
+    const attack = 0.005  // 极短的起音（钢琴击弦特性）
+    const decay = 0.15    // 快速衰减到持续音
+    const sustain = 0.4   // 持续音量比例
+    const release = 0.3   // 释放时间
     
-    oscillator.start()
+    for (const g of gains) {
+      const gainValue = maxGain * g.baseGain
+      
+      // Attack
+      g.node.gain.setValueAtTime(0.001, now)
+      g.node.gain.exponentialRampToValueAtTime(gainValue, now + attack)
+      
+      // Decay to Sustain
+      g.node.gain.exponentialRampToValueAtTime(gainValue * sustain, now + attack + decay * g.decay)
+      
+      // Release
+      if (duration > 0) {
+        const releaseStart = now + duration
+        g.node.gain.setValueAtTime(gainValue * sustain, releaseStart)
+        g.node.gain.exponentialRampToValueAtTime(0.001, releaseStart + release)
+      }
+    }
+    
+    // 添加轻微的击弦噪音（模拟琴槌击弦）
+    const noiseGain = this.audioContext.createGain()
+    const noiseOsc = this.audioContext.createOscillator()
+    noiseOsc.type = 'triangle'
+    noiseOsc.frequency.value = frequency * 8 // 高频噪音
+    noiseGain.gain.value = 0.001
+    noiseGain.gain.setValueAtTime(maxGain * 0.1, now)
+    noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.03) // 快速衰减
+    noiseOsc.connect(noiseGain)
+    noiseGain.connect(masterGain)
+    
+    // 启动所有振荡器
+    for (const osc of oscillators) {
+      osc.start(now)
+    }
+    noiseOsc.start(now)
     
     // 自动停止
     if (duration > 0) {
+      const stopTime = (duration + release + 0.1) * 1000
       setTimeout(() => {
-        oscillator.stop()
-      }, (duration + 0.5) * 1000)
+        try {
+          for (const osc of oscillators) {
+            osc.stop()
+          }
+          noiseOsc.stop()
+        } catch (e) {
+          // 忽略已停止的错误
+        }
+      }, stopTime)
     }
     
-    return { oscillator, gainNode }
+    return { 
+      oscillators, 
+      gains: gains.map(g => g.node), 
+      masterGain,
+      noiseOsc,
+      noiseGain
+    }
   }
   
   /**
@@ -234,23 +310,54 @@ class AudioManager {
    * 释放音符（用于按键抬起时）
    */
   releaseNote(noteHandle: any): void {
-    if (!noteHandle) return
+    if (!noteHandle || !this.audioContext) return
     
-    const { gainNode, oscillator, source } = noteHandle
-    
-    if (!this.audioContext) return
     const now = this.audioContext.currentTime
+    const releaseTime = 0.15 // 快速释放
     
-    // 使用指数衰减淡出，避免爆破噪音
-    if (gainNode) {
-      gainNode.gain.cancelScheduledValues(now)
-      // 先设置当前值，再平滑过渡到0
-      gainNode.gain.setValueAtTime(gainNode.gain.value, now)
-      gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.2)
-      gainNode.gain.setValueAtTime(0, now + 0.21)
+    // 处理多振荡器结构（新合成器）
+    if (noteHandle.gains && Array.isArray(noteHandle.gains)) {
+      for (const gain of noteHandle.gains) {
+        if (gain && gain.gain) {
+          gain.gain.cancelScheduledValues(now)
+          gain.gain.setValueAtTime(gain.gain.value || 0.001, now)
+          gain.gain.exponentialRampToValueAtTime(0.001, now + releaseTime)
+        }
+      }
+      
+      // 也处理 masterGain
+      if (noteHandle.masterGain && noteHandle.masterGain.gain) {
+        noteHandle.masterGain.gain.cancelScheduledValues(now)
+        noteHandle.masterGain.gain.setValueAtTime(noteHandle.masterGain.gain.value || 1, now)
+        noteHandle.masterGain.gain.exponentialRampToValueAtTime(0.001, now + releaseTime)
+      }
+      
+      // 延迟停止所有振荡器
+      setTimeout(() => {
+        try {
+          if (noteHandle.oscillators) {
+            for (const osc of noteHandle.oscillators) {
+              osc.stop()
+            }
+          }
+          if (noteHandle.noiseOsc) noteHandle.noiseOsc.stop()
+        } catch (e) {
+          // 忽略已停止的错误
+        }
+      }, (releaseTime + 0.05) * 1000)
+      
+      return
     }
     
-    // 延迟停止振荡器/源，确保淡出完成
+    // 处理旧结构（单振荡器或采样）
+    const { gainNode, oscillator, source } = noteHandle
+    
+    if (gainNode && gainNode.gain) {
+      gainNode.gain.cancelScheduledValues(now)
+      gainNode.gain.setValueAtTime(gainNode.gain.value || 0.001, now)
+      gainNode.gain.exponentialRampToValueAtTime(0.001, now + releaseTime)
+    }
+    
     setTimeout(() => {
       try {
         if (oscillator) oscillator.stop()
@@ -258,7 +365,7 @@ class AudioManager {
       } catch (e) {
         // 忽略已停止的错误
       }
-    }, 250)
+    }, (releaseTime + 0.05) * 1000)
   }
   
   /**
