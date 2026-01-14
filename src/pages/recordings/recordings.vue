@@ -392,7 +392,7 @@ const formatDate = (isoString: string): string => {
   background: var(--primary-gradient);
   border-radius: 100rpx;
   overflow: hidden;
-  box-shadow: 0 8rpx 24rpx rgba(102, 126, 234, 0.3);
+  box-shadow: 0 8rpx 24rpx rgba(212, 175, 55, 0.3);
 }
 
 .empty-btn-content {

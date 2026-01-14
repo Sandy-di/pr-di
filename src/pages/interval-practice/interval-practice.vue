@@ -237,7 +237,7 @@ const goBack = () => {
 <style scoped>
 .practice-page {
   min-height: 100vh;
-  background: linear-gradient(180deg, #0f0f1a 0%, #1a1a2e 100%);
+  background: var(--divine-gradient);
 }
 
 .navbar {
@@ -245,7 +245,7 @@ const goBack = () => {
   align-items: center;
   justify-content: space-between;
   padding: 16rpx 32rpx;
-  background: #1a1a2e;
+  background: var(--bg-dark);
 }
 
 .nav-back {
@@ -268,7 +268,7 @@ const goBack = () => {
 
 .nav-progress {
   font-size: 28rpx;
-  color: #667eea;
+  color: var(--divine-gold);
   font-weight: 600;
 }
 
@@ -291,9 +291,9 @@ const goBack = () => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gold-gradient);
   border-radius: 50%;
-  box-shadow: 0 8rpx 30rpx rgba(102, 126, 234, 0.4);
+  box-shadow: var(--shadow-gold);
 }
 
 .play-btn.playing {
@@ -334,8 +334,8 @@ const goBack = () => {
   align-items: center;
   justify-content: center;
   padding: 32rpx 16rpx;
-  background: #1a1a2e;
-  border: 2rpx solid rgba(255,255,255,0.1);
+  background: var(--bg-card);
+  border: 1px solid rgba(212, 175, 55, 0.15);
   border-radius: 16rpx;
   transition: all 0.2s;
 }
@@ -345,8 +345,8 @@ const goBack = () => {
 }
 
 .option-btn.selected {
-  border-color: #667eea;
-  background: rgba(102, 126, 234, 0.2);
+  border-color: var(--divine-gold);
+  background: rgba(212, 175, 55, 0.15);
 }
 
 .option-btn.correct {
@@ -393,13 +393,14 @@ const goBack = () => {
   align-items: center;
   justify-content: center;
   padding: 32rpx;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gold-gradient);
   border-radius: 16rpx;
+  box-shadow: var(--shadow-gold);
 }
 
 .next-btn text {
   font-size: 32rpx;
-  color: #fff;
+  color: var(--divine-blue);
   font-weight: 600;
 }
 
@@ -414,10 +415,11 @@ const goBack = () => {
 
 .result-card {
   width: 100%;
-  background: #1a1a2e;
+  background: var(--bg-card);
   border-radius: 32rpx;
   padding: 60rpx 40rpx;
   text-align: center;
+  box-shadow: var(--shadow-md);
 }
 
 .result-title {
@@ -443,7 +445,7 @@ const goBack = () => {
 .stat-value {
   font-size: 56rpx;
   font-weight: 700;
-  color: #667eea;
+  color: var(--divine-gold);
 }
 
 .stat-label {
@@ -470,6 +472,7 @@ const goBack = () => {
 }
 
 .action-btn.primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gold-gradient);
+  color: var(--divine-blue);
 }
 </style>

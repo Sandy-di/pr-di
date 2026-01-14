@@ -518,7 +518,7 @@ const formatTime = (ms: number) => { const s = Math.floor(ms / 1000); return `${
   right: 0;
   bottom: 0;
   border-radius: 0 0 12rpx 12rpx;
-  box-shadow: 0 0 30rpx var(--primary-color, #667eea);
+  box-shadow: 0 0 30rpx var(--primary-color, var(--divine-gold));
   opacity: 0;
   transition: opacity 0.1s;
   pointer-events: none;
@@ -625,7 +625,7 @@ const formatTime = (ms: number) => { const s = Math.floor(ms / 1000); return `${
   left: 0;
   right: 0;
   height: 40rpx;
-  background: linear-gradient(180deg, rgba(102, 126, 234, 0.3) 0%, transparent 100%);
+  background: linear-gradient(180deg, rgba(212, 175, 55, 0.3) 0%, transparent 100%);
   z-index: 100;
 }
 

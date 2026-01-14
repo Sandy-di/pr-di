@@ -106,7 +106,7 @@
           :min="60" 
           :max="180" 
           :step="10"
-          activeColor="#667eea"
+          activeColor="var(--divine-gold)"
           block-size="12"
           @change="onSpeedChange"
         />
@@ -288,7 +288,7 @@ const goBack = () => uni.navigateBack()
 .practice-page {
   width: 100vw;
   height: 100vh;
-  background: #0f0f1a;
+  background: var(--bg-dark);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -302,7 +302,7 @@ const goBack = () => uni.navigateBack()
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  background: #1a1a2e;
+  background: var(--bg-dark);
   padding: 6rpx 16rpx;
   padding-top: calc(6rpx + env(safe-area-inset-top));
   gap: 12rpx;
@@ -344,8 +344,8 @@ const goBack = () => uni.navigateBack()
 }
 
 .scale-btn.active {
-  background: rgba(102, 126, 234, 0.25);
-  border-color: #667eea;
+  background: rgba(212, 175, 55, 0.25);
+  border-color: var(--divine-gold);
 }
 
 .scale-btn text {
@@ -389,7 +389,7 @@ const goBack = () => uni.navigateBack()
 
 .white-key.pressed { background: linear-gradient(180deg, #ddd 0%, #ccc 100%); }
 .white-key.highlight { background: linear-gradient(180deg, #e8f0ff 0%, #d0e0ff 100%); }
-.white-key.current { background: linear-gradient(180deg, #667eea 0%, #764ba2 100%); }
+.white-key.current { background: linear-gradient(180deg, var(--divine-gold) 0%, var(--divine-gold-light) 100%); }
 
 .white-key .key-label {
   display: flex;
@@ -405,8 +405,8 @@ const goBack = () => uni.navigateBack()
   gap: 1rpx;
 }
 
-.white-key .dot { font-size: 16rpx; color: #667eea; line-height: 0.5; }
-.white-key .notation { font-size: 28rpx; font-weight: 700; color: #667eea; margin: 2rpx 0; }
+.white-key .dot { font-size: 16rpx; color: var(--divine-gold); line-height: 0.5; }
+.white-key .notation { font-size: 28rpx; font-weight: 700; color: var(--divine-gold); margin: 2rpx 0; }
 .white-key.current .notation { color: #fff; }
 
 .black-key {
@@ -425,7 +425,7 @@ const goBack = () => uni.navigateBack()
 
 .black-key.pressed { background: linear-gradient(180deg, #333 0%, #111 100%); }
 .black-key.highlight { background: linear-gradient(180deg, #5a6fd6 0%, #4a5bc6 100%); }
-.black-key.current { background: linear-gradient(180deg, #667eea 0%, #764ba2 100%); }
+.black-key.current { background: linear-gradient(180deg, var(--divine-gold) 0%, var(--divine-gold-light) 100%); }
 
 .black-key .key-label {
   display: flex;
@@ -474,7 +474,7 @@ const goBack = () => uni.navigateBack()
   gap: 16rpx;
   padding: 8rpx 24rpx;
   padding-bottom: calc(8rpx + env(safe-area-inset-bottom));
-  background: #1a1a2e;
+  background: var(--bg-dark);
 }
 
 .control-btn {
@@ -484,9 +484,9 @@ const goBack = () => uni.navigateBack()
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(102, 126, 234, 0.25);
+  background: rgba(212, 175, 55, 0.25);
   border-radius: 28rpx;
-  border: 1px solid rgba(102, 126, 234, 0.4);
+  border: 1px solid rgba(212, 175, 55, 0.4);
 }
 
 .btn-text { font-size: 24rpx; color: #fff; font-weight: 500; }
@@ -500,11 +500,11 @@ const goBack = () => uni.navigateBack()
   align-items: center;
   justify-content: center;
   gap: 8rpx;
-  background: rgba(102, 126, 234, 0.15);
+  background: rgba(212, 175, 55, 0.15);
   border-radius: 28rpx;
   padding: 0 16rpx;
 }
 
-.speed-value { font-size: 22rpx; color: #667eea; font-weight: 600; }
+.speed-value { font-size: 22rpx; color: var(--divine-gold); font-weight: 600; }
 .speed-slider { flex: 1; margin: 0; }
 </style>

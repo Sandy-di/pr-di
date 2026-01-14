@@ -255,7 +255,7 @@ const goBack = () => uni.navigateBack()
 <style scoped>
 .practice-page {
   min-height: 100vh;
-  background: linear-gradient(180deg, #0f0f1a 0%, #1a1a2e 100%);
+  background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-dark) 100%);
 }
 
 .navbar {
@@ -263,7 +263,7 @@ const goBack = () => uni.navigateBack()
   align-items: center;
   justify-content: space-between;
   padding: 16rpx 32rpx;
-  background: #1a1a2e;
+  background: var(--bg-dark);
 }
 
 .nav-back {
@@ -286,7 +286,7 @@ const goBack = () => uni.navigateBack()
 
 .nav-progress {
   font-size: 28rpx;
-  color: #667eea;
+  color: var(--divine-gold);
   font-weight: 600;
 }
 
@@ -309,9 +309,9 @@ const goBack = () => uni.navigateBack()
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--divine-gold) 0%, var(--divine-gold-light) 100%);
   border-radius: 50%;
-  box-shadow: 0 8rpx 30rpx rgba(102, 126, 234, 0.4);
+  box-shadow: 0 8rpx 30rpx rgba(212, 175, 55, 0.4);
   margin-bottom: 24rpx;
 }
 
@@ -348,8 +348,8 @@ const goBack = () => uni.navigateBack()
 }
 
 .mode-btn.active {
-  background: rgba(102, 126, 234, 0.3);
-  border-color: #667eea;
+  background: rgba(212, 175, 55, 0.3);
+  border-color: var(--divine-gold);
 }
 
 .mode-btn text {
@@ -376,7 +376,7 @@ const goBack = () => uni.navigateBack()
   align-items: center;
   justify-content: center;
   padding: 28rpx 16rpx;
-  background: #1a1a2e;
+  background: var(--bg-dark);
   border: 2rpx solid rgba(255,255,255,0.1);
   border-radius: 16rpx;
   transition: all 0.2s;
@@ -387,8 +387,8 @@ const goBack = () => uni.navigateBack()
 }
 
 .option-btn.selected {
-  border-color: #667eea;
-  background: rgba(102, 126, 234, 0.2);
+  border-color: var(--divine-gold);
+  background: rgba(212, 175, 55, 0.2);
 }
 
 .option-btn.correct {
@@ -447,7 +447,7 @@ const goBack = () => uni.navigateBack()
   align-items: center;
   justify-content: center;
   padding: 32rpx;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--divine-gold) 0%, var(--divine-gold-light) 100%);
   border-radius: 16rpx;
 }
 
@@ -468,7 +468,7 @@ const goBack = () => uni.navigateBack()
 
 .result-card {
   width: 100%;
-  background: #1a1a2e;
+  background: var(--bg-dark);
   border-radius: 32rpx;
   padding: 60rpx 40rpx;
   text-align: center;
@@ -497,7 +497,7 @@ const goBack = () => uni.navigateBack()
 .stat-value {
   font-size: 56rpx;
   font-weight: 700;
-  color: #667eea;
+  color: var(--divine-gold);
 }
 
 .stat-label {
@@ -524,6 +524,6 @@ const goBack = () => uni.navigateBack()
 }
 
 .action-btn.primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--divine-gold) 0%, var(--divine-gold-light) 100%);
 }
 </style>
