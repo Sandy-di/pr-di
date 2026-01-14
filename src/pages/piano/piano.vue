@@ -367,34 +367,50 @@ const formatTime = (ms: number) => { const s = Math.floor(ms / 1000); return `${
   gap: 12rpx;
 }
 
-/* 统一胶囊按钮样式 */
+/* 统一胶囊按钮样式 - 全部正方形 52x52 */
 .capsule-btn {
+  width: 52rpx;
   height: 52rpx;
-  padding: 0 20rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8rpx;
   background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
   border-radius: 26rpx;
   border: 1px solid rgba(255,255,255,0.15);
-  backdrop-filter: blur(10px);
 }
 
+/* 返回按钮 */
 .back-btn {
-  width: 52rpx;
-  padding: 0;
+  /* 继承基础样式 */
+}
+
+/* 录音按钮 - 可以稍宽一点显示文字 */
+.record-btn {
+  width: auto;
+  min-width: 52rpx;
+  padding: 0 16rpx;
+  gap: 6rpx;
 }
 
 .record-btn.recording {
   background: linear-gradient(135deg, rgba(239, 68, 68, 0.3), rgba(239, 68, 68, 0.15));
   border-color: rgba(239, 68, 68, 0.5);
-  box-shadow: 0 0 12rpx rgba(239, 68, 68, 0.3);
 }
 
+/* 分享按钮 */
 .share-btn {
   background: linear-gradient(135deg, rgba(34, 197, 94, 0.25), rgba(34, 197, 94, 0.1));
   border-color: rgba(34, 197, 94, 0.4);
+}
+
+/* 节拍器按钮 */
+.metronome-btn {
+  /* 继承基础样式 */
+}
+
+.metronome-btn.active {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.3), rgba(34, 197, 94, 0.15));
+  border-color: rgba(34, 197, 94, 0.5);
 }
 
 .btn-text {
@@ -409,23 +425,6 @@ const formatTime = (ms: number) => { const s = Math.floor(ms / 1000); return `${
   display: flex;
   align-items: center;
   gap: 12rpx;
-}
-
-.metronome-btn {
-  width: 52rpx;
-  height: 52rpx;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
-  border-radius: 26rpx;
-  border: 1px solid rgba(255,255,255,0.15);
-}
-
-.metronome-btn.active {
-  background: linear-gradient(135deg, rgba(34, 197, 94, 0.3), rgba(34, 197, 94, 0.15));
-  border-color: rgba(34, 197, 94, 0.5);
 }
 
 .tempo-text {
