@@ -188,7 +188,10 @@ const userInfo = ref<UserInfo | null>(null)
 const showNameModal = ref(false)
 const newName = ref('')
 
-const displayName = computed(() => UserService.getDisplayName())
+const displayName = computed(() => {
+  if (!userInfo.value) return '未登录'
+  return userInfo.value.customName || userInfo.value.nickName || '微信用户'
+})
 
 const settings = reactive({
   pianoVolume: 80,
@@ -243,9 +246,13 @@ const showEditName = () => {
 // 保存用户名
 const saveName = () => {
   if (newName.value.trim()) {
-    UserService.updateNickName(newName.value)
-    showNameModal.value = false
-    uni.showToast({ title: '已保存', icon: 'success' })
+    const success = UserService.updateNickName(newName.value)
+    if (success) {
+      // 强制刷新用户信息以触发界面更新
+      userInfo.value = { ...UserService.getUserInfo()! }
+      showNameModal.value = false
+      uni.showToast({ title: '已保存', icon: 'success' })
+    }
   }
 }
 
@@ -489,9 +496,14 @@ const resetAll = () => {
 }
 
 .edit-btn {
-  padding: 8rpx;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 8rpx;
+  padding: 12rpx;
+  background: rgba(212, 175, 55, 0.1);
+  border-radius: 50%;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8rpx;
 }
 
 .user-status {

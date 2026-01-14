@@ -138,7 +138,9 @@ onUnmounted(() => {
 })
 
 const loadRecordings = () => {
-  recordings.value = RecorderService.getRecordings()
+  const allRecordings = RecorderService.getRecordings()
+  // 过滤掉无效的录音（duration 为 NaN 或 0）
+  recordings.value = allRecordings.filter(r => r.duration && r.duration > 0 && !isNaN(r.duration))
 }
 
 const playRecording = (recording: Recording) => {
