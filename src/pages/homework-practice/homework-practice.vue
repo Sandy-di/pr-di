@@ -1,16 +1,17 @@
 <template>
   <view class="practice-page">
-    <!-- 顶部控制栏 15% -->
-    <view class="top-bar" :style="{ paddingTop: statusBarHeight + 'px' }">
-      <view class="top-controls">
+    <!-- 顶部控制栏 -->
+    <view class="top-bar">
+      <view class="top-left">
         <!-- 返回按钮 -->
         <view class="control-btn back-btn" @click="goBack">
           <text>←</text>
         </view>
-        
         <!-- 作业标题 -->
-        <text class="homework-title">{{ homework?.title || '加载中...' }}</text>
-        
+        <text class="homework-title">{{ homework?.title || '' }}</text>
+      </view>
+      
+      <view class="top-right">
         <!-- 录音按钮 -->
         <view 
           class="control-btn record-btn" 
@@ -28,7 +29,7 @@
           </view>
           <view class="speed-selector">
             <view 
-              v-for="speed in playbackSpeeds" 
+              v-for="speed in [0.5, 1, 1.5]" 
               :key="speed"
               class="speed-btn"
               :class="{ active: currentSpeed === speed }"
@@ -305,51 +306,56 @@ const onKeyRelease = (midi: number) => {
   overflow: hidden;
 }
 
-/* 顶部控制栏 15% */
+/* 顶部控制栏 */
 .top-bar {
-  height: 15%;
-  min-height: 80rpx;
-  background: linear-gradient(180deg, var(--divine-blue) 0%, var(--bg-dark) 100%);
-  display: flex;
-  align-items: flex-end;
-  padding-bottom: 16rpx;
-}
-
-.top-controls {
-  width: 100%;
+  height: 100rpx;
+  background: var(--bg-dark);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 24rpx;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  flex-shrink: 0;
+}
+
+.top-left {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.top-right {
+  display: flex;
+  align-items: center;
   gap: 16rpx;
 }
 
 .control-btn {
-  height: 64rpx;
-  padding: 0 24rpx;
+  height: 56rpx;
+  padding: 0 20rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8rpx;
   background: rgba(255,255,255,0.1);
-  border-radius: 32rpx;
-  font-size: 26rpx;
+  border-radius: 28rpx;
+  font-size: 24rpx;
   color: #fff;
   border: 1px solid rgba(255,255,255,0.15);
+  flex-shrink: 0;
 }
 
 .back-btn {
-  width: 64rpx;
+  width: 56rpx;
   padding: 0;
-  font-size: 32rpx;
+  font-size: 28rpx;
 }
 
 .homework-title {
-  flex: 1;
-  font-size: 32rpx;
+  font-size: 28rpx;
   font-weight: 600;
   color: #fff;
-  text-align: center;
+  white-space: nowrap;
 }
 
 .record-btn {
@@ -408,12 +414,11 @@ const onKeyRelease = (midi: number) => {
   font-weight: 600;
 }
 
-/* 看谱区 40% */
+/* 看谱区 */
 .sheet-area {
-  height: 40%;
-  background: rgba(255,255,255,0.03);
-  border-top: 1px solid rgba(255,255,255,0.1);
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  flex: 4;
+  background: #fff;
+  overflow: hidden;
 }
 
 .sheet-scroll {
@@ -423,7 +428,8 @@ const onKeyRelease = (midi: number) => {
 
 .sheet-image {
   width: 100%;
-  min-height: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .sheet-placeholder {
@@ -433,6 +439,7 @@ const onKeyRelease = (midi: number) => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  background: rgba(255,255,255,0.03);
 }
 
 .placeholder-icon {
@@ -445,9 +452,9 @@ const onKeyRelease = (midi: number) => {
   color: var(--text-muted);
 }
 
-/* 钢琴区 45% */
+/* 钢琴区 */
 .piano-area {
-  height: 45%;
+  flex: 5;
   background: linear-gradient(180deg, #1a1a2e 0%, #0f0f1a 100%);
   display: flex;
   align-items: flex-end;
