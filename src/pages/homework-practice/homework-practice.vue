@@ -29,7 +29,7 @@
           </view>
           <view class="speed-selector">
             <view 
-              v-for="speed in [0.5, 1, 1.5]" 
+              v-for="speed in [0.75, 1, 1.25]" 
               :key="speed"
               class="speed-btn"
               :class="{ active: currentSpeed === speed }"
@@ -54,8 +54,9 @@
           v-if="homework?.sheetImageUrl"
           class="sheet-image"
           :src="homework.sheetImageUrl"
-          mode="widthFix"
+          mode="aspectFit"
           @click="previewSheet"
+          @error="onImageError"
         />
         <view v-else class="sheet-placeholder">
           <text class="placeholder-icon">🎼</text>
@@ -281,6 +282,11 @@ const previewSheet = () => {
   }
 }
 
+// 图片加载失败
+const onImageError = (e: any) => {
+  console.error('乐谱加载失败:', e)
+}
+
 // 钢琴按键
 const onKeyPress = (midi: number) => {
   pressedKeys.add(midi)
@@ -306,14 +312,15 @@ const onKeyRelease = (midi: number) => {
   overflow: hidden;
 }
 
-/* 顶部控制栏 */
+/* 顶部控制栏 15% */
 .top-bar {
-  height: 100rpx;
+  height: 15vh;
+  max-height: 80rpx;
   background: var(--bg-dark);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 24rpx;
+  padding: 0 16rpx;
   border-bottom: 1px solid rgba(255,255,255,0.1);
   flex-shrink: 0;
 }
@@ -331,28 +338,28 @@ const onKeyRelease = (midi: number) => {
 }
 
 .control-btn {
-  height: 56rpx;
-  padding: 0 20rpx;
+  height: 48rpx;
+  padding: 0 16rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8rpx;
+  gap: 6rpx;
   background: rgba(255,255,255,0.1);
-  border-radius: 28rpx;
-  font-size: 24rpx;
+  border-radius: 24rpx;
+  font-size: 22rpx;
   color: #fff;
   border: 1px solid rgba(255,255,255,0.15);
   flex-shrink: 0;
 }
 
 .back-btn {
-  width: 56rpx;
+  width: 48rpx;
   padding: 0;
-  font-size: 28rpx;
+  font-size: 24rpx;
 }
 
 .homework-title {
-  font-size: 28rpx;
+  font-size: 24rpx;
   font-weight: 600;
   color: #fff;
   white-space: nowrap;
