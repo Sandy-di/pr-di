@@ -315,12 +315,12 @@ const onKeyRelease = (midi: number) => {
 /* 顶部控制栏 15% */
 .top-bar {
   height: 15vh;
-  max-height: 80rpx;
+  max-height: 60rpx;
   background: var(--bg-dark);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 16rpx;
+  padding: 0 12rpx;
   border-bottom: 1px solid rgba(255,255,255,0.1);
   flex-shrink: 0;
 }
@@ -328,45 +328,45 @@ const onKeyRelease = (midi: number) => {
 .top-left {
   display: flex;
   align-items: center;
-  gap: 16rpx;
+  gap: 8rpx;
 }
 
 .top-right {
   display: flex;
   align-items: center;
-  gap: 16rpx;
+  gap: 8rpx;
 }
 
 .control-btn {
-  height: 48rpx;
-  padding: 0 16rpx;
+  height: 32rpx;
+  padding: 0 10rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6rpx;
+  gap: 4rpx;
   background: rgba(255,255,255,0.1);
-  border-radius: 24rpx;
-  font-size: 22rpx;
+  border-radius: 16rpx;
+  font-size: 16rpx;
   color: #fff;
   border: 1px solid rgba(255,255,255,0.15);
   flex-shrink: 0;
 }
 
 .back-btn {
-  width: 48rpx;
+  width: 32rpx;
   padding: 0;
-  font-size: 24rpx;
+  font-size: 18rpx;
 }
 
 .homework-title {
-  font-size: 24rpx;
+  font-size: 18rpx;
   font-weight: 600;
   color: #fff;
   white-space: nowrap;
 }
 
 .record-btn {
-  min-width: 120rpx;
+  min-width: 70rpx;
 }
 
 .record-btn.recording {
@@ -375,8 +375,8 @@ const onKeyRelease = (midi: number) => {
 }
 
 .record-dot {
-  width: 16rpx;
-  height: 16rpx;
+  width: 10rpx;
+  height: 10rpx;
   border-radius: 50%;
   background: #ef4444;
 }
@@ -393,25 +393,25 @@ const onKeyRelease = (midi: number) => {
 .demo-player {
   display: flex;
   align-items: center;
-  gap: 12rpx;
+  gap: 6rpx;
 }
 
 .play-btn {
-  width: 64rpx;
+  width: 32rpx;
   padding: 0;
-  font-size: 28rpx;
+  font-size: 16rpx;
 }
 
 .speed-selector {
   display: flex;
   background: rgba(255,255,255,0.05);
-  border-radius: 16rpx;
+  border-radius: 10rpx;
   overflow: hidden;
 }
 
 .speed-btn {
-  padding: 8rpx 16rpx;
-  font-size: 22rpx;
+  padding: 4rpx 8rpx;
+  font-size: 14rpx;
   color: var(--text-muted);
 }
 
