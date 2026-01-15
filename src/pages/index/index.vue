@@ -53,6 +53,15 @@
           <text class="feature-desc">跟拍练习录音</text>
         </view>
         
+        <view class="feature-card glass glass-hover" @click="navigateTo('/pages/homework-list/homework-list')">
+          <view class="card-glow" style="background: var(--divine-gold);"></view>
+          <view class="feature-icon-box" style="background: rgba(212, 175, 55, 0.15); color: var(--divine-gold);">
+            <svg-icon name="music-note" size="48rpx" />
+          </view>
+          <text class="feature-title">作业练习</text>
+          <text class="feature-desc">看谱弹奏录音</text>
+        </view>
+        
         <view class="feature-card glass glass-hover" @click="navigateTo('/pages/recordings/recordings')">
           <view class="card-glow" style="background: var(--divine-gold);"></view>
           <view class="feature-icon-box" style="background: rgba(212, 175, 55, 0.15); color: var(--divine-gold);">

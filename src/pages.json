@@ -15,6 +15,21 @@
       }
     },
     {
+      "path": "pages/homework-list/homework-list",
+      "style": {
+        "navigationBarTitleText": "作业练习",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/homework-practice/homework-practice",
+      "style": {
+        "navigationBarTitleText": "作业练习",
+        "navigationStyle": "custom",
+        "pageOrientation": "landscape"
+      }
+    },
+    {
       "path": "pages/piano/piano",
       "style": {
         "navigationBarTitleText": "钢琴弹奏",
