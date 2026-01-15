@@ -2,41 +2,37 @@
   <view class="practice-page">
     <!-- 顶部控制栏 -->
     <view class="top-bar">
-      <view class="top-left">
-        <!-- 返回按钮 -->
-        <view class="control-btn back-btn" @click="goBack">
-          <text>←</text>
-        </view>
-        <!-- 作业标题 -->
-        <text class="homework-title">{{ homework?.title || '' }}</text>
+      <!-- 返回按钮 -->
+      <view class="control-btn back-btn" @click="goBack">
+        <text>←</text>
+      </view>
+      <!-- 作业标题 -->
+      <text class="homework-title">{{ homework?.title || '' }}</text>
+      
+      <!-- 录音按钮 -->
+      <view 
+        class="control-btn record-btn" 
+        :class="{ recording: isRecording }"
+        @click="toggleRecording"
+      >
+        <view class="record-dot" :class="{ pulse: isRecording }"></view>
+        <text>{{ isRecording ? formatTime(recordingDuration) : '录音' }}</text>
       </view>
       
-      <view class="top-right">
-        <!-- 录音按钮 -->
-        <view 
-          class="control-btn record-btn" 
-          :class="{ recording: isRecording }"
-          @click="toggleRecording"
-        >
-          <view class="record-dot" :class="{ pulse: isRecording }"></view>
-          <text>{{ isRecording ? formatTime(recordingDuration) : '录音' }}</text>
+      <!-- 示范音播放 -->
+      <view class="demo-player" v-if="homework?.demoAudioUrl">
+        <view class="control-btn play-btn" @click="toggleDemo">
+          <text>{{ isDemoPlaying ? '⏸' : '▶' }}</text>
         </view>
-        
-        <!-- 示范音播放 -->
-        <view class="demo-player" v-if="homework?.demoAudioUrl">
-          <view class="control-btn play-btn" @click="toggleDemo">
-            <text>{{ isDemoPlaying ? '⏸' : '▶' }}</text>
-          </view>
-          <view class="speed-selector">
-            <view 
-              v-for="speed in [0.75, 1, 1.25]" 
-              :key="speed"
-              class="speed-btn"
-              :class="{ active: currentSpeed === speed }"
-              @click="setSpeed(speed)"
-            >
-              <text>{{ speed }}x</text>
-            </view>
+        <view class="speed-selector">
+          <view 
+            v-for="speed in [0.75, 1, 1.25]" 
+            :key="speed"
+            class="speed-btn"
+            :class="{ active: currentSpeed === speed }"
+            @click="setSpeed(speed)"
+          >
+            <text>{{ speed }}x</text>
           </view>
         </view>
       </view>
@@ -319,22 +315,11 @@ const onKeyRelease = (midi: number) => {
   background: var(--bg-dark);
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   padding: 0 12rpx;
+  gap: 8rpx;
   border-bottom: 1px solid rgba(255,255,255,0.1);
   flex-shrink: 0;
-}
-
-.top-left {
-  display: flex;
-  align-items: center;
-  gap: 8rpx;
-}
-
-.top-right {
-  display: flex;
-  align-items: center;
-  gap: 8rpx;
 }
 
 .control-btn {
