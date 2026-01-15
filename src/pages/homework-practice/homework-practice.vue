@@ -38,27 +38,35 @@
       </view>
     </view>
 
-    <!-- 看谱区 40% -->
+    <!-- 看谱区 -->
     <view class="sheet-area">
-      <scroll-view 
-        class="sheet-scroll" 
-        scroll-x 
-        scroll-y
-        :enable-flex="true"
+      <swiper 
+        class="sheet-swiper" 
+        :current="currentSheetPage"
+        @change="onSheetChange"
+        :indicator-dots="sheetImages.length > 1"
+        indicator-color="rgba(255,255,255,0.3)"
+        indicator-active-color="#d4af37"
       >
-        <image 
-          v-if="homework?.sheetImageUrl"
-          class="sheet-image"
-          :src="homework.sheetImageUrl"
-          mode="aspectFit"
-          @click="previewSheet"
-          @error="onImageError"
-        />
-        <view v-else class="sheet-placeholder">
-          <text class="placeholder-icon">🎼</text>
-          <text class="placeholder-text">乐谱加载中...</text>
-        </view>
-      </scroll-view>
+        <swiper-item v-for="(img, index) in sheetImages" :key="index">
+          <image 
+            class="sheet-image"
+            :src="img"
+            mode="aspectFit"
+            @click="previewSheet(index)"
+            @error="onImageError"
+          />
+        </swiper-item>
+      </swiper>
+      <!-- 页码指示 -->
+      <view class="page-indicator" v-if="sheetImages.length > 1">
+        <text>{{ currentSheetPage + 1 }} / {{ sheetImages.length }}</text>
+      </view>
+      <!-- 空状态 -->
+      <view v-if="sheetImages.length === 0" class="sheet-placeholder">
+        <text class="placeholder-icon">🎼</text>
+        <text class="placeholder-text">暂无乐谱</text>
+      </view>
     </view>
 
     <!-- 钢琴区 45% -->
@@ -92,11 +100,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, onUnmounted } from 'vue'
+import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { onLoad, onShareAppMessage } from '@dcloudio/uni-app'
 import AudioManager from '@/utils/audio-manager'
 import RecorderService from '@/utils/recorder-manager'
-import { getHomeworkById, incrementPracticeCount, type Homework } from '@/utils/homework-data'
+import { getHomeworkById, getSheetImages, incrementPracticeCount, type Homework } from '@/utils/homework-data'
 
 onShareAppMessage(() => ({
   title: `📚 ${homework.value?.title || '作业练习'} - 视唱练耳助手`,
@@ -106,6 +114,10 @@ onShareAppMessage(() => ({
 const statusBarHeight = ref(20)
 const homeworkId = ref('')
 const homework = ref<Homework | null>(null)
+
+// 乐谱翻页
+const currentSheetPage = ref(0)
+const sheetImages = computed(() => homework.value ? getSheetImages(homework.value) : [])
 
 // 录音相关
 const isRecording = ref(false)
@@ -268,12 +280,17 @@ const setSpeed = (speed: number) => {
   }
 }
 
+// 乐谱翻页
+const onSheetChange = (e: any) => {
+  currentSheetPage.value = e.detail.current
+}
+
 // 乐谱预览
-const previewSheet = () => {
-  if (homework.value?.sheetImageUrl) {
+const previewSheet = (index: number = 0) => {
+  if (sheetImages.value.length > 0) {
     uni.previewImage({
-      urls: [homework.value.sheetImageUrl],
-      current: homework.value.sheetImageUrl
+      urls: sheetImages.value,
+      current: sheetImages.value[index]
     })
   }
 }
@@ -411,9 +428,10 @@ const onKeyRelease = (midi: number) => {
   flex: 4;
   background: #fff;
   overflow: hidden;
+  position: relative;
 }
 
-.sheet-scroll {
+.sheet-swiper {
   width: 100%;
   height: 100%;
 }
@@ -421,7 +439,17 @@ const onKeyRelease = (midi: number) => {
 .sheet-image {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+}
+
+.page-indicator {
+  position: absolute;
+  bottom: 10rpx;
+  right: 20rpx;
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  padding: 4rpx 12rpx;
+  border-radius: 10rpx;
+  font-size: 20rpx;
 }
 
 .sheet-placeholder {
@@ -431,7 +459,7 @@ const onKeyRelease = (midi: number) => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: rgba(255,255,255,0.03);
+  background: rgba(0,0,0,0.03);
 }
 
 .placeholder-icon {
