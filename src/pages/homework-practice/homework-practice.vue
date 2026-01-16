@@ -459,13 +459,14 @@ const onImageLoad = (e: any) => {
 .capsule-btn, .back-btn, .record-btn {
   height: 56rpx; /* 缩小高度 */
   display: flex;
-  align-items: center;
+  align-items: center; /* 确保垂直居中 */
   justify-content: center;
   background: rgba(255,255,255,0.15);
   border: 1px solid rgba(255,255,255,0.2);
   border-radius: 28rpx;
   color: #fff;
   transition: all 0.2s;
+  line-height: 1; /* 防止行高导致偏移 */
 }
 
 /* 返回按钮 */
@@ -719,30 +720,29 @@ const onImageLoad = (e: any) => {
 /* 钢琴琴键标签位置修正 */
 .white-key .key-label {
   position: absolute;
-  bottom: 80rpx; /* 大幅上移，避开底部横条 */
+  bottom: 30rpx; /* 下调位置，避开黑键 */
   left: 0;
   right: 0;
-  /* top 属性移除，不再依赖 top */
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-end; /* 从底部向上排列点和音名 */
+  justify-content: flex-end;
   padding: 0;
-  opacity: 0.9;
-  pointer-events: none; /* 防止遮挡点击 */
+  opacity: 1;
+  pointer-events: none;
+  z-index: 5;
 }
-
-
 
 .white-key .dot {
   display: none;
 }
 
 .white-key .notation {
-  font-size: 24rpx; /* 加大音名 */
-  font-weight: 600;
-  color: #333;
+  font-size: 24rpx;
+  font-weight: 700;
+  color: #000;
   margin: 0;
+  text-shadow: 0 0 2rpx rgba(255,255,255,0.8);
 }
 
 /* 黑键 */
