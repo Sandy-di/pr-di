@@ -464,6 +464,10 @@ const onKeyRelease = (midi: number) => {
 .sheet-image {
   width: 100%;
   display: block;
+  /* 确保顶对齐 */
+  margin-top: 0;
+  vertical-align: top;
+  background: red; /* DEBUG: 检查图片实际范围 */
 }
 
 .page-indicator {
