@@ -447,7 +447,6 @@ const onKeyRelease = (midi: number) => {
   background: #fff;
   overflow: hidden;
   position: relative;
-  /* border: 2px solid red; DEBUG REMOVED */
 }
 
 .sheet-scroll {
@@ -457,17 +456,13 @@ const onKeyRelease = (midi: number) => {
 
 .sheet-content {
   width: 100%;
-  /* 移除 Flex 居中，确保大图从顶部开始显示 */
-  display: block;
+  padding-bottom: 20rpx; /* 底部留白 */
 }
 
 .sheet-image {
   width: 100%;
+  height: auto !important; /* 关键：让 widthFix 能够由内容撑开高度 */
   display: block;
-  /* 确保顶对齐 */
-  margin-top: 0;
-  vertical-align: top;
-  background: red; /* DEBUG: 检查图片实际范围 */
 }
 
 .page-indicator {
