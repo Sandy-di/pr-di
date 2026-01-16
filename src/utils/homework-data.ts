@@ -33,8 +33,11 @@ export const getSheetImagesAsync = async (homework: Homework): Promise<string[]>
   if (images.length === 0) return []
 
   // 检查是否有 cloud:// 开头的 fileID
-  const cloudImages = images.filter(img => img.startsWith('cloud://'))
-  if (cloudImages.length === 0) return images
+  // 注意：需要 trim() 去除可能的空白字符
+  const cleanedImages = images.map(img => img.trim())
+  const cloudImages = cleanedImages.filter(img => img.startsWith('cloud://'))
+  
+  if (cloudImages.length === 0) return cleanedImages
 
   // 转换云存储 fileID 为临时 URL
   try {
@@ -48,10 +51,10 @@ export const getSheetImagesAsync = async (homework: Homework): Promise<string[]>
     })
 
     // 替换原数组中的 cloud:// 为临时 URL
-    return images.map(img => urlMap[img] || img)
+    return cleanedImages.map(img => urlMap[img] || img)
   } catch (e) {
     console.error('转换云存储 URL 失败:', e)
-    return images
+    return cleanedImages
   }
 }
 
