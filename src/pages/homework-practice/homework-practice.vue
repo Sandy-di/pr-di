@@ -40,7 +40,15 @@
 
     <!-- 看谱区 -->
     <view class="sheet-area">
-      <!-- 简化：直接显示图片，不滚动，确保完整 -->
+      <!-- 诊断面板 (调试用) -->
+      <view class="debug-panel" style="position: absolute; top: 0; left: 0; right: 0; padding: 10rpx; background: rgba(0,0,0,0.8); color: #0f0; font-size: 20rpx; z-index: 999;">
+        <view>ID: {{ homeworkId || '未获取' }}</view>
+        <view>Loading: {{ isLoading }}</view>
+        <view>Images: {{ sheetImages ? sheetImages.length : 'null' }}</view>
+        <view>Error: {{ loadError }}</view>
+        <view style="word-break: break-all;">Data: {{ homework ? (homework.title || 'ok') : 'null' }}</view>
+      </view>
+
       <view class="sheet-content">
         <image 
           v-if="sheetImages.length > 0"
@@ -51,7 +59,10 @@
           @error="onImageError"
           @load="onImageLoad"
         />
-        <text v-else style="color: #999;">正在加载图片...</text>
+        <view v-else class="loading-state">
+          <text>正在加载图片...</text>
+          <text v-if="!homeworkId" style="font-size: 24rpx; color: red;">(ID 为空, 请重新进入)</text>
+        </view>
       </view>
 
       <!-- 页码指示 -->
@@ -107,6 +118,8 @@ onShareAppMessage(() => ({
 const statusBarHeight = ref(20)
 const homeworkId = ref('')
 const homework = ref<Homework | null>(null)
+const isLoading = ref(false)
+const loadError = ref('')
 
 // 通过 onLoad 获取参数
 onLoad((options: any) => {
@@ -135,11 +148,32 @@ onMounted(() => {
     }
   }
 
+  // 初始化音频管理器
+  AudioManager.init()
+
   // 初始化录音
   RecorderService.init()
-  
-  // 初始化钢琴
-  // ...
+  RecorderService.setCallbacks({
+    onStop: () => {
+      isRecording.value = false
+      clearInterval(recordingTimer)
+      uni.showToast({ title: '录音已保存', icon: 'success' })
+    }
+  })
+
+  // 增加练习次数
+  if (homeworkId.value) {
+    incrementPracticeCount(homeworkId.value)
+  }
+})
+
+onUnmounted(() => {
+  if (isRecording.value) {
+    RecorderService.stop()
+  }
+  if (demoAudio) {
+    demoAudio.destroy()
+  }
 })
 
 // 乐谱翻页
@@ -191,49 +225,35 @@ const blackKeys = [
   { note: 'A#5', midi: 82, position: 91 }
 ]
 
-onLoad((options) => {
-  if (options?.id) {
-    homeworkId.value = options.id
-    loadHomework()
-  }
-})
-
-onMounted(() => {
-  const windowInfo = uni.getWindowInfo()
-  statusBarHeight.value = windowInfo.statusBarHeight || 20
-  
-  AudioManager.init()
-  RecorderService.init()
-  
-  RecorderService.setCallbacks({
-    onStop: () => {
-      isRecording.value = false
-      clearInterval(recordingTimer)
-      uni.showToast({ title: '录音已保存', icon: 'success' })
-    }
-  })
-  
-  // 增加练习次数
-  if (homeworkId.value) {
-    incrementPracticeCount(homeworkId.value)
-  }
-})
-
-onUnmounted(() => {
-  if (isRecording.value) {
-    RecorderService.stop()
-  }
-  if (demoAudio) {
-    demoAudio.destroy()
-  }
-})
-
+// 原有的 onLoad 和 onMounted 删除，保留顶部的实现
+// loadHomework 替换为带错误处理的版本
 const loadHomework = async () => {
-  homework.value = await fetchHomeworkByIdAsync(homeworkId.value)
+  if (!homeworkId.value) return
   
-  // 异步加载乐谱图片（转换云存储 URL）
-  if (homework.value) {
-    sheetImages.value = await getSheetImagesAsync(homework.value)
+  try {
+    isLoading.value = true
+    loadError.value = ''
+    console.log('开始加载作业:', homeworkId.value)
+    
+    homework.value = await fetchHomeworkByIdAsync(homeworkId.value)
+    console.log('作业数据:', homework.value)
+    
+    if (homework.value) {
+      if (homework.value.sheetImages && homework.value.sheetImages.length > 0) {
+        console.log('转换云图片链接:', homework.value.sheetImages)
+        sheetImages.value = await getSheetImagesAsync(homework.value)
+        console.log('图片链接转换完成:', sheetImages.value)
+      } else {
+        loadError.value = '该作业没有乐谱图片'
+      }
+    } else {
+      loadError.value = '未找到作业数据'
+    }
+  } catch (err: any) {
+    console.error('加载异常:', err)
+    loadError.value = err.message || '加载异常'
+  } finally {
+    isLoading.value = false
   }
 }
 
