@@ -240,9 +240,14 @@ const loadHomework = async () => {
     
     if (homework.value) {
       if (homework.value.sheetImages && homework.value.sheetImages.length > 0) {
-        console.log('转换云图片链接:', homework.value.sheetImages)
-        sheetImages.value = await getSheetImagesAsync(homework.value)
-        console.log('图片链接转换完成:', sheetImages.value)
+        console.log('原始 sheetImages:', homework.value.sheetImages)
+        try {
+          sheetImages.value = await getSheetImagesAsync(homework.value)
+          console.log('转换后 sheetImages:', sheetImages.value)
+        } catch (e) {
+          console.error('转换失败:', e)
+          loadError.value = '图片链接转换失败'
+        }
       } else {
         loadError.value = '该作业没有乐谱图片'
       }
