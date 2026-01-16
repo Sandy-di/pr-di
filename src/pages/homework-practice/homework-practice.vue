@@ -445,6 +445,7 @@ const onKeyRelease = (midi: number) => {
   background: #fff;
   overflow: hidden;
   position: relative;
+  border: 2px solid red; /* DEBUG: 检查看谱区高度 */
 }
 
 .sheet-scroll {
