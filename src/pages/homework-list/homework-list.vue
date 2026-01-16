@@ -55,7 +55,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { onShow, onShareAppMessage } from '@dcloudio/uni-app'
-import { getHomeworkList, getHomeworkProgress, type Homework, type HomeworkProgress } from '@/utils/homework-data'
+import { fetchHomeworkListAsync, getHomeworkProgress, type Homework, type HomeworkProgress } from '@/utils/homework-data'
 
 onShareAppMessage(() => ({
   title: '📚 作业练习 - 视唱练耳助手',
@@ -65,6 +65,7 @@ onShareAppMessage(() => ({
 const statusBarHeight = ref(20)
 const homeworkList = ref<Homework[]>([])
 const progressMap = ref<Record<string, HomeworkProgress | null>>({})
+const isLoading = ref(false)
 
 const difficultyLabel: Record<string, string> = {
   easy: '入门',
@@ -85,13 +86,19 @@ onShow(() => {
   loadHomework()
 })
 
-const loadHomework = () => {
-  homeworkList.value = getHomeworkList()
-  
-  // 加载所有进度
-  homeworkList.value.forEach(hw => {
-    progressMap.value[hw.id] = getHomeworkProgress(hw.id)
-  })
+const loadHomework = async () => {
+  isLoading.value = true
+  try {
+    // 优先从云端获取，失败则使用本地数据
+    homeworkList.value = await fetchHomeworkListAsync()
+    
+    // 加载所有进度
+    homeworkList.value.forEach(hw => {
+      progressMap.value[hw.id] = getHomeworkProgress(hw.id)
+    })
+  } finally {
+    isLoading.value = false
+  }
 }
 
 const getProgress = (id: string): HomeworkProgress | null => {

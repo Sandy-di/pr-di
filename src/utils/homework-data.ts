@@ -63,14 +63,59 @@ export const homeworkList: Homework[] = [
   }
 ]
 
-// 获取作业列表
+// 获取作业列表（本地静态数据，作为备用）
 export const getHomeworkList = (): Homework[] => {
   return homeworkList
 }
 
-// 根据 ID 获取作业
+// 根据 ID 获取作业（本地静态数据）
 export const getHomeworkById = (id: string): Homework | undefined => {
   return homeworkList.find(hw => hw.id === id)
+}
+
+// 【云端】异步获取作业列表
+export const fetchHomeworkListAsync = async (): Promise<Homework[]> => {
+  // @ts-ignore
+  if (!wx.cloud) {
+    console.warn('云开发不可用，使用本地数据')
+    return homeworkList
+  }
+
+  try {
+    // @ts-ignore
+    const db = wx.cloud.database()
+    const res = await db.collection('homework')
+      .where({ isPublished: true })
+      .orderBy('createdAt', 'desc')
+      .get()
+    
+    if (res.data && res.data.length > 0) {
+      return res.data as Homework[]
+    }
+    console.warn('云端无数据，使用本地数据')
+    return homeworkList
+  } catch (e) {
+    console.error('获取云端作业失败:', e)
+    return homeworkList
+  }
+}
+
+// 【云端】异步获取作业详情
+export const fetchHomeworkByIdAsync = async (id: string): Promise<Homework | null> => {
+  // @ts-ignore
+  if (!wx.cloud) {
+    return getHomeworkById(id) || null
+  }
+
+  try {
+    // @ts-ignore
+    const db = wx.cloud.database()
+    const res = await db.collection('homework').doc(id).get()
+    return res.data as Homework || null
+  } catch (e) {
+    console.error('获取云端作业详情失败:', e)
+    return getHomeworkById(id) || null
+  }
 }
 
 // 获取作业进度
