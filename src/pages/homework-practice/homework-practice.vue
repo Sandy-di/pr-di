@@ -74,38 +74,53 @@
 
 
 
-    <!-- 钢琴区 45% -->
+    <!-- 钢琴区 (占据剩余空间) -->
     <view class="piano-area">
-      <view class="piano-keyboard">
-        <!-- 白键 -->
-        <view 
-          v-for="key in whiteKeys" 
-          :key="key.note"
-          class="white-key"
-          :class="{ pressed: pressedKeys.has(key.midi) }"
-          @touchstart.prevent="onKeyPress(key.midi)"
-          @touchend.prevent="onKeyRelease(key.midi)"
-        >
-          <text class="key-label">{{ key.label }}</text>
+      <scroll-view class="keyboard-scroll" scroll-x :scroll-left="scrollLeft" @scroll="onScroll">
+        <view class="keyboard" :style="{ width: totalWidth + 'px' }">
+          <view class="keyboard-shadow"></view>
+          
+          <!-- 白键 -->
+          <view 
+            v-for="key in whiteKeys" 
+            :key="key.midi"
+            class="white-key"
+            :class="{ pressed: pressedKeys.has(key.midi) }"
+            :style="{ left: key.x + 'px', width: WHITE_KEY_WIDTH + 'px' }"
+            @touchstart="onKeyPress(key)"
+            @touchend="onKeyRelease(key)"
+          >
+            <view class="key-label">
+              <view class="dots-above">
+                <text v-for="n in (key.dotCount > 0 ? key.dotCount : 0)" :key="n" class="dot">•</text>
+              </view>
+              <text class="notation">{{ key.baseNote }}</text>
+              <view class="dots-below">
+                <text v-for="n in (key.dotCount < 0 ? Math.abs(key.dotCount) : 0)" :key="n" class="dot">•</text>
+              </view>
+            </view>
+          </view>
+          
+          <!-- 黑键 -->
+          <view 
+            v-for="key in blackKeys" 
+            :key="key.midi"
+            class="black-key"
+            :class="{ pressed: pressedKeys.has(key.midi) }"
+            :style="{ left: key.x + 'px', width: BLACK_KEY_WIDTH + 'px' }"
+            @touchstart.stop="onKeyPress(key)"
+            @touchend.stop="onKeyRelease(key)"
+          >
+            <view class="key-highlight"></view>
+          </view>
         </view>
-        
-        <!-- 黑键 -->
-        <view 
-          v-for="key in blackKeys" 
-          :key="key.note"
-          class="black-key"
-          :style="{ left: key.position + '%' }"
-          :class="{ pressed: pressedKeys.has(key.midi) }"
-          @touchstart.prevent="onKeyPress(key.midi)"
-          @touchend.prevent="onKeyRelease(key.midi)"
-        ></view>
-      </view>
+      </scroll-view>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, onUnmounted } from 'vue'
+import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { onLoad, onShareAppMessage } from '@dcloudio/uni-app'
 import AudioManager from '@/utils/audio-manager'
 import RecorderService from '@/utils/recorder-manager'
@@ -195,36 +210,77 @@ let demoAudio: UniApp.InnerAudioContext | null = null
 // 钢琴键盘
 const pressedKeys = reactive(new Set<number>())
 
-// 白键和黑键数据 (两个八度 C4-B5)
-const whiteKeys = [
-  { note: 'C4', midi: 60, label: '1' },
-  { note: 'D4', midi: 62, label: '2' },
-  { note: 'E4', midi: 64, label: '3' },
-  { note: 'F4', midi: 65, label: '4' },
-  { note: 'G4', midi: 67, label: '5' },
-  { note: 'A4', midi: 69, label: '6' },
-  { note: 'B4', midi: 71, label: '7' },
-  { note: 'C5', midi: 72, label: '1·' },
-  { note: 'D5', midi: 74, label: '2·' },
-  { note: 'E5', midi: 76, label: '3·' },
-  { note: 'F5', midi: 77, label: '4·' },
-  { note: 'G5', midi: 79, label: '5·' },
-  { note: 'A5', midi: 81, label: '6·' },
-  { note: 'B5', midi: 83, label: '7·' }
-]
+// 钢琴配置
+const currentOctave = ref(2)  // 从C2开始
+const numOctaves = ref(5)     // 显示5个八度 (C2-B6)
+const WHITE_KEY_WIDTH = 50
+const BLACK_KEY_WIDTH = 32
+const scrollLeft = ref(0)
+const totalWidth = computed(() => numOctaves.value * 7 * WHITE_KEY_WIDTH)
 
-const blackKeys = [
-  { note: 'C#4', midi: 61, position: 6 },
-  { note: 'D#4', midi: 63, position: 13 },
-  { note: 'F#4', midi: 66, position: 27 },
-  { note: 'G#4', midi: 68, position: 34 },
-  { note: 'A#4', midi: 70, position: 41 },
-  { note: 'C#5', midi: 73, position: 56 },
-  { note: 'D#5', midi: 75, position: 63 },
-  { note: 'F#5', midi: 78, position: 77 },
-  { note: 'G#5', midi: 80, position: 84 },
-  { note: 'A#5', midi: 82, position: 91 }
-]
+interface KeyData {
+  midi: number
+  baseNote: string
+  dotCount: number
+  x: number
+}
+
+// 生成白键数据
+const whiteKeys = computed<KeyData[]>(() => {
+  const keys: KeyData[] = []
+  const whiteNotes = [0, 2, 4, 5, 7, 9, 11]
+  const baseNotes = ['1', '2', '3', '4', '5', '6', '7']
+  
+  let x = 0
+  for (let oct = 0; oct < numOctaves.value; oct++) {
+    const octave = currentOctave.value + oct
+    for (let i = 0; i < 7; i++) {
+      const midi = (octave + 1) * 12 + whiteNotes[i]
+      const baseNote = baseNotes[i]
+      const dotCount = octave - 4
+      
+      keys.push({ midi, baseNote, dotCount, x })
+      x += WHITE_KEY_WIDTH
+    }
+  }
+  return keys
+})
+
+// 生成黑键数据
+const blackKeys = computed<KeyData[]>(() => {
+  const keys: KeyData[] = []
+  const blackNotes = [1, 3, 6, 8, 10]
+  const baseNotes = ['1', '2', '4', '5', '6']
+  const blackPositions = [0.65, 1.65, 3.65, 4.65, 5.65]
+  
+  for (let oct = 0; oct < numOctaves.value; oct++) {
+    const octave = currentOctave.value + oct
+    for (let i = 0; i < 5; i++) {
+      const midi = (octave + 1) * 12 + blackNotes[i]
+      const baseNote = baseNotes[i]
+      const dotCount = octave - 4
+      
+      const x = (oct * 7 + blackPositions[i]) * WHITE_KEY_WIDTH - BLACK_KEY_WIDTH / 2
+      keys.push({ midi, baseNote, dotCount, x })
+    }
+  }
+  return keys
+})
+
+const onScroll = (e: any) => {
+  scrollLeft.value = e.detail.scrollLeft
+}
+
+// 钢琴按键处理
+const onKeyPress = (key: KeyData) => {
+  pressedKeys.add(key.midi)
+  AudioManager.playNote(key.midi, 0.8)
+  uni.vibrateShort({})
+}
+
+const onKeyRelease = (key: KeyData) => {
+  pressedKeys.delete(key.midi)
+}
 
 // 原有的 onLoad 和 onMounted 删除，保留顶部的实现
 // loadHomework 替换为带错误处理的版本
@@ -371,19 +427,7 @@ const onImageLoad = (e: any) => {
   console.log('乐谱加载成功:', e.detail)
 }
 
-// 钢琴按键
-const onKeyPress = (midi: number) => {
-  pressedKeys.add(midi)
-  AudioManager.playNote(midi, 0.8)
-  
-  // 震动反馈
-  uni.vibrateShort({})
-}
 
-const onKeyRelease = (midi: number) => {
-  pressedKeys.delete(midi)
-  AudioManager.releaseNote(midi)
-}
 </script>
 
 <style scoped>
@@ -494,13 +538,16 @@ const onKeyRelease = (midi: number) => {
   font-weight: 600;
 }
 
-/* 看谱区 */
+/* 看谱区 (自动占据剩余空间) */
 .sheet-area {
-  flex: 4;
+  flex: 1; /* 改为 flex: 1，让它自动占据除了钢琴外的空间 */
   background: #fff;
   overflow: hidden;
   position: relative;
+  min-height: 0; /* 防止内容撑开容器 */
 }
+
+/* ... sheet 相关的样式保持不变 ... */
 
 .sheet-swiper {
   width: 100%;
@@ -552,63 +599,119 @@ const onKeyRelease = (midi: number) => {
   color: var(--text-muted);
 }
 
-/* 钢琴区 */
+/* 钢琴区 (固定高度或比例) */
 .piano-area {
-  flex: 5;
-  background: linear-gradient(180deg, #1a1a2e 0%, #0f0f1a 100%);
+  height: 380rpx; /* 设置一个较高的高度，确保钢琴足够大 */
+  flex-shrink: 0;
   display: flex;
-  align-items: flex-end;
-  padding: 16rpx;
-}
-
-.piano-keyboard {
-  width: 100%;
-  height: 90%;
-  display: flex;
+  align-items: stretch;
+  overflow: hidden;
   position: relative;
+  background: #000;
+  border-top: 1px solid rgba(255,255,255,0.1);
 }
 
-.white-key {
+.keyboard-scroll {
   flex: 1;
   height: 100%;
-  background: linear-gradient(180deg, #f8f8f8 0%, #e8e8e8 100%);
-  border: 1px solid #ccc;
-  border-radius: 0 0 8rpx 8rpx;
-  margin: 0 2rpx;
+}
+
+.keyboard {
+  position: relative;
+  height: 100%;
+  padding-top: 24rpx;
+}
+
+.keyboard-shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 24rpx;
+  background: #000;
+  z-index: 0;
+}
+
+/* 白键 */
+.white-key {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background: var(--key-white, #ffffff);
+  border-radius: 0 0 12rpx 12rpx;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1), 0 4rpx 0 #bbb, inset 0 -8rpx 12rpx rgba(0,0,0,0.1);
+  box-sizing: border-box;
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  padding-bottom: 16rpx;
-  transition: background 0.05s;
+  z-index: 1;
+  transform-origin: top center;
+  transition: background 0.1s, transform 0.05s;
 }
 
 .white-key.pressed {
-  background: linear-gradient(180deg, #d4af37 0%, #b8962d 100%);
+  background: var(--key-white-pressed, #e8e8e8);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1), 0 1rpx 0 #bbb, inset 0 -4rpx 20rpx rgba(0,0,0,0.2);
+  transform: translateY(2rpx);
 }
 
-.key-label {
-  font-size: 24rpx;
-  color: #666;
-  font-weight: 600;
+.white-key .key-label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 62%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  opacity: 0.7;
 }
 
-.white-key.pressed .key-label {
-  color: #fff;
+.white-key .dot {
+  font-size: 12rpx;
+  color: #333;
+  line-height: 6rpx;
+  height: 6rpx;
+  margin: 0;
 }
 
+.white-key .notation {
+  font-size: 18rpx;
+  font-weight: 700;
+  color: #333;
+  line-height: 1;
+  margin: 1rpx 0;
+}
+
+/* 黑键 */
 .black-key {
   position: absolute;
-  width: 5%;
-  height: 55%;
-  background: linear-gradient(180deg, #333 0%, #111 100%);
-  border-radius: 0 0 6rpx 6rpx;
-  transform: translateX(-50%);
-  z-index: 1;
-  box-shadow: 0 4rpx 8rpx rgba(0,0,0,0.5);
-  transition: background 0.05s;
+  top: 0;
+  height: 60%;
+  background: var(--key-black, #2a2a2a);
+  border-radius: 0 0 8rpx 8rpx;
+  box-shadow: 0 4rpx 8rpx rgba(0,0,0,0.5), 0 6rpx 0 #000, inset 2rpx -2rpx 4rpx rgba(255,255,255,0.1);
+  display: flex;
+  justify-content: center;
+  z-index: 10;
+  transform-origin: top center;
 }
 
 .black-key.pressed {
-  background: linear-gradient(180deg, #d4af37 0%, #8b6914 100%);
+  box-shadow: 0 2rpx 4rpx rgba(0,0,0,0.5), 0 2rpx 0 #000, inset 1rpx -1rpx 2rpx rgba(255,255,255,0.1);
+  transform: translateY(2rpx);
+}
+
+.key-highlight {
+  position: absolute;
+  top: 8rpx;
+  left: 8rpx;
+  right: 8rpx;
+  height: 30rpx;
+  background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 100%);
+  border-radius: 4rpx;
 }
 </style>
+```
