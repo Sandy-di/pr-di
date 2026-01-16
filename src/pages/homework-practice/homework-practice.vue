@@ -85,19 +85,14 @@
             v-for="key in whiteKeys" 
             :key="key.midi"
             class="white-key"
-            :class="{ pressed: pressedKeys.has(key.midi) }"
+            :class="{ pressed: pressedKeys.has(key.midi), 'middle-c': key.midi === 60 }"
             :style="{ left: key.x + 'px', width: WHITE_KEY_WIDTH + 'px' }"
             @touchstart="onKeyPress(key)"
             @touchend="onKeyRelease(key)"
           >
             <view class="key-label">
-              <view class="dots-above">
-                <text v-for="n in (key.dotCount > 0 ? key.dotCount : 0)" :key="n" class="dot">•</text>
-              </view>
-              <text class="notation">{{ key.baseNote }}</text>
-              <view class="dots-below">
-                <text v-for="n in (key.dotCount < 0 ? Math.abs(key.dotCount) : 0)" :key="n" class="dot">•</text>
-              </view>
+              <!-- 只显示中央C C4 的文本 -->
+              <text class="notation" v-if="key.midi === 60">C4</text>
             </view>
           </view>
           
@@ -455,32 +450,33 @@ const onImageLoad = (e: any) => {
   box-sizing: border-box;
 }
 
-/* 控制栏按钮通用样式 */
+/* 强制覆盖：控制栏按钮通用样式 */
 .capsule-btn, .back-btn, .record-btn {
-  height: 56rpx; /* 缩小高度 */
-  display: flex;
-  align-items: center; /* 确保垂直居中 */
-  justify-content: center;
+  height: 56rpx !important; /* 强制高度 */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   background: rgba(255,255,255,0.15);
   border: 1px solid rgba(255,255,255,0.2);
   border-radius: 28rpx;
   color: #fff;
   transition: all 0.2s;
-  line-height: 1; /* 防止行高导致偏移 */
+  padding: 0;
 }
 
 /* 返回按钮 */
 .back-btn {
-  width: 64rpx;
-  padding: 0;
+  width: 56rpx !important; /* 正方形 */
+  padding: 0 !important;
   flex-shrink: 0;
 }
 
 /* 录音按钮 */
 .record-btn {
-  padding: 0 24rpx;
-  gap: 10rpx;
+  padding: 0 24rpx !important;
+  gap: 12rpx !important;
   min-width: 140rpx;
+  flex-direction: row !important; /* 确保横向排列 */
 }
 
 .record-btn.recording {
@@ -488,19 +484,23 @@ const onImageLoad = (e: any) => {
   border-color: #ef4444;
 }
 
+/* 录音红点 */
 .record-dot {
-  width: 16rpx;
-  height: 16rpx;
+  width: 12rpx !important; /* 更精致的点 */
+  height: 12rpx !important;
   border-radius: 50%;
   background: #ef4444;
+  margin-top: 2rpx; /* 微调对齐 */
 }
 
 .record-dot.pulse { animation: pulse 1s infinite; }
 
 .btn-text {
-  font-size: 24rpx; /* 稍微缩小字体 */
+  font-size: 24rpx !important;
   color: #fff;
   font-weight: 500;
+  line-height: normal !important;
+  padding-bottom: 2rpx; /* 微调文字垂直对齐 */
 }
 
 /* 标题 */
@@ -720,29 +720,22 @@ const onImageLoad = (e: any) => {
 /* 钢琴琴键标签位置修正 */
 .white-key .key-label {
   position: absolute;
-  bottom: 30rpx; /* 下调位置，避开黑键 */
+  bottom: 36rpx;
   left: 0;
   right: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
-  padding: 0;
-  opacity: 1;
   pointer-events: none;
   z-index: 5;
 }
 
-.white-key .dot {
-  display: none;
-}
-
 .white-key .notation {
-  font-size: 24rpx;
+  font-size: 26rpx;
   font-weight: 700;
   color: #000;
-  margin: 0;
-  text-shadow: 0 0 2rpx rgba(255,255,255,0.8);
+  text-shadow: 0 0 4rpx rgba(255,255,255,0.8);
 }
 
 /* 黑键 */
