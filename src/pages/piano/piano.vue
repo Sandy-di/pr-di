@@ -99,7 +99,7 @@ import { onShareAppMessage } from '@dcloudio/uni-app'
 onShareAppMessage(() => ({
   title: '🎹 来和我一起弹钢琴吧！ - 视唱练耳助手',
   path: '/pages/piano/piano',
-  imageUrl: '/static/share-cover.png'
+  imageUrl: '/static/share-cover.jpg'
 }))
 
 const currentOctave = ref(2)  // 从C2开始

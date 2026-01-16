@@ -41,8 +41,7 @@ export const homeworkList: Homework[] = [
     id: 'hw001',
     title: '小星星',
     description: '入门练习曲，适合初学者',
-    sheetImages: ['/static/sheets/little-star.png'],
-    demoAudioUrl: '/static/audio/little-star-demo.mp3',
+    sheetImages: [],  // TODO: 配置云存储 URL
     difficulty: 'easy',
     createdAt: '2026-01-15'
   },
@@ -50,8 +49,7 @@ export const homeworkList: Homework[] = [
     id: 'hw002',
     title: '欢乐颂',
     description: '贝多芬第九交响曲主题',
-    sheetImages: ['/static/sheets/ode-to-joy.png'],
-    demoAudioUrl: '/static/audio/ode-to-joy-demo.mp3',
+    sheetImages: [],  // TODO: 配置云存储 URL
     difficulty: 'easy',
     createdAt: '2026-01-15'
   },
@@ -59,8 +57,7 @@ export const homeworkList: Homework[] = [
     id: 'hw003',
     title: '两只老虎',
     description: '经典儿歌，节奏明快',
-    sheetImages: ['/static/sheets/two-tigers.png'],
-    demoAudioUrl: '/static/audio/two-tigers-demo.mp3',
+    sheetImages: [],  // TODO: 配置云存储 URL
     difficulty: 'easy',
     createdAt: '2026-01-15'
   }

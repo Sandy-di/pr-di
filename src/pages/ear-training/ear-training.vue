@@ -146,7 +146,7 @@ import SvgIcon from '@/components/SvgIcon.vue'
 onShareAppMessage(() => ({
   title: '🎵 来练习音乐听力吧！ - 视唱练耳助手',
   path: '/pages/ear-training/ear-training',
-  imageUrl: '/static/share-cover.png'
+  imageUrl: '/static/share-cover.jpg'
 }))
 
 const statusBarHeight = ref(20)

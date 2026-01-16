@@ -161,7 +161,7 @@ import UserService from '@/utils/user-service'
 onShareAppMessage(() => ({
   title: '🎵 视唱练耳助手 - 提升你的音乐听力',
   path: '/pages/index/index',
-  imageUrl: '/static/share-cover.png'
+  imageUrl: '/static/share-cover.jpg'
 }))
 
 // 状态栏高度
