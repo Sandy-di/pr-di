@@ -49,13 +49,15 @@
         indicator-active-color="#d4af37"
       >
         <swiper-item v-for="(img, index) in sheetImages" :key="index">
-          <image 
-            class="sheet-image"
-            :src="img"
-            mode="scaleToFill"
-            @click="previewSheet(index)"
-            @error="onImageError"
-          />
+          <scroll-view class="sheet-scroll" scroll-y>
+            <image 
+              class="sheet-image"
+              :src="img"
+              mode="widthFix"
+              @click="previewSheet(index)"
+              @error="onImageError"
+            />
+          </scroll-view>
         </swiper-item>
       </swiper>
       <!-- 页码指示 -->
@@ -441,16 +443,13 @@ const onKeyRelease = (midi: number) => {
   height: 100%;
 }
 
-/* swiper-item 内居中 */
-.sheet-swiper swiper-item {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.sheet-scroll {
+  width: 100%;
+  height: 100%;
 }
 
 .sheet-image {
   width: 100%;
-  height: 100%;
 }
 
 .page-indicator {
