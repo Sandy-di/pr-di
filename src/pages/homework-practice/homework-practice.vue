@@ -52,7 +52,7 @@
           <image 
             class="sheet-image"
             :src="img"
-            mode="aspectFit"
+            mode="scaleToFill"
             @click="previewSheet(index)"
             @error="onImageError"
           />
