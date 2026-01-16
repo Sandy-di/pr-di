@@ -229,7 +229,8 @@ interface KeyData {
 const whiteKeys = computed<KeyData[]>(() => {
   const keys: KeyData[] = []
   const whiteNotes = [0, 2, 4, 5, 7, 9, 11]
-  const baseNotes = ['1', '2', '3', '4', '5', '6', '7']
+  // 改为英文字母音名
+  const baseNotes = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
   
   let x = 0
   for (let oct = 0; oct < numOctaves.value; oct++) {
@@ -456,13 +457,13 @@ const onImageLoad = (e: any) => {
 
 /* 控制栏按钮通用样式 */
 .capsule-btn, .back-btn, .record-btn {
-  height: 64rpx;
+  height: 56rpx; /* 缩小高度 */
   display: flex;
   align-items: center;
   justify-content: center;
   background: rgba(255,255,255,0.15);
   border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 32rpx;
+  border-radius: 28rpx;
   color: #fff;
   transition: all 0.2s;
 }
@@ -496,7 +497,7 @@ const onImageLoad = (e: any) => {
 .record-dot.pulse { animation: pulse 1s infinite; }
 
 .btn-text {
-  font-size: 26rpx;
+  font-size: 24rpx; /* 稍微缩小字体 */
   color: #fff;
   font-weight: 500;
 }
@@ -505,7 +506,7 @@ const onImageLoad = (e: any) => {
 .page-title {
   flex: 1;
   text-align: left; /* 左对齐 */
-  font-size: 34rpx;
+  font-size: 32rpx;
   font-weight: 600;
   color: #fff;
   white-space: nowrap;
@@ -732,20 +733,16 @@ const onImageLoad = (e: any) => {
 }
 
 
+
 .white-key .dot {
-  font-size: 12rpx;
-  color: #333;
-  line-height: 6rpx;
-  height: 6rpx;
-  margin: 0;
+  display: none;
 }
 
 .white-key .notation {
-  font-size: 18rpx;
-  font-weight: 700;
+  font-size: 24rpx; /* 加大音名 */
+  font-weight: 600;
   color: #333;
-  line-height: 1;
-  margin: 1rpx 0;
+  margin: 0;
 }
 
 /* 黑键 */
@@ -777,4 +774,3 @@ const onImageLoad = (e: any) => {
   border-radius: 4rpx;
 }
 </style>
-```
