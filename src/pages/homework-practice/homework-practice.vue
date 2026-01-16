@@ -120,6 +120,16 @@ const statusBarHeight = ref(20)
 const homeworkId = ref('')
 const homework = ref<Homework | null>(null)
 
+onLoad((options: any) => {
+  if (options.id) {
+    homeworkId.value = options.id
+    loadHomework()
+  } else {
+    // 如果没有 ID，尝试加载第一个作为测试（或者提示错误）
+    // console.warn('No homework ID found')
+  }
+})
+
 // 乐谱翻页
 const currentSheetPage = ref(0)
 const sheetImages = ref<string[]>([])
