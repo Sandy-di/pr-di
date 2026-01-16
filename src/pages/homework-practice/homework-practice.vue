@@ -445,13 +445,73 @@ const onImageLoad = (e: any) => {
   height: 15vh;
   flex-shrink: 0;
   display: flex;
-  align-items: center;
-  padding: 0 12rpx;
-  gap: 8rpx;
+  align-items: flex-end; /* 底部对齐，更接近标准导航栏位置 */
+  padding: 0 24rpx 20rpx 24rpx; /* 增加底部内边距 */
+  gap: 16rpx;
   background: var(--bg-dark);
   border-bottom: 1px solid rgba(255,255,255,0.1);
   z-index: 100;
-  box-sizing: border-box; /* 确保 padding 包含在高度内 */
+  box-sizing: border-box;
+}
+
+/* 控制栏按钮通用样式 */
+.capsule-btn, .back-btn, .record-btn {
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 32rpx;
+  color: #fff;
+  transition: all 0.2s;
+}
+
+/* 返回按钮 */
+.back-btn {
+  width: 64rpx;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+/* 录音按钮 */
+.record-btn {
+  padding: 0 24rpx;
+  gap: 10rpx;
+  min-width: 140rpx;
+}
+
+.record-btn.recording {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: #ef4444;
+}
+
+.record-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  background: #ef4444;
+}
+
+.record-dot.pulse { animation: pulse 1s infinite; }
+
+.btn-text {
+  font-size: 26rpx;
+  color: #fff;
+  font-weight: 500;
+}
+
+/* 标题 */
+.page-title {
+  flex: 1;
+  text-align: left; /* 左对齐 */
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-left: 10rpx;
 }
 
 /* 控制栏按钮样式 */
@@ -655,19 +715,22 @@ const onImageLoad = (e: any) => {
   transform: translateY(2rpx);
 }
 
+/* 钢琴琴键标签位置修正 */
 .white-key .key-label {
   position: absolute;
-  bottom: 0;
+  bottom: 80rpx; /* 大幅上移，避开底部横条 */
   left: 0;
   right: 0;
-  top: 62%;
+  /* top 属性移除，不再依赖 top */
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end; /* 从底部向上排列点和音名 */
   padding: 0;
-  opacity: 0.7;
+  opacity: 0.9;
+  pointer-events: none; /* 防止遮挡点击 */
 }
+
 
 .white-key .dot {
   font-size: 12rpx;
