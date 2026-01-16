@@ -40,7 +40,19 @@
 
     <!-- 看谱区 -->
     <view class="sheet-area">
-      <!-- 简化：直接显示图片，不滚动，确保完整 -->
+      <!-- 调试信息 -->
+      <view style="position: absolute; top: 0; left: 0; z-index: 100; color: red; font-size: 20rpx; background: rgba(255,255,255,0.8); padding: 10rpx;">
+        <text>图片数量: {{ sheetImages.length }}</text>
+        <view>当前链接: {{ sheetImages[currentSheetPage] || '无' }}</view>
+        <view>ID: {{ homeworkId }}</view>
+      </view>
+
+      <!-- 强制显示一张网络测试图 (验证布局) -->
+      <!-- <image 
+        src="https://picsum.photos/400/200" 
+        style="position: absolute; top: 50rpx; right: 50rpx; width: 200rpx; height: 100rpx; z-index: 99; border: 2px solid blue;"
+      /> -->
+
       <view class="sheet-content">
         <image 
           v-if="sheetImages.length > 0"
@@ -49,18 +61,16 @@
           mode="aspectFit"
           @click="previewSheet(currentSheetPage)"
           @error="onImageError"
+          @load="onImageLoad"
         />
+        <text v-else style="color: #999;">正在加载图片...</text>
       </view>
+
       <!-- 页码指示 -->
       <view class="page-indicator" v-if="sheetImages.length > 1">
         <text @click="prevPage">◀</text>
         <text style="margin: 0 16rpx;">{{ currentSheetPage + 1 }} / {{ sheetImages.length }}</text>
         <text @click="nextPage">▶</text>
-      </view>
-      <!-- 空状态 -->
-      <view v-if="sheetImages.length === 0" class="sheet-placeholder">
-        <text class="placeholder-icon">🎼</text>
-        <text class="placeholder-text">暂无乐谱</text>
       </view>
     </view>
 
@@ -310,6 +320,11 @@ const previewSheet = (index: number = 0) => {
 // 图片加载失败
 const onImageError = (e: any) => {
   console.error('乐谱加载失败:', e)
+}
+
+// 图片加载成功
+const onImageLoad = (e: any) => {
+  console.log('乐谱加载成功:', e.detail)
 }
 
 // 钢琴按键
