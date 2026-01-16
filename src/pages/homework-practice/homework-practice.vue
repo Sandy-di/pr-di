@@ -440,9 +440,9 @@ const onImageLoad = (e: any) => {
   overflow: hidden;
 }
 
-/* 顶部控制栏 (固定高度) */
+/* 顶部控制栏 (15%) */
 .top-bar {
-  height: 88rpx; /* 标准导航栏高度 */
+  height: 15vh;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -451,6 +451,7 @@ const onImageLoad = (e: any) => {
   background: var(--bg-dark);
   border-bottom: 1px solid rgba(255,255,255,0.1);
   z-index: 100;
+  box-sizing: border-box; /* 确保 padding 包含在高度内 */
 }
 
 /* 控制栏按钮样式 */
@@ -534,13 +535,14 @@ const onImageLoad = (e: any) => {
   font-weight: 600;
 }
 
-/* 看谱区 (自动占据剩余空间) */
+/* 看谱区 (40%) */
 .sheet-area {
-  flex: 1; /* 改为 flex: 1，让它自动占据除了钢琴外的空间 */
+  height: 40vh;
   background: #fff;
-  overflow: hidden;
   position: relative;
-  min-height: 0; /* 防止内容撑开容器 */
+  overflow: hidden;
+  flex-shrink: 0;
+  min-height: 0;
 }
 
 /* ... sheet 相关的样式保持不变 ... */
@@ -595,16 +597,18 @@ const onImageLoad = (e: any) => {
   color: var(--text-muted);
 }
 
-/* 钢琴区 (固定高度或比例) */
+/* 钢琴区 (45%) */
 .piano-area {
-  height: 380rpx; /* 设置一个较高的高度，确保钢琴足够大 */
+  height: 45vh;
   flex-shrink: 0;
+  width: 100%;
+  background: #000;
+  position: relative;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  z-index: 10;
   display: flex;
   align-items: stretch;
   overflow: hidden;
-  position: relative;
-  background: #000;
-  border-top: 1px solid rgba(255,255,255,0.1);
 }
 
 .keyboard-scroll {
