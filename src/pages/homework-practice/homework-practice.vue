@@ -52,7 +52,7 @@
           <image 
             class="sheet-image"
             :src="img"
-            mode="widthFix"
+            mode="aspectFit"
             @click="previewSheet(index)"
             @error="onImageError"
           />
@@ -441,10 +441,16 @@ const onKeyRelease = (midi: number) => {
   height: 100%;
 }
 
+/* swiper-item 内居中 */
+.sheet-swiper swiper-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .sheet-image {
   width: 100%;
-  min-height: 100%;
-  object-fit: contain;
+  height: 100%;
 }
 
 .page-indicator {
