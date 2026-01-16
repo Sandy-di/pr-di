@@ -100,11 +100,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
+import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import { onLoad, onShareAppMessage } from '@dcloudio/uni-app'
 import AudioManager from '@/utils/audio-manager'
 import RecorderService from '@/utils/recorder-manager'
-import { getHomeworkById, getSheetImages, incrementPracticeCount, type Homework } from '@/utils/homework-data'
+import { fetchHomeworkByIdAsync, getSheetImagesAsync, incrementPracticeCount, type Homework } from '@/utils/homework-data'
 
 onShareAppMessage(() => ({
   title: `📚 ${homework.value?.title || '作业练习'} - 视唱练耳助手`,
@@ -117,7 +117,7 @@ const homework = ref<Homework | null>(null)
 
 // 乐谱翻页
 const currentSheetPage = ref(0)
-const sheetImages = computed(() => homework.value ? getSheetImages(homework.value) : [])
+const sheetImages = ref<string[]>([])
 
 // 录音相关
 const isRecording = ref(false)
@@ -201,8 +201,13 @@ onUnmounted(() => {
   }
 })
 
-const loadHomework = () => {
-  homework.value = getHomeworkById(homeworkId.value) || null
+const loadHomework = async () => {
+  homework.value = await fetchHomeworkByIdAsync(homeworkId.value)
+  
+  // 异步加载乐谱图片（转换云存储 URL）
+  if (homework.value) {
+    sheetImages.value = await getSheetImagesAsync(homework.value)
+  }
 }
 
 const goBack = () => {

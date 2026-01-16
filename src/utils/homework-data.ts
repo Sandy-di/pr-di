@@ -27,6 +27,34 @@ export const getSheetImages = (homework: Homework): string[] => {
   return []
 }
 
+// 【异步】获取乐谱图片（自动转换 cloud:// 为临时 URL）
+export const getSheetImagesAsync = async (homework: Homework): Promise<string[]> => {
+  const images = getSheetImages(homework)
+  if (images.length === 0) return []
+
+  // 检查是否有 cloud:// 开头的 fileID
+  const cloudImages = images.filter(img => img.startsWith('cloud://'))
+  if (cloudImages.length === 0) return images
+
+  // 转换云存储 fileID 为临时 URL
+  try {
+    // @ts-ignore
+    const res = await wx.cloud.getTempFileURL({ fileList: cloudImages })
+    const urlMap: Record<string, string> = {}
+    res.fileList.forEach((item: any) => {
+      if (item.tempFileURL) {
+        urlMap[item.fileID] = item.tempFileURL
+      }
+    })
+
+    // 替换原数组中的 cloud:// 为临时 URL
+    return images.map(img => urlMap[img] || img)
+  } catch (e) {
+    console.error('转换云存储 URL 失败:', e)
+    return images
+  }
+}
+
 export interface HomeworkProgress {
   homeworkId: string
   completed: boolean
