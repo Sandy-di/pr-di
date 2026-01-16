@@ -440,27 +440,23 @@ const onImageLoad = (e: any) => {
   overflow: hidden;
 }
 
-/* 顶部控制栏 15% */
+/* 顶部控制栏 (固定高度) */
 .top-bar {
-  height: 15vh;
-  max-height: 60rpx;
-  background: var(--bg-dark);
+  height: 88rpx; /* 标准导航栏高度 */
+  flex-shrink: 0;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
   padding: 0 12rpx;
   gap: 8rpx;
+  background: var(--bg-dark);
   border-bottom: 1px solid rgba(255,255,255,0.1);
-  flex-shrink: 0;
+  z-index: 100;
 }
 
-.control-btn {
-  height: 32rpx;
-  padding: 0 10rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4rpx;
+/* 控制栏按钮样式 */
+.capsule-btn {
+  height: 60rpx;
+  border-radius: 30rpx;
   background: rgba(255,255,255,0.1);
   border-radius: 16rpx;
   font-size: 16rpx;
