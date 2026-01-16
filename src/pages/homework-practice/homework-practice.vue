@@ -2,40 +2,27 @@
   <view class="practice-page">
     <!-- 顶部控制栏 -->
     <view class="top-bar">
-      <!-- 返回按钮 -->
-      <view class="control-btn back-btn" @click="goBack">
-        <text>←</text>
-      </view>
-      <!-- 作业标题 -->
-      <text class="homework-title">{{ homework?.title || '' }}</text>
-      
-      <!-- 录音按钮 -->
-      <view 
-        class="control-btn record-btn" 
-        :class="{ recording: isRecording }"
-        @click="toggleRecording"
-      >
-        <view class="record-dot" :class="{ pulse: isRecording }"></view>
-        <text>{{ isRecording ? formatTime(recordingDuration) : '录音' }}</text>
-      </view>
-      
-      <!-- 示范音播放 -->
-      <view class="demo-player" v-if="homework?.demoAudioUrl">
-        <view class="control-btn play-btn" @click="toggleDemo">
-          <text>{{ isDemoPlaying ? '⏸' : '▶' }}</text>
+      <!-- 左侧内容区：返回 + 标题 + 录音 -->
+      <view class="top-bar-left">
+        <!-- 返回按钮 -->
+        <view class="control-btn back-btn" @click="goBack">
+          <text>←</text>
         </view>
-        <view class="speed-selector">
-          <view 
-            v-for="speed in [0.75, 1, 1.25]" 
-            :key="speed"
-            class="speed-btn"
-            :class="{ active: currentSpeed === speed }"
-            @click="setSpeed(speed)"
-          >
-            <text>{{ speed }}x</text>
-          </view>
+        <!-- 作业标题 -->
+        <text class="homework-title">{{ homework?.title || '' }}</text>
+        <!-- 录音按钮 -->
+        <view 
+          class="control-btn record-btn" 
+          :class="{ recording: isRecording }"
+          @click="toggleRecording"
+        >
+          <view class="record-dot" :class="{ pulse: isRecording }"></view>
+          <text>{{ isRecording ? formatTime(recordingDuration) : '录音' }}</text>
         </view>
       </view>
+      
+      <!-- 右侧留空给微信胶囊 -->
+      <view class="top-bar-right"></view>
     </view>
 
     <!-- 看谱区 -->
@@ -441,39 +428,52 @@ const onImageLoad = (e: any) => {
   height: 15vh;
   flex-shrink: 0;
   display: flex;
-  align-items: flex-end; /* 底部对齐，更接近标准导航栏位置 */
-  padding: 0 24rpx 20rpx 24rpx; /* 增加底部内边距 */
-  gap: 16rpx;
+  align-items: flex-end; /* 底部对齐 */
+  justify-content: space-between;
+  padding: 0 24rpx 16rpx 24rpx; /* 底部留白 */
   background: var(--bg-dark);
   border-bottom: 1px solid rgba(255,255,255,0.1);
   z-index: 100;
   box-sizing: border-box;
 }
 
+/* 左侧内容区 */
+.top-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+/* 右侧留空给微信胶囊 */
+.top-bar-right {
+  width: 180rpx; /* 给微信胶囊按钮预留空间 */
+}
+
 /* 顶部控制按钮通用样式 */
 .control-btn {
-  height: 52rpx;
-  padding: 0 20rpx;
+  height: 48rpx; /* 缩小高度 */
+  padding: 0 16rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   background: rgba(255,255,255,0.15);
   border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 26rpx;
+  border-radius: 24rpx;
   color: #fff;
-  font-size: 24rpx;
-  gap: 8rpx;
+  font-size: 22rpx;
+  gap: 6rpx;
 }
 
 /* 返回按钮 */
 .control-btn.back-btn {
-  width: 52rpx;
+  width: 48rpx;
   padding: 0;
+  font-size: 28rpx;
 }
 
 /* 录音按钮 */
 .control-btn.record-btn {
-  min-width: 120rpx;
+  min-width: 100rpx;
 }
 
 .control-btn.record-btn.recording {
@@ -483,8 +483,8 @@ const onImageLoad = (e: any) => {
 
 /* 录音红点 */
 .record-dot {
-  width: 12rpx;
-  height: 12rpx;
+  width: 10rpx;
+  height: 10rpx;
   border-radius: 50%;
   background: #ef4444;
 }
@@ -493,14 +493,13 @@ const onImageLoad = (e: any) => {
 
 /* 作业标题 */
 .homework-title {
-  flex: 1;
   font-size: 28rpx;
   font-weight: 600;
   color: #fff;
+  max-width: 200rpx;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding: 0 16rpx;
 }
 
 /* 控制栏按钮样式 */
