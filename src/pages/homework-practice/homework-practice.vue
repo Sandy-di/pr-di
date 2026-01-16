@@ -52,7 +52,7 @@
           <image 
             class="sheet-image"
             :src="img"
-            mode="aspectFit"
+            mode="widthFix"
             @click="previewSheet(index)"
             @error="onImageError"
           />
@@ -443,7 +443,8 @@ const onKeyRelease = (midi: number) => {
 
 .sheet-image {
   width: 100%;
-  height: 100%;
+  min-height: 100%;
+  object-fit: contain;
 }
 
 .page-indicator {

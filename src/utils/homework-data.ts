@@ -138,8 +138,13 @@ export const fetchHomeworkByIdAsync = async (id: string): Promise<Homework | nul
   try {
     // @ts-ignore
     const db = wx.cloud.database()
-    const res = await db.collection('homework').doc(id).get()
-    return res.data as Homework || null
+    // 云数据库的 _id 字段
+    const res = await db.collection('homework').where({ _id: id }).get()
+    if (res.data && res.data.length > 0) {
+      return res.data[0] as Homework
+    }
+    // 尝试本地数据作为回退
+    return getHomeworkById(id) || null
   } catch (e) {
     console.error('获取云端作业详情失败:', e)
     return getHomeworkById(id) || null
