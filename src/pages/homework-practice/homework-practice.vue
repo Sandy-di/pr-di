@@ -46,14 +46,16 @@
         scroll-x
         :enhanced="true"
       >
-        <image 
-          v-if="sheetImages.length > 0"
-          class="sheet-image"
-          :src="sheetImages[currentSheetPage] || sheetImages[0]"
-          mode="widthFix"
-          @click="previewSheet(currentSheetPage)"
-          @error="onImageError"
-        />
+        <view class="sheet-content">
+          <image 
+            v-if="sheetImages.length > 0"
+            class="sheet-image"
+            :src="sheetImages[currentSheetPage] || sheetImages[0]"
+            mode="widthFix"
+            @click="previewSheet(currentSheetPage)"
+            @error="onImageError"
+          />
+        </view>
       </scroll-view>
       <!-- 页码指示 -->
       <view class="page-indicator" v-if="sheetImages.length > 1">
@@ -445,12 +447,20 @@ const onKeyRelease = (midi: number) => {
   background: #fff;
   overflow: hidden;
   position: relative;
-  border: 2px solid red; /* DEBUG: 检查看谱区高度 */
+  /* border: 2px solid red; DEBUG REMOVED */
 }
 
 .sheet-scroll {
   width: 100%;
   height: 100%;
+}
+
+.sheet-content {
+  min-height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center; /* 不足一屏时垂直居中 */
+  justify-content: center;
 }
 
 .sheet-image {
