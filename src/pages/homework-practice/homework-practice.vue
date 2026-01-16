@@ -40,23 +40,17 @@
 
     <!-- 看谱区 -->
     <view class="sheet-area">
-      <scroll-view 
-        class="sheet-scroll" 
-        scroll-y
-        scroll-x
-        :enhanced="true"
-      >
-        <view class="sheet-content">
-          <image 
-            v-if="sheetImages.length > 0"
-            class="sheet-image"
-            :src="sheetImages[currentSheetPage] || sheetImages[0]"
-            mode="widthFix"
-            @click="previewSheet(currentSheetPage)"
-            @error="onImageError"
-          />
-        </view>
-      </scroll-view>
+      <!-- 简化：直接显示图片，不滚动，确保完整 -->
+      <view class="sheet-content">
+        <image 
+          v-if="sheetImages.length > 0"
+          class="sheet-image"
+          :src="sheetImages[currentSheetPage] || sheetImages[0]"
+          mode="aspectFit"
+          @click="previewSheet(currentSheetPage)"
+          @error="onImageError"
+        />
+      </view>
       <!-- 页码指示 -->
       <view class="page-indicator" v-if="sheetImages.length > 1">
         <text @click="prevPage">◀</text>
@@ -449,19 +443,17 @@ const onKeyRelease = (midi: number) => {
   position: relative;
 }
 
-.sheet-scroll {
-  width: 100%;
-  height: 100%;
-}
-
 .sheet-content {
   width: 100%;
-  padding-bottom: 20rpx; /* 底部留白 */
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .sheet-image {
   width: 100%;
-  height: auto !important; /* 关键：让 widthFix 能够由内容撑开高度 */
+  height: 100%;
   display: block;
 }
 
