@@ -450,70 +450,57 @@ const onImageLoad = (e: any) => {
   box-sizing: border-box;
 }
 
-/* 强制覆盖：控制栏按钮通用样式 */
-.capsule-btn, .back-btn, .record-btn {
-  height: 56rpx !important; /* 强制高度 */
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
+/* 顶部控制按钮通用样式 */
+.control-btn {
+  height: 52rpx;
+  padding: 0 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: rgba(255,255,255,0.15);
   border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 28rpx;
+  border-radius: 26rpx;
   color: #fff;
-  transition: all 0.2s;
-  padding: 0;
+  font-size: 24rpx;
+  gap: 8rpx;
 }
 
 /* 返回按钮 */
-.back-btn {
-  width: 56rpx !important; /* 正方形 */
-  padding: 0 !important;
-  flex-shrink: 0;
+.control-btn.back-btn {
+  width: 52rpx;
+  padding: 0;
 }
 
 /* 录音按钮 */
-.record-btn {
-  padding: 0 24rpx !important;
-  gap: 12rpx !important;
-  min-width: 140rpx;
-  flex-direction: row !important; /* 确保横向排列 */
+.control-btn.record-btn {
+  min-width: 120rpx;
 }
 
-.record-btn.recording {
+.control-btn.record-btn.recording {
   background: rgba(239, 68, 68, 0.25);
   border-color: #ef4444;
 }
 
 /* 录音红点 */
 .record-dot {
-  width: 12rpx !important; /* 更精致的点 */
-  height: 12rpx !important;
+  width: 12rpx;
+  height: 12rpx;
   border-radius: 50%;
   background: #ef4444;
-  margin-top: 2rpx; /* 微调对齐 */
 }
 
 .record-dot.pulse { animation: pulse 1s infinite; }
 
-.btn-text {
-  font-size: 24rpx !important;
-  color: #fff;
-  font-weight: 500;
-  line-height: normal !important;
-  padding-bottom: 2rpx; /* 微调文字垂直对齐 */
-}
-
-/* 标题 */
-.page-title {
+/* 作业标题 */
+.homework-title {
   flex: 1;
-  text-align: left; /* 左对齐 */
-  font-size: 32rpx;
+  font-size: 28rpx;
   font-weight: 600;
   color: #fff;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding-left: 10rpx;
+  padding: 0 16rpx;
 }
 
 /* 控制栏按钮样式 */
@@ -732,10 +719,9 @@ const onImageLoad = (e: any) => {
 }
 
 .white-key .notation {
-  font-size: 26rpx;
-  font-weight: 700;
-  color: #000;
-  text-shadow: 0 0 4rpx rgba(255,255,255,0.8);
+  font-size: 18rpx;
+  font-weight: 500;
+  color: #999;
 }
 
 /* 黑键 */
