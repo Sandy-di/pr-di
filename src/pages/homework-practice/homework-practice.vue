@@ -443,6 +443,10 @@ const onKeyRelease = (midi: number) => {
   height: 100%;
 }
 
+.sheet-swiper swiper-item {
+  height: 100% !important;
+}
+
 .sheet-scroll {
   width: 100%;
   height: 100%;
