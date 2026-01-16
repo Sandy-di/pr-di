@@ -106,7 +106,7 @@ import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { onLoad, onShareAppMessage } from '@dcloudio/uni-app'
 import AudioManager from '@/utils/audio-manager'
 import RecorderService from '@/utils/recorder-manager'
-import { fetchHomeworkByIdAsync, getSheetImagesAsync, incrementPracticeCount, type Homework } from '@/utils/homework-data'
+import { fetchHomeworkByIdAsync, getSheetImagesAsync, incrementPracticeCount, getHomeworkProgress, saveHomeworkProgress, type Homework } from '@/utils/homework-data'
 
 onShareAppMessage(() => ({
   title: `📚 ${homework.value?.title || '作业练习'} - 视唱练耳助手`,
@@ -303,14 +303,54 @@ const goBack = () => {
 }
 
 // 录音功能
-const toggleRecording = () => {
+const isUploading = ref(false)
+
+const toggleRecording = async () => {
   if (isRecording.value) {
-    RecorderService.stop()
+    // 停止录音并上传
     isRecording.value = false
     clearInterval(recordingTimer)
+    
+    if (homeworkId.value) {
+      // 有作业ID时，停止并上传到云存储
+      isUploading.value = true
+      uni.showLoading({ title: '正在上传...' })
+      
+      try {
+        const recording = await RecorderService.stopAndUpload(homeworkId.value)
+        uni.hideLoading()
+        isUploading.value = false
+        uni.showToast({ title: '录音已保存到云端', icon: 'success' })
+        
+        // 更新作业进度
+        updateHomeworkRecording(homeworkId.value, recording.cloudFileId || recording.voicePath)
+      } catch (error) {
+        uni.hideLoading()
+        isUploading.value = false
+        console.error('上传失败:', error)
+        uni.showToast({ title: '上传失败，已保存本地', icon: 'none' })
+      }
+    } else {
+      // 无作业ID时，仅保存本地
+      RecorderService.stop()
+      uni.showToast({ title: '录音已保存', icon: 'success' })
+    }
   } else {
     startRecording()
   }
+}
+
+// 更新作业进度中的录音记录
+const updateHomeworkRecording = (hwId: string, recordingPath: string) => {
+  const progress = getHomeworkProgress(hwId) || {
+    homeworkId: hwId,
+    completed: false,
+    practiceCount: 0,
+    recordings: []
+  }
+  progress.recordings.push(recordingPath)
+  progress.lastPracticeAt = new Date().toISOString()
+  saveHomeworkProgress(progress)
 }
 
 const startRecording = () => {

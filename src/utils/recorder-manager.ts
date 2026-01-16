@@ -1,15 +1,18 @@
 /**
  * 录音管理器
- * 封装微信小程序录音 API
+ * 封装微信小程序录音 API + 云存储上传
  */
 
 export interface Recording {
   id: string
   name: string
-  voicePath: string
+  voicePath: string       // 本地临时路径
+  cloudUrl?: string       // 云存储 URL（上传后）
+  cloudFileId?: string    // 云存储文件 ID
   duration: number
   mode: 'voice-only' | 'mixed'
   practiceType?: string
+  homeworkId?: string     // 关联的作业 ID
   createdAt: string
   score?: number
 }
@@ -287,6 +290,108 @@ class RecorderService {
     audioContext.src = filePath
     audioContext.play()
     return audioContext
+  }
+
+  /**
+   * 上传录音到云存储
+   * @param recording 录音对象
+   * @param homeworkId 可选，关联的作业ID
+   * @returns 更新后的录音对象（包含云端URL）
+   */
+  async uploadToCloud(recording: Recording, homeworkId?: string): Promise<Recording> {
+    // @ts-ignore
+    if (!wx.cloud) {
+      throw new Error('云开发不可用')
+    }
+
+    try {
+      const timestamp = Date.now()
+      const cloudPath = `recordings/${homeworkId || 'free'}/${timestamp}_${recording.id}.mp3`
+
+      // @ts-ignore
+      const uploadResult = await wx.cloud.uploadFile({
+        cloudPath,
+        filePath: recording.voicePath
+      })
+
+      if (uploadResult.fileID) {
+        // 获取临时访问 URL
+        // @ts-ignore
+        const urlResult = await wx.cloud.getTempFileURL({
+          fileList: [uploadResult.fileID]
+        })
+
+        const cloudUrl = urlResult.fileList[0]?.tempFileURL || ''
+
+        // 更新录音对象
+        const updatedRecording: Recording = {
+          ...recording,
+          cloudFileId: uploadResult.fileID,
+          cloudUrl,
+          homeworkId
+        }
+
+        // 更新本地存储中的录音记录
+        this.updateRecordingInStorage(updatedRecording)
+
+        console.log('录音上传成功:', uploadResult.fileID)
+        return updatedRecording
+      }
+
+      throw new Error('上传失败：未获取到 fileID')
+    } catch (error) {
+      console.error('上传录音到云存储失败:', error)
+      throw error
+    }
+  }
+
+  /**
+   * 更新本地存储中的录音记录
+   */
+  private updateRecordingInStorage(recording: Recording): void {
+    try {
+      const recordings = this.getRecordings()
+      const index = recordings.findIndex(r => r.id === recording.id)
+      if (index !== -1) {
+        recordings[index] = recording
+        uni.setStorageSync('recordings', recordings)
+      }
+    } catch (error) {
+      console.error('更新录音记录失败:', error)
+    }
+  }
+
+  /**
+   * 录音并自动上传到云存储
+   * @param homeworkId 作业ID
+   * @param onProgress 上传进度回调
+   */
+  async stopAndUpload(homeworkId: string): Promise<Recording> {
+    return new Promise((resolve, reject) => {
+      const originalCallback = this.onStopCallback
+
+      this.onStopCallback = async (recording) => {
+        // 恢复原回调
+        this.onStopCallback = originalCallback
+
+        try {
+          // 关联作业ID
+          recording.homeworkId = homeworkId
+          
+          // 上传到云存储
+          const uploadedRecording = await this.uploadToCloud(recording, homeworkId)
+          
+          // 调用原回调
+          originalCallback?.(uploadedRecording)
+          
+          resolve(uploadedRecording)
+        } catch (error) {
+          reject(error)
+        }
+      }
+
+      this.stop()
+    })
   }
 }
 
