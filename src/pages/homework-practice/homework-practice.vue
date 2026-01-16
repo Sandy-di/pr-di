@@ -456,11 +456,9 @@ const onKeyRelease = (midi: number) => {
 }
 
 .sheet-content {
-  min-height: 100%;
   width: 100%;
-  display: flex;
-  align-items: center; /* 不足一屏时垂直居中 */
-  justify-content: center;
+  /* 移除 Flex 居中，确保大图从顶部开始显示 */
+  display: block;
 }
 
 .sheet-image {
