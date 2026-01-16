@@ -40,19 +40,7 @@
 
     <!-- 看谱区 -->
     <view class="sheet-area">
-      <!-- 调试信息 -->
-      <view style="position: absolute; top: 0; left: 0; z-index: 100; color: red; font-size: 20rpx; background: rgba(255,255,255,0.8); padding: 10rpx;">
-        <text>图片数量: {{ sheetImages.length }}</text>
-        <view>当前链接: {{ sheetImages[currentSheetPage] || '无' }}</view>
-        <view>ID: {{ homeworkId }}</view>
-      </view>
-
-      <!-- 强制显示一张网络测试图 (验证布局) -->
-      <!-- <image 
-        src="https://picsum.photos/400/200" 
-        style="position: absolute; top: 50rpx; right: 50rpx; width: 200rpx; height: 100rpx; z-index: 99; border: 2px solid blue;"
-      /> -->
-
+      <!-- 简化：直接显示图片，不滚动，确保完整 -->
       <view class="sheet-content">
         <image 
           v-if="sheetImages.length > 0"
@@ -120,14 +108,38 @@ const statusBarHeight = ref(20)
 const homeworkId = ref('')
 const homework = ref<Homework | null>(null)
 
+// 通过 onLoad 获取参数
 onLoad((options: any) => {
-  if (options.id) {
+  console.log('onLoad options:', options)
+  if (options && options.id) {
     homeworkId.value = options.id
     loadHomework()
-  } else {
-    // 如果没有 ID，尝试加载第一个作为测试（或者提示错误）
-    // console.warn('No homework ID found')
   }
+})
+
+onMounted(() => {
+  // 顶栏高度
+  const menuBtn = uni.getMenuButtonBoundingClientRect()
+  statusBarHeight.value = menuBtn.top
+
+  // 保险措施：如果 onLoad 没取到（例如组件刷新），尝试从页面栈获取
+  if (!homeworkId.value) {
+    const pages = getCurrentPages()
+    if (pages.length > 0) {
+      const page = pages[pages.length - 1] as any
+      if (page.options && page.options.id) {
+        console.log('Force load from page options:', page.options.id)
+        homeworkId.value = page.options.id
+        loadHomework()
+      }
+    }
+  }
+
+  // 初始化录音
+  RecorderService.init()
+  
+  // 初始化钢琴
+  // ...
 })
 
 // 乐谱翻页
