@@ -118,7 +118,11 @@ export const fetchHomeworkListAsync = async (): Promise<Homework[]> => {
       .get()
     
     if (res.data && res.data.length > 0) {
-      return res.data as Homework[]
+      // 映射 _id 为 id
+      return res.data.map((item: any) => ({
+        ...item,
+        id: item._id
+      })) as Homework[]
     }
     console.warn('云端无数据，使用本地数据')
     return homeworkList
@@ -140,8 +144,13 @@ export const fetchHomeworkByIdAsync = async (id: string): Promise<Homework | nul
     const db = wx.cloud.database()
     // 云数据库的 _id 字段
     const res = await db.collection('homework').where({ _id: id }).get()
+    
     if (res.data && res.data.length > 0) {
-      return res.data[0] as Homework
+      const data = res.data[0]
+      return {
+        ...data,
+        id: data._id
+      } as Homework
     }
     // 尝试本地数据作为回退
     return getHomeworkById(id) || null
