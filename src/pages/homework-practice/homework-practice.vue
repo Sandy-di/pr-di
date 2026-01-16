@@ -40,29 +40,26 @@
 
     <!-- 看谱区 -->
     <view class="sheet-area">
-      <swiper 
-        class="sheet-swiper" 
-        :current="currentSheetPage"
-        @change="onSheetChange"
-        :indicator-dots="sheetImages.length > 1"
-        indicator-color="rgba(255,255,255,0.3)"
-        indicator-active-color="#d4af37"
+      <scroll-view 
+        class="sheet-scroll" 
+        scroll-y
+        scroll-x
+        :enhanced="true"
       >
-        <swiper-item v-for="(img, index) in sheetImages" :key="index">
-          <scroll-view class="sheet-scroll" scroll-y>
-            <image 
-              class="sheet-image"
-              :src="img"
-              mode="widthFix"
-              @click="previewSheet(index)"
-              @error="onImageError"
-            />
-          </scroll-view>
-        </swiper-item>
-      </swiper>
+        <image 
+          v-if="sheetImages.length > 0"
+          class="sheet-image"
+          :src="sheetImages[currentSheetPage] || sheetImages[0]"
+          mode="widthFix"
+          @click="previewSheet(currentSheetPage)"
+          @error="onImageError"
+        />
+      </scroll-view>
       <!-- 页码指示 -->
       <view class="page-indicator" v-if="sheetImages.length > 1">
-        <text>{{ currentSheetPage + 1 }} / {{ sheetImages.length }}</text>
+        <text @click="prevPage">◀</text>
+        <text style="margin: 0 16rpx;">{{ currentSheetPage + 1 }} / {{ sheetImages.length }}</text>
+        <text @click="nextPage">▶</text>
       </view>
       <!-- 空状态 -->
       <view v-if="sheetImages.length === 0" class="sheet-placeholder">
@@ -292,6 +289,18 @@ const onSheetChange = (e: any) => {
   currentSheetPage.value = e.detail.current
 }
 
+const prevPage = () => {
+  if (currentSheetPage.value > 0) {
+    currentSheetPage.value--
+  }
+}
+
+const nextPage = () => {
+  if (currentSheetPage.value < sheetImages.value.length - 1) {
+    currentSheetPage.value++
+  }
+}
+
 // 乐谱预览
 const previewSheet = (index: number = 0) => {
   if (sheetImages.value.length > 0) {
@@ -438,15 +447,6 @@ const onKeyRelease = (midi: number) => {
   position: relative;
 }
 
-.sheet-swiper {
-  width: 100%;
-  height: 100%;
-}
-
-.sheet-swiper swiper-item {
-  height: 100% !important;
-}
-
 .sheet-scroll {
   width: 100%;
   height: 100%;
@@ -454,6 +454,7 @@ const onKeyRelease = (midi: number) => {
 
 .sheet-image {
   width: 100%;
+  display: block;
 }
 
 .page-indicator {
