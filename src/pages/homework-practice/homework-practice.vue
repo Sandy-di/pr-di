@@ -428,9 +428,9 @@ const onImageLoad = (e: any) => {
   height: 15vh;
   flex-shrink: 0;
   display: flex;
-  align-items: flex-end; /* 底部对齐 */
+  align-items: center; /* 垂直居中，上下都有留空 */
   justify-content: space-between;
-  padding: 0 24rpx 16rpx 24rpx; /* 底部留白 */
+  padding: 0 24rpx;
   background: var(--bg-dark);
   border-bottom: 1px solid rgba(255,255,255,0.1);
   z-index: 100;
@@ -446,34 +446,34 @@ const onImageLoad = (e: any) => {
 
 /* 右侧留空给微信胶囊 */
 .top-bar-right {
-  width: 180rpx; /* 给微信胶囊按钮预留空间 */
+  width: 180rpx;
 }
 
 /* 顶部控制按钮通用样式 */
 .control-btn {
-  height: 48rpx; /* 缩小高度 */
-  padding: 0 16rpx;
+  height: 36rpx; /* 进一步缩小 */
+  padding: 0 14rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   background: rgba(255,255,255,0.15);
   border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 24rpx;
+  border-radius: 18rpx;
   color: #fff;
-  font-size: 22rpx;
+  font-size: 20rpx;
   gap: 6rpx;
 }
 
 /* 返回按钮 */
 .control-btn.back-btn {
-  width: 48rpx;
+  width: 36rpx;
   padding: 0;
-  font-size: 28rpx;
+  font-size: 24rpx;
 }
 
 /* 录音按钮 */
 .control-btn.record-btn {
-  min-width: 100rpx;
+  min-width: 80rpx;
 }
 
 .control-btn.record-btn.recording {
@@ -483,8 +483,8 @@ const onImageLoad = (e: any) => {
 
 /* 录音红点 */
 .record-dot {
-  width: 10rpx;
-  height: 10rpx;
+  width: 8rpx;
+  height: 8rpx;
   border-radius: 50%;
   background: #ef4444;
 }
@@ -493,10 +493,10 @@ const onImageLoad = (e: any) => {
 
 /* 作业标题 */
 .homework-title {
-  font-size: 28rpx;
+  font-size: 24rpx;
   font-weight: 600;
   color: #fff;
-  max-width: 200rpx;
+  max-width: 180rpx;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
