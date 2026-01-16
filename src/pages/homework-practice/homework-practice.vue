@@ -40,30 +40,34 @@
 
     <!-- 看谱区 -->
     <view class="sheet-area">
-      <!-- 诊断面板 (调试用) -->
-      <view class="debug-panel" style="position: absolute; top: 0; left: 0; right: 0; padding: 10rpx; background: rgba(0,0,0,0.8); color: #0f0; font-size: 20rpx; z-index: 999;">
-        <view>ID: {{ homeworkId || '未获取' }}</view>
-        <view>Loading: {{ isLoading }}</view>
-        <view>Images: {{ sheetImages ? sheetImages.length : 'null' }}</view>
-        <view>Error: {{ loadError }}</view>
-        <view style="word-break: break-all;">Data: {{ homework ? (homework.title || 'ok') : 'null' }}</view>
-      </view>
-
-      <view class="sheet-content">
-        <image 
-          v-if="sheetImages.length > 0"
-          class="sheet-image"
-          :src="sheetImages[currentSheetPage] || sheetImages[0]"
-          mode="aspectFit"
-          @click="previewSheet(currentSheetPage)"
-          @error="onImageError"
-          @load="onImageLoad"
-        />
-        <view v-else class="loading-state">
-          <text>正在加载图片...</text>
-          <text v-if="!homeworkId" style="font-size: 24rpx; color: red;">(ID 为空, 请重新进入)</text>
+      <scroll-view 
+        class="sheet-scroll" 
+        scroll-y
+        :enhanced="true"
+        :show-scrollbar="true"
+      >
+        <view class="sheet-content">
+          <image 
+            v-if="sheetImages.length > 0"
+            class="sheet-image"
+            :src="sheetImages[currentSheetPage] || sheetImages[0]"
+            mode="widthFix"
+            @click="previewSheet(currentSheetPage)"
+            @error="onImageError"
+          />
+          <view v-else-if="isLoading" class="loading-state">
+            <text>正在加载图片...</text>
+          </view>
+          <view v-else-if="loadError" class="error-state">
+            <text>{{ loadError }}</text>
+            <button size="mini" @click="loadHomework">重试</button>
+          </view>
+          <view v-else class="empty-state">
+            <text class="placeholder-icon">🎼</text>
+            <text class="placeholder-text">暂无乐谱</text>
+          </view>
         </view>
-      </view>
+      </scroll-view>
 
       <!-- 页码指示 -->
       <view class="page-indicator" v-if="sheetImages.length > 1">
@@ -72,6 +76,8 @@
         <text @click="nextPage">▶</text>
       </view>
     </view>
+
+
 
     <!-- 钢琴区 45% -->
     <view class="piano-area">
@@ -233,17 +239,13 @@ const loadHomework = async () => {
   try {
     isLoading.value = true
     loadError.value = ''
-    console.log('开始加载作业:', homeworkId.value)
     
     homework.value = await fetchHomeworkByIdAsync(homeworkId.value)
-    console.log('作业数据:', homework.value)
     
     if (homework.value) {
       if (homework.value.sheetImages && homework.value.sheetImages.length > 0) {
-        console.log('原始 sheetImages:', homework.value.sheetImages)
         try {
           sheetImages.value = await getSheetImagesAsync(homework.value)
-          console.log('转换后 sheetImages:', sheetImages.value)
         } catch (e) {
           console.error('转换失败:', e)
           loadError.value = '图片链接转换失败'
@@ -507,15 +509,12 @@ const onKeyRelease = (midi: number) => {
 
 .sheet-content {
   width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  padding-bottom: 20rpx;
 }
 
 .sheet-image {
   width: 100%;
-  height: 100%;
+  height: auto; /* widthFix 模式下高度自适应 */
   display: block;
 }
 
