@@ -40,40 +40,35 @@
 
     <!-- 看谱区 -->
     <view class="sheet-area">
-      <scroll-view 
-        class="sheet-scroll" 
-        scroll-y
-        :enhanced="true"
-        :show-scrollbar="true"
+      <swiper 
+        class="sheet-swiper" 
+        :current="currentSheetPage"
+        @change="onSheetChange"
+        :indicator-dots="sheetImages.length > 1"
+        indicator-color="rgba(0,0,0,0.2)"
+        indicator-active-color="#d4af37"
+        :circular="true"
       >
-        <view class="sheet-content">
+        <swiper-item v-for="(img, index) in sheetImages" :key="index">
           <image 
-            v-if="sheetImages.length > 0"
             class="sheet-image"
-            :src="sheetImages[currentSheetPage] || sheetImages[0]"
-            mode="widthFix"
-            @click="previewSheet(currentSheetPage)"
+            :src="img"
+            mode="aspectFit"
+            @click="previewSheet(index)"
             @error="onImageError"
           />
-          <view v-else-if="isLoading" class="loading-state">
-            <text>正在加载图片...</text>
-          </view>
-          <view v-else-if="loadError" class="error-state">
-            <text>{{ loadError }}</text>
-            <button size="mini" @click="loadHomework">重试</button>
-          </view>
-          <view v-else class="empty-state">
-            <text class="placeholder-icon">🎼</text>
-            <text class="placeholder-text">暂无乐谱</text>
-          </view>
-        </view>
-      </scroll-view>
+        </swiper-item>
+      </swiper>
 
-      <!-- 页码指示 -->
+      <!-- 空状态 -->
+      <view v-if="!isLoading && sheetImages.length === 0" class="empty-state">
+        <text class="placeholder-icon">🎼</text>
+        <text class="placeholder-text">暂无乐谱</text>
+      </view>
+
+      <!-- 页码指示 (浮动在右下角) -->
       <view class="page-indicator" v-if="sheetImages.length > 1">
-        <text @click="prevPage">◀</text>
-        <text style="margin: 0 16rpx;">{{ currentSheetPage + 1 }} / {{ sheetImages.length }}</text>
-        <text @click="nextPage">▶</text>
+        <text>{{ currentSheetPage + 1 }} / {{ sheetImages.length }}</text>
       </view>
     </view>
 
@@ -507,14 +502,22 @@ const onKeyRelease = (midi: number) => {
   position: relative;
 }
 
-.sheet-content {
+.sheet-swiper {
   width: 100%;
-  padding-bottom: 20rpx;
+  height: 100%;
+}
+
+.sheet-swiper swiper-item {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .sheet-image {
   width: 100%;
-  height: auto; /* widthFix 模式下高度自适应 */
+  height: 100%;
   display: block;
 }
 
