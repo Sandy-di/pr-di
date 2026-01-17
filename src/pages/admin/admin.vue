@@ -1,12 +1,37 @@
 <template>
   <view class="admin-page">
-    <!-- 顶部标题栏 -->
-    <view class="header">
-      <text class="title">作业管理</text>
-      <view class="add-btn" @click="showAddModal = true">
-        <text>+ 新建作业</text>
+    <!-- 密码验证弹窗 -->
+    <view v-if="!isAuthenticated" class="auth-overlay">
+      <view class="auth-modal">
+        <text class="auth-title">🔐 管理员验证</text>
+        <text class="auth-desc">请输入管理密码</text>
+        <input 
+          v-model="password" 
+          type="password" 
+          class="password-input" 
+          placeholder="请输入密码"
+          @confirm="verifyPassword"
+        />
+        <view class="auth-actions">
+          <view class="auth-btn cancel" @click="goBack">返回</view>
+          <view class="auth-btn confirm" @click="verifyPassword">确认</view>
+        </view>
+        <text v-if="authError" class="auth-error">{{ authError }}</text>
       </view>
     </view>
+
+    <!-- 管理内容（验证通过后显示） -->
+    <template v-else>
+      <!-- 顶部标题栏 -->
+      <view class="header">
+        <view class="header-left" @click="goBack">
+          <text class="back-icon">←</text>
+        </view>
+        <text class="title">作业管理</text>
+        <view class="add-btn" @click="showAddModal = true">
+          <text>+ 新建</text>
+        </view>
+      </view>
 
     <!-- 作业列表 -->
     <scroll-view class="homework-list" scroll-y>
@@ -141,6 +166,7 @@
         </view>
       </view>
     </view>
+    </template>
   </view>
 </template>
 
@@ -167,6 +193,30 @@ const isEditing = ref(false)
 const isSaving = ref(false)
 const editingId = ref<string | null>(null)
 
+// 密码验证相关
+const isAuthenticated = ref(false)
+const password = ref('')
+const authError = ref('')
+const ADMIN_PASSWORD = '123456'  // 管理密码，可改为更安全的方式
+
+// 验证密码
+const verifyPassword = () => {
+  if (password.value === ADMIN_PASSWORD) {
+    isAuthenticated.value = true
+    authError.value = ''
+    // 验证成功后加载数据
+    loadHomeworkList()
+  } else {
+    authError.value = '密码错误，请重试'
+    password.value = ''
+  }
+}
+
+// 返回上一页
+const goBack = () => {
+  uni.navigateBack()
+}
+
 const difficulties: { value: 'easy' | 'medium' | 'hard', label: string }[] = [
   { value: 'easy', label: '简单' },
   { value: 'medium', label: '中等' },
@@ -185,9 +235,7 @@ const formData = reactive({
 
 let demoAudioContext: UniApp.InnerAudioContext | null = null
 
-onLoad(() => {
-  loadHomeworkList()
-})
+// 不再自动加载，改为验证成功后加载
 
 // 加载作业列表
 const loadHomeworkList = async () => {
@@ -469,12 +517,102 @@ const saveHomework = async () => {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
+/* 密码验证弹窗 */
+.auth-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.auth-modal {
+  width: 80%;
+  max-width: 600rpx;
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 48rpx;
+  text-align: center;
+  box-shadow: 0 20rpx 60rpx rgba(0,0,0,0.3);
+}
+
+.auth-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #333;
+  display: block;
+  margin-bottom: 16rpx;
+}
+
+.auth-desc {
+  font-size: 26rpx;
+  color: #666;
+  display: block;
+  margin-bottom: 32rpx;
+}
+
+.password-input {
+  width: 100%;
+  height: 88rpx;
+  padding: 0 24rpx;
+  border: 2rpx solid #ddd;
+  border-radius: 12rpx;
+  font-size: 32rpx;
+  text-align: center;
+  box-sizing: border-box;
+  margin-bottom: 32rpx;
+}
+
+.auth-actions {
+  display: flex;
+  gap: 24rpx;
+}
+
+.auth-btn {
+  flex: 1;
+  padding: 24rpx;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+}
+
+.auth-btn.cancel {
+  background: #f0f0f0;
+  color: #666;
+}
+
+.auth-btn.confirm {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+}
+
+.auth-error {
+  display: block;
+  margin-top: 24rpx;
+  color: #f44336;
+  font-size: 24rpx;
+}
+
+/* 顶部标题栏 */
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 40rpx 32rpx 24rpx;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.header-left {
+  padding: 8rpx 16rpx;
+}
+
+.back-icon {
+  font-size: 40rpx;
+  color: #fff;
 }
 
 .title {
