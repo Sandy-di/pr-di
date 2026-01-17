@@ -27,35 +27,63 @@ export const getSheetImages = (homework: Homework): string[] => {
   return []
 }
 
+// 【通用】通过云函数获取临时文件 URL（绕过存储权限限制）
+const getTempFileURLViaCloudFunction = async (fileList: string[]): Promise<Record<string, string>> => {
+  const urlMap: Record<string, string> = {}
+  
+  if (fileList.length === 0) return urlMap
+  
+  try {
+    // 优先使用云函数（可绕过存储权限）
+    // @ts-ignore
+    const res = await wx.cloud.callFunction({
+      name: 'getTempFileURL',
+      data: { fileList }
+    })
+    
+    if (res.result?.success && res.result.fileList) {
+      res.result.fileList.forEach((item: any) => {
+        if (item.tempFileURL) {
+          urlMap[item.fileID] = item.tempFileURL
+        }
+      })
+    }
+  } catch (e) {
+    console.warn('云函数获取临时URL失败，尝试客户端API:', e)
+    
+    // 降级使用客户端 API（可能因权限问题失败）
+    try {
+      // @ts-ignore
+      const res = await wx.cloud.getTempFileURL({ fileList })
+      res.fileList.forEach((item: any) => {
+        if (item.tempFileURL) {
+          urlMap[item.fileID] = item.tempFileURL
+        }
+      })
+    } catch (e2) {
+      console.error('客户端获取临时URL也失败:', e2)
+    }
+  }
+  
+  return urlMap
+}
+
 // 【异步】获取乐谱图片（自动转换 cloud:// 为临时 URL）
 export const getSheetImagesAsync = async (homework: Homework): Promise<string[]> => {
   const images = getSheetImages(homework)
   if (images.length === 0) return []
 
   // 检查是否有 cloud:// 开头的 fileID
-  // 注意：需要 trim() 去除可能的空白字符
   const cleanedImages = images.map(img => img.trim())
   const cloudImages = cleanedImages.filter(img => img.startsWith('cloud://'))
   
   if (cloudImages.length === 0) return cleanedImages
 
-  // 转换云存储 fileID 为临时 URL
-  try {
-    // @ts-ignore
-    const res = await wx.cloud.getTempFileURL({ fileList: cloudImages })
-    const urlMap: Record<string, string> = {}
-    res.fileList.forEach((item: any) => {
-      if (item.tempFileURL) {
-        urlMap[item.fileID] = item.tempFileURL
-      }
-    })
+  // 通过云函数转换云存储 fileID 为临时 URL
+  const urlMap = await getTempFileURLViaCloudFunction(cloudImages)
 
-    // 替换原数组中的 cloud:// 为临时 URL
-    return cleanedImages.map(img => urlMap[img] || img)
-  } catch (e) {
-    console.error('转换云存储 URL 失败:', e)
-    return cleanedImages
-  }
+  // 替换原数组中的 cloud:// 为临时 URL
+  return cleanedImages.map(img => urlMap[img] || img)
 }
 
 // 【异步】获取示范音频 URL（自动转换 cloud:// 为临时 URL）
@@ -67,18 +95,9 @@ export const getDemoAudioUrlAsync = async (homework: Homework): Promise<string |
   // 如果不是云存储 URL，直接返回
   if (!url.startsWith('cloud://')) return url
 
-  // 转换云存储 fileID 为临时 URL
-  try {
-    // @ts-ignore
-    const res = await wx.cloud.getTempFileURL({ fileList: [url] })
-    if (res.fileList[0]?.tempFileURL) {
-      return res.fileList[0].tempFileURL
-    }
-    return url
-  } catch (e) {
-    console.error('获取示范音频 URL 失败:', e)
-    return url
-  }
+  // 通过云函数转换云存储 fileID 为临时 URL
+  const urlMap = await getTempFileURLViaCloudFunction([url])
+  return urlMap[url] || url
 }
 
 export interface HomeworkProgress {
