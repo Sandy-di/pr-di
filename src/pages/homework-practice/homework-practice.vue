@@ -31,8 +31,14 @@
         </view>
         <!-- 播放进度条 -->
         <view v-if="demoAudioUrl && isDemoPlaying" class="demo-progress">
-          <view class="progress-bar">
+          <view 
+            class="progress-bar" 
+            @touchstart="onProgressTouchStart"
+            @touchmove="onProgressTouchMove"
+            @touchend="onProgressTouchEnd"
+          >
             <view class="progress-fill" :style="{ width: demoProgress + '%' }"></view>
+            <view class="progress-thumb" :style="{ left: demoProgress + '%' }"></view>
           </view>
           <text class="progress-time">{{ formatDemoTime(demoCurrentTime) }}</text>
         </view>
@@ -392,6 +398,44 @@ const formatDemoTime = (seconds: number) => {
   return `${mins}:${secs.toString().padStart(2, '0')}`
 }
 
+// 进度条拖动控制
+let isDragging = false
+let progressBarWidth = 60 // 进度条宽度 px
+
+const onProgressTouchStart = (e: any) => {
+  isDragging = true
+  updateProgressFromTouch(e)
+}
+
+const onProgressTouchMove = (e: any) => {
+  if (isDragging) {
+    updateProgressFromTouch(e)
+  }
+}
+
+const onProgressTouchEnd = () => {
+  isDragging = false
+}
+
+const updateProgressFromTouch = (e: any) => {
+  if (!demoAudio || demoDuration.value <= 0) return
+  
+  const touch = e.touches[0]
+  const rect = e.currentTarget.getBoundingClientRect?.() || { left: 0, width: progressBarWidth }
+  const barLeft = rect.left || 0
+  const barWidth = rect.width || progressBarWidth
+  
+  let x = touch.clientX - barLeft
+  x = Math.max(0, Math.min(x, barWidth))
+  
+  const percent = x / barWidth
+  const newTime = percent * demoDuration.value
+  
+  demoAudio.seek(newTime)
+  demoCurrentTime.value = newTime
+  demoProgress.value = percent * 100
+}
+
 // 切换播放速度
 const speeds = [0.75, 1, 1.25]
 const cycleSpeed = () => {
@@ -632,18 +676,46 @@ const onImageLoad = (e: any) => {
 }
 
 .progress-bar {
+  position: relative;
   width: 60px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  background: transparent;
+}
+
+.progress-bar::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
   height: 4px;
   background: rgba(255,255,255,0.3);
   border-radius: 2px;
-  overflow: hidden;
 }
 
 .progress-fill {
-  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 4px;
   background: #22c55e;
   border-radius: 2px;
-  transition: width 0.1s linear;
+  pointer-events: none;
+}
+
+.progress-thumb {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
 .progress-time {
