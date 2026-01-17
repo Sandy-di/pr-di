@@ -3,6 +3,9 @@
     <!-- 导航栏 -->
     <view class="navbar" :style="{ paddingTop: statusBarHeight + 'px' }">
       <view class="navbar-content">
+        <view class="back-btn" @click="goBack">
+          <text>←</text>
+        </view>
         <text class="navbar-title">📚 作业练习</text>
         <view class="navbar-badge">{{ completedCount }}/{{ homeworkList.length }}</view>
       </view>
@@ -73,6 +76,11 @@ const difficultyLabel: Record<string, string> = {
   hard: '挑战'
 }
 
+// 返回上一页
+const goBack = () => {
+  uni.navigateBack()
+}
+
 const completedCount = computed(() => {
   return Object.values(progressMap.value).filter(p => p?.completed).length
 })
@@ -128,15 +136,28 @@ const goToPractice = (id: string) => {
 .navbar-content {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 16rpx;
   height: 88rpx;
+  padding: 0 24rpx;
+}
+
+.back-btn {
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.1);
+  border-radius: 50%;
+  color: #fff;
+  font-size: 32rpx;
 }
 
 .navbar-title {
   font-size: 36rpx;
   font-weight: 600;
   color: #fff;
+  flex: 1;
 }
 
 .navbar-badge {
