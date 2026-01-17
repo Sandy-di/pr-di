@@ -1,5 +1,18 @@
 // @ts-ignore
-import COS from './cos-wx-sdk-v5.js'
+// 尝试使用小程序原生 require 引用 static 目录下的文件
+// 注意：编译后的目录结构中，static 位于根目录
+let COS: any;
+try {
+  // @ts-ignore
+  COS = require('/static/js/cos-wx-sdk-v5.js')
+} catch (e) {
+  console.error('Failed to require COS SDK from static:', e)
+}
+
+// 兼容性处理
+if (COS && COS.default) {
+  COS = COS.default
+}
 
 /**
  * 腾讯云 COS 配置和工具类

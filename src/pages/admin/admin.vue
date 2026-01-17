@@ -357,6 +357,7 @@ const deleteHomework = (hw: Homework) => {
   })
 }
 
+// 上传相关
 // 上传乐谱图片 (使用腾讯云 COS)
 const uploadSheetImage = () => {
   uni.chooseImage({
