@@ -33,12 +33,13 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+import mongoose from 'mongoose';
 import { User, Homework, UserProgress } from './models';
 
-// ... (existing code)
-
-// 数据库连接
-// ...
+// 连接 MongoDB 数据库
+mongoose.connect('mongodb://127.0.0.1:27017/xiaochengxu')
+  .then(() => console.log('Connected to MongoDB'))
+  .catch(err => console.error('MongoDB connection error:', err));
 
 // 简单的用户中间件 (模拟登录)
 app.use((req, res, next) => {

@@ -400,10 +400,21 @@ const formatDemoTime = (seconds: number) => {
 
 // 进度条拖动控制
 let isDragging = false
-let progressBarWidth = 60 // 进度条宽度 px
+let progressBarRect = { left: 0, width: 200 } // 缓存进度条尺寸
+
+// 获取进度条尺寸
+const getProgressBarRect = () => {
+  const query = uni.createSelectorQuery()
+  query.select('.progress-bar').boundingClientRect((rect: any) => {
+    if (rect) {
+      progressBarRect = { left: rect.left, width: rect.width }
+    }
+  }).exec()
+}
 
 const onProgressTouchStart = (e: any) => {
   isDragging = true
+  getProgressBarRect()
   updateProgressFromTouch(e)
 }
 
@@ -420,10 +431,11 @@ const onProgressTouchEnd = () => {
 const updateProgressFromTouch = (e: any) => {
   if (!demoAudio || demoDuration.value <= 0) return
   
-  const touch = e.touches[0]
-  const rect = e.currentTarget.getBoundingClientRect?.() || { left: 0, width: progressBarWidth }
-  const barLeft = rect.left || 0
-  const barWidth = rect.width || progressBarWidth
+  const touch = e.touches?.[0] || e.changedTouches?.[0]
+  if (!touch) return
+  
+  const barLeft = progressBarRect.left
+  const barWidth = progressBarRect.width || 200
   
   let x = touch.clientX - barLeft
   x = Math.max(0, Math.min(x, barWidth))
