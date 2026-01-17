@@ -48,7 +48,8 @@ export const uploadToCOS = (
     // COS 支持预签名 URL 方式上传
     
     // 简单方式：使用 wx.uploadFile + 签名
-    const COS = require('cos-wx-sdk-v5')
+    // @ts-ignore
+    const COS = require('../libs/cos-wx-sdk-v5.js')
     
     const cos = new COS({
       SecretId: COS_CONFIG.SecretId,
