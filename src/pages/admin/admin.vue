@@ -76,8 +76,8 @@
     </scroll-view>
 
     <!-- 添加/编辑作业弹窗 -->
-    <view v-if="showAddModal" class="modal-overlay" @click.self="closeModal">
-      <view class="modal-content">
+    <view v-if="showAddModal" class="modal-overlay" @click="closeModal">
+      <view class="modal-content" @click.stop>
         <view class="modal-header">
           <text class="modal-title">{{ isEditing ? '编辑作业' : '新建作业' }}</text>
           <text class="close-btn" @click="closeModal">×</text>
@@ -360,6 +360,7 @@ const uploadSheetImage = () => {
     success: async (res) => {
       uni.showLoading({ title: '上传中...' })
       
+      let successCount = 0
       for (const filePath of res.tempFilePaths) {
         try {
           const cloudPath = `sheets/${Date.now()}_${Math.random().toString(36).slice(2)}.jpg`
@@ -374,12 +375,24 @@ const uploadSheetImage = () => {
           // 保存 fileID 和临时 URL
           formData.sheetImageIds.push(uploadRes.fileID)
           formData.sheetImages.push(tempUrl)
-        } catch (e) {
+          successCount++
+        } catch (e: any) {
           console.error('上传图片失败:', e)
+          uni.showToast({ 
+            title: e.errMsg || '上传失败', 
+            icon: 'none',
+            duration: 3000
+          })
         }
       }
       
       uni.hideLoading()
+      if (successCount > 0) {
+        uni.showToast({ title: `已上传 ${successCount} 张`, icon: 'success' })
+      }
+    },
+    fail: (err) => {
+      console.error('选择图片失败:', err)
     }
   })
 }
