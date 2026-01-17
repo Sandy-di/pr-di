@@ -4,18 +4,17 @@ import { onLaunch, onShow, onHide, onShareAppMessage, onShareTimeline } from '@d
 onLaunch(() => {
   console.log('视唱练耳助手启动')
   
-  // 初始化云开发环境
-  // @ts-ignore
+  // 云开发已弃用，改用自建后端
+  // 如需恢复云开发，取消以下注释
+  /*
   if (wx.cloud) {
-    // @ts-ignore
     wx.cloud.init({
       env: 'cloudbase-6g27fpr3ae127639',
       traceUser: true
     })
     console.log('云开发初始化成功')
-  } else {
-    console.error('云开发不可用')
   }
+  */
 })
 
 onShow(() => {
