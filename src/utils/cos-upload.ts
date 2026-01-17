@@ -1,5 +1,5 @@
 // @ts-ignore
-import COS from '../libs/cos-wx-sdk-v5.js'
+import COS from './cos-wx-sdk-v5.js'
 
 /**
  * 腾讯云 COS 配置和工具类
