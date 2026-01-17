@@ -1,3 +1,6 @@
+// @ts-ignore
+import COS from '../libs/cos-wx-sdk-v5.js'
+
 /**
  * 腾讯云 COS 配置和工具类
  * 用于上传乐谱图片和示范音频
@@ -38,19 +41,8 @@ export const uploadToCOS = (
 ): Promise<string> => {
   return new Promise((resolve, reject) => {
     const key = generateFileName(originalName, prefix)
-    const url = `https://${COS_CONFIG.Bucket}.cos.${COS_CONFIG.Region}.myqcloud.com/${key}`
     
-    // 计算签名
-    const now = Math.floor(Date.now() / 1000)
-    const exp = now + 900 // 15分钟有效期
-    
-    // 使用 uni.uploadFile 直接上传
-    // COS 支持预签名 URL 方式上传
-    
-    // 简单方式：使用 wx.uploadFile + 签名
-    // @ts-ignore
-    const COS = require('../libs/cos-wx-sdk-v5.js')
-    
+    // 简单方式：使用 SecretId/SecretKey 直接实例化
     const cos = new COS({
       SecretId: COS_CONFIG.SecretId,
       SecretKey: COS_CONFIG.SecretKey,
@@ -71,6 +63,7 @@ export const uploadToCOS = (
         reject(err)
       } else {
         console.log('COS 上传成功:', data)
+        // 返回公开访问 URL
         resolve(getCosPublicUrl(key))
       }
     })
