@@ -94,6 +94,13 @@ class UserService {
   }
 
   /**
+   * 设置自定义名称（别名）
+   */
+  setCustomName(name: string): boolean {
+    return this.updateNickName(name)
+  }
+
+  /**
    * 获取显示名称（优先使用自定义名称）
    */
   getDisplayName(): string {

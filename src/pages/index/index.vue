@@ -147,6 +147,30 @@
           <text class="login-skip" @click="closeLoginModal">暂不登录</text>
         </view>
       </view>
+
+      <!-- 首次登录设置用户名弹窗 -->
+      <view v-if="showNameModal" class="login-modal-overlay animate-fade-in">
+        <view class="login-modal glass animate-slide-up">
+          <view class="login-icon-large">
+             <svg-icon name="user" size="80rpx" color="var(--divine-gold)" />
+          </view>
+          <text class="login-title">设置您的姓名</text>
+          <text class="login-desc">请使用中文姓名，方便老师识别</text>
+          
+          <input 
+            v-model="customName" 
+            class="name-input"
+            placeholder="请输入中文姓名"
+            maxlength="10"
+          />
+          
+          <button class="login-btn-wechat" @click="saveCustomName">
+            <text>确认</text>
+          </button>
+          
+          <text class="login-skip" @click="skipSetName">稍后再设置</text>
+        </view>
+      </view>
     </view>
   </view>
 </template>
@@ -204,15 +228,44 @@ const checkLoginStatus = () => {
   }
 }
 
+// 用户名设置弹窗
+const showNameModal = ref(false)
+const customName = ref('')
+
 const handleLogin = async () => {
   try {
-    await UserService.login()
-    uni.showToast({ title: '登录成功', icon: 'success' })
+    const userInfo = await UserService.login()
     showLoginModal.value = false
+    
+    // 首次登录且没有设置过自定义名称，弹出设置窗口
+    if (!userInfo.customName) {
+      setTimeout(() => {
+        showNameModal.value = true
+      }, 300)
+    } else {
+      uni.showToast({ title: '登录成功', icon: 'success' })
+    }
   } catch (err) {
     console.error('登录失败', err)
     uni.showToast({ title: '登录失败', icon: 'none' })
   }
+}
+
+const saveCustomName = () => {
+  const name = customName.value.trim()
+  if (!name) {
+    uni.showToast({ title: '请输入姓名', icon: 'none' })
+    return
+  }
+  
+  UserService.setCustomName(name)
+  showNameModal.value = false
+  uni.showToast({ title: '设置成功', icon: 'success' })
+}
+
+const skipSetName = () => {
+  showNameModal.value = false
+  uni.showToast({ title: '您可以稍后在设置中修改', icon: 'none' })
 }
 
 const closeLoginModal = () => {
@@ -608,6 +661,25 @@ const startRecording = () => {
   font-size: 28rpx;
   color: var(--text-muted);
   padding: 20rpx;
+}
+
+/* 用户名输入框 */
+.name-input {
+  width: 100%;
+  height: 96rpx;
+  padding: 0 32rpx;
+  background: rgba(255,255,255,0.1);
+  border: 2rpx solid rgba(255,255,255,0.2);
+  border-radius: 24rpx;
+  color: #fff;
+  font-size: 32rpx;
+  text-align: center;
+  margin-bottom: 40rpx;
+  box-sizing: border-box;
+}
+
+.name-input::placeholder {
+  color: var(--text-muted);
 }
 
 /* 动画 */
