@@ -122,8 +122,8 @@
         "selectedIconPath": "static/icons/piano-active.png"
       },
       {
-        "pagePath": "pages/ear-training/ear-training",
-        "text": "练耳",
+        "pagePath": "pages/homework-list/homework-list",
+        "text": "作业",
         "iconPath": "static/icons/mic.png",
         "selectedIconPath": "static/icons/mic-active.png"
       },
