@@ -547,44 +547,42 @@ const onImageLoad = (e: any) => {
   width: 180rpx;
 }
 
-/* 顶部控制按钮通用样式 - 微信胶囊风格 */
+/* 顶部控制按钮通用样式 - 与微信胶囊一致 */
 .control-btn {
-  height: 48rpx;
-  padding: 0 16rpx;
+  height: 32px;
+  padding: 0 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255,255,255,0.95);
-  border: 1rpx solid rgba(0,0,0,0.15);
-  border-radius: 24rpx;
-  color: #333;
-  font-size: 22rpx;
-  gap: 4rpx;
+  background: rgba(255,255,255,0.8);
+  border: 0.5px solid rgba(0,0,0,0.1);
+  border-radius: 16px;
+  color: rgba(0,0,0,0.6);
+  font-size: 13px;
+  gap: 3px;
 }
 
 /* 返回按钮 */
 .control-btn.back-btn {
-  width: 48rpx;
+  width: 32px;
   padding: 0;
-  font-size: 26rpx;
-  color: #333;
+  font-size: 16px;
 }
 
 /* 录音按钮 */
 .control-btn.record-btn {
-  min-width: 80rpx;
+  min-width: 50px;
 }
 
 .control-btn.record-btn.recording {
-  background: rgba(239, 68, 68, 0.15);
-  border-color: #ef4444;
-  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.3);
 }
 
 /* 录音红点 */
 .record-dot {
-  width: 10rpx;
-  height: 10rpx;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: #ef4444;
 }
@@ -593,20 +591,17 @@ const onImageLoad = (e: any) => {
 
 /* 示范按钮 */
 .control-btn.demo-btn {
-  min-width: 80rpx;
-  background: rgba(255,255,255,0.95);
+  min-width: 50px;
 }
 
 .control-btn.demo-btn.playing {
-  background: rgba(34, 197, 94, 0.15);
-  border-color: #22c55e;
-  color: #22c55e;
+  background: rgba(34, 197, 94, 0.1);
+  border-color: rgba(34, 197, 94, 0.3);
 }
 
 /* 速度按钮 */
 .control-btn.speed-btn {
-  min-width: 56rpx;
-  background: rgba(255,255,255,0.95);
+  min-width: 36px;
 }
 
 /* 作业标题 */
