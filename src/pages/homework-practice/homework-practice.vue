@@ -2,7 +2,7 @@
   <view class="practice-page">
     <!-- 顶部控制栏 -->
     <view class="top-bar">
-      <!-- 左侧内容区：返回 + 标题 + 录音 -->
+      <!-- 左侧内容区：返回 + 标题 + 录音 + 示范 -->
       <view class="top-bar-left">
         <!-- 返回按钮 -->
         <view class="control-btn back-btn" @click="goBack">
@@ -18,6 +18,16 @@
         >
           <view class="record-dot" :class="{ pulse: isRecording }"></view>
           <text>{{ isRecording ? formatTime(recordingDuration) : '录音' }}</text>
+        </view>
+        <!-- 示范音频播放按钮 -->
+        <view 
+          v-if="demoAudioUrl"
+          class="control-btn demo-btn" 
+          :class="{ playing: isDemoPlaying }"
+          @click="toggleDemo"
+        >
+          <text>{{ isDemoPlaying ? '⏸' : '▶' }}</text>
+          <text>示范</text>
         </view>
       </view>
       
@@ -106,7 +116,7 @@ import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { onLoad, onShareAppMessage } from '@dcloudio/uni-app'
 import AudioManager from '@/utils/audio-manager'
 import RecorderService from '@/utils/recorder-manager'
-import { fetchHomeworkByIdAsync, getSheetImagesAsync, incrementPracticeCount, getHomeworkProgress, saveHomeworkProgress, type Homework } from '@/utils/homework-data'
+import { fetchHomeworkByIdAsync, getSheetImagesAsync, getDemoAudioUrlAsync, incrementPracticeCount, getHomeworkProgress, saveHomeworkProgress, type Homework } from '@/utils/homework-data'
 
 onShareAppMessage(() => ({
   title: `📚 ${homework.value?.title || '作业练习'} - 视唱练耳助手`,
@@ -185,6 +195,7 @@ let recordingTimer: any = null
 
 // 示范音播放相关
 const isDemoPlaying = ref(false)
+const demoAudioUrl = ref<string | null>(null) // 示范音频 URL
 const currentSpeed = ref(1)
 const playbackSpeeds = [0.5, 0.75, 1, 1.25, 1.5]
 let demoAudio: UniApp.InnerAudioContext | null = null
@@ -277,6 +288,7 @@ const loadHomework = async () => {
     homework.value = await fetchHomeworkByIdAsync(homeworkId.value)
     
     if (homework.value) {
+      // 获取乐谱图片
       if (homework.value.sheetImages && homework.value.sheetImages.length > 0) {
         try {
           sheetImages.value = await getSheetImagesAsync(homework.value)
@@ -286,6 +298,15 @@ const loadHomework = async () => {
         }
       } else {
         loadError.value = '该作业没有乐谱图片'
+      }
+      
+      // 获取示范音频 URL
+      if (homework.value.demoAudioUrl) {
+        try {
+          demoAudioUrl.value = await getDemoAudioUrlAsync(homework.value)
+        } catch (e) {
+          console.error('获取示范音频失败:', e)
+        }
       }
     } else {
       loadError.value = '未找到作业数据'
@@ -300,6 +321,37 @@ const loadHomework = async () => {
 
 const goBack = () => {
   uni.navigateBack()
+}
+
+// 示范音频播放
+const toggleDemo = () => {
+  if (!demoAudioUrl.value) return
+  
+  if (isDemoPlaying.value) {
+    // 暂停
+    demoAudio?.pause()
+    isDemoPlaying.value = false
+  } else {
+    // 播放
+    if (!demoAudio) {
+      demoAudio = uni.createInnerAudioContext()
+      demoAudio.src = demoAudioUrl.value
+      demoAudio.playbackRate = currentSpeed.value
+      
+      demoAudio.onEnded(() => {
+        isDemoPlaying.value = false
+      })
+      
+      demoAudio.onError((err) => {
+        console.error('示范音频播放错误:', err)
+        isDemoPlaying.value = false
+        uni.showToast({ title: '播放失败', icon: 'none' })
+      })
+    }
+    
+    demoAudio.play()
+    isDemoPlaying.value = true
+  }
 }
 
 // 录音功能
@@ -384,27 +436,6 @@ const formatTime = (ms: number): string => {
   return `${mins}:${secs.toString().padStart(2, '0')}`
 }
 
-// 示范音播放
-const toggleDemo = () => {
-  if (!homework.value?.demoAudioUrl) return
-  
-  if (isDemoPlaying.value) {
-    demoAudio?.pause()
-    isDemoPlaying.value = false
-  } else {
-    if (!demoAudio) {
-      demoAudio = uni.createInnerAudioContext()
-      demoAudio.src = homework.value.demoAudioUrl
-      demoAudio.playbackRate = currentSpeed.value
-      
-      demoAudio.onEnded(() => {
-        isDemoPlaying.value = false
-      })
-    }
-    demoAudio.play()
-    isDemoPlaying.value = true
-  }
-}
 
 const setSpeed = (speed: number) => {
   currentSpeed.value = speed
@@ -530,6 +561,18 @@ const onImageLoad = (e: any) => {
 }
 
 .record-dot.pulse { animation: pulse 1s infinite; }
+
+/* 示范按钮 */
+.control-btn.demo-btn {
+  min-width: 80rpx;
+  background: rgba(34, 197, 94, 0.15);
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.control-btn.demo-btn.playing {
+  background: rgba(34, 197, 94, 0.3);
+  border-color: #22c55e;
+}
 
 /* 作业标题 */
 .homework-title {

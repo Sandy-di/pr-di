@@ -58,6 +58,29 @@ export const getSheetImagesAsync = async (homework: Homework): Promise<string[]>
   }
 }
 
+// 【异步】获取示范音频 URL（自动转换 cloud:// 为临时 URL）
+export const getDemoAudioUrlAsync = async (homework: Homework): Promise<string | null> => {
+  if (!homework.demoAudioUrl) return null
+
+  const url = homework.demoAudioUrl.trim()
+  
+  // 如果不是云存储 URL，直接返回
+  if (!url.startsWith('cloud://')) return url
+
+  // 转换云存储 fileID 为临时 URL
+  try {
+    // @ts-ignore
+    const res = await wx.cloud.getTempFileURL({ fileList: [url] })
+    if (res.fileList[0]?.tempFileURL) {
+      return res.fileList[0].tempFileURL
+    }
+    return url
+  } catch (e) {
+    console.error('获取示范音频 URL 失败:', e)
+    return url
+  }
+}
+
 export interface HomeworkProgress {
   homeworkId: string
   completed: boolean
