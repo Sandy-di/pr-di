@@ -2,7 +2,7 @@
   <view class="practice-page">
     <!-- 顶部控制栏 -->
     <view class="top-bar">
-      <!-- 左侧内容区：返回 + 标题 + 录音 + 示范 -->
+      <!-- 左侧内容区：返回 + 标题 + 录音 + 示范 + 速度 -->
       <view class="top-bar-left">
         <!-- 返回按钮 -->
         <view class="control-btn back-btn" @click="goBack">
@@ -27,7 +27,15 @@
           @click="toggleDemo"
         >
           <text>{{ isDemoPlaying ? '⏸' : '▶' }}</text>
-          <text>示范</text>
+          <text>{{ currentSpeed }}x</text>
+        </view>
+        <!-- 速度选择按钮 -->
+        <view 
+          v-if="demoAudioUrl"
+          class="control-btn speed-btn"
+          @click="cycleSpeed"
+        >
+          <text>速度</text>
         </view>
       </view>
       
@@ -354,6 +362,25 @@ const toggleDemo = () => {
   }
 }
 
+// 切换播放速度
+const speeds = [0.75, 1, 1.25]
+const cycleSpeed = () => {
+  const currentIndex = speeds.indexOf(currentSpeed.value)
+  const nextIndex = (currentIndex + 1) % speeds.length
+  currentSpeed.value = speeds[nextIndex]
+  
+  // 如果正在播放，立即应用新速度
+  if (demoAudio) {
+    demoAudio.playbackRate = currentSpeed.value
+  }
+  
+  uni.showToast({ 
+    title: `速度: ${currentSpeed.value}x`, 
+    icon: 'none',
+    duration: 1000
+  })
+}
+
 // 录音功能
 const isUploading = ref(false)
 
@@ -572,6 +599,13 @@ const onImageLoad = (e: any) => {
 .control-btn.demo-btn.playing {
   background: rgba(34, 197, 94, 0.3);
   border-color: #22c55e;
+}
+
+/* 速度按钮 */
+.control-btn.speed-btn {
+  min-width: 60rpx;
+  background: rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.3);
 }
 
 /* 作业标题 */
