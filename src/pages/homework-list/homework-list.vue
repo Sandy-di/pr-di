@@ -3,9 +3,6 @@
     <!-- 导航栏 -->
     <view class="navbar" :style="{ paddingTop: statusBarHeight + 'px' }">
       <view class="navbar-content">
-        <view class="back-btn" @click="goBack">
-          <text>←</text>
-        </view>
         <text class="navbar-title">📚 作业练习</text>
         <view class="navbar-badge">{{ completedCount }}/{{ homeworkList.length }}</view>
       </view>
@@ -76,9 +73,14 @@ const difficultyLabel: Record<string, string> = {
   hard: '挑战'
 }
 
-// 返回上一页
+// 返回上一页或首页
 const goBack = () => {
-  uni.navigateBack()
+  const pages = getCurrentPages()
+  if (pages.length > 1) {
+    uni.navigateBack()
+  } else {
+    uni.switchTab({ url: '/pages/index/index' })
+  }
 }
 
 const completedCount = computed(() => {
