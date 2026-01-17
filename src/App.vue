@@ -9,7 +9,7 @@ onLaunch(() => {
   if (wx.cloud) {
     // @ts-ignore
     wx.cloud.init({
-      env: 'cloudbase-7gvqz9yb60907dd2',
+      env: 'cloudbase-6g27fpr3ae127639',
       traceUser: true
     })
     console.log('云开发初始化成功')
