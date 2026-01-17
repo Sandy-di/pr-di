@@ -24,13 +24,16 @@
     <template v-else>
       <!-- 顶部标题栏 -->
       <view class="header">
-        <view class="header-left" @click="goBack">
-          <text class="back-icon">←</text>
+        <view class="header-left">
+          <view class="action-btn back-btn" @click="goBack">
+            <text class="back-icon">←</text>
+          </view>
+          <view class="action-btn add-btn" @click="showAddModal = true">
+            <text>+ 新建</text>
+          </view>
         </view>
         <text class="title">作业管理</text>
-        <view class="add-btn" @click="showAddModal = true">
-          <text>+ 新建</text>
-        </view>
+        <view class="header-placeholder"></view> <!-- 占位符保证标题居中 -->
       </view>
 
     <!-- 作业列表 -->
@@ -618,6 +621,23 @@ const saveHomework = async () => {
 }
 
 .header-left {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  flex: 1;
+}
+
+.header-placeholder {
+  flex: 1;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.back-btn {
   padding: 8rpx 16rpx;
 }
 
@@ -627,17 +647,18 @@ const saveHomework = async () => {
 }
 
 .title {
-  font-size: 40rpx;
+  font-size: 36rpx;
   font-weight: 700;
   color: #fff;
+  text-align: center;
 }
 
 .add-btn {
-  padding: 16rpx 32rpx;
+  padding: 12rpx 24rpx;
   background: rgba(255,255,255,0.2);
   border-radius: 24rpx;
   color: #fff;
-  font-size: 28rpx;
+  font-size: 26rpx;
 }
 
 .homework-list {
