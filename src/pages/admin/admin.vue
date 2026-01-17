@@ -177,8 +177,10 @@ const formData = reactive({
   title: '',
   description: '',
   difficulty: 'easy' as 'easy' | 'medium' | 'hard',
-  sheetImages: [] as string[],
-  demoAudioUrl: ''
+  sheetImages: [] as string[],       // 用于显示的 URL（临时URL或普通URL）
+  sheetImageIds: [] as string[],     // 云存储 fileID（用于保存到数据库）
+  demoAudioUrl: '',
+  demoAudioId: ''                    // 云存储 fileID
 })
 
 let demoAudioContext: UniApp.InnerAudioContext | null = null
@@ -223,14 +225,51 @@ const formatDate = (dateStr: string) => {
 }
 
 // 编辑作业
-const editHomework = (hw: Homework) => {
+const editHomework = async (hw: Homework) => {
   isEditing.value = true
   editingId.value = hw.id
   formData.title = hw.title
   formData.description = hw.description || ''
   formData.difficulty = hw.difficulty
-  formData.sheetImages = [...(hw.sheetImages || [])]
-  formData.demoAudioUrl = hw.demoAudioUrl || ''
+  
+  // 保存原始 fileIDs
+  formData.sheetImageIds = [...(hw.sheetImages || [])]
+  
+  // 转换 cloud:// 为临时 URL 用于显示
+  const cloudImages = (hw.sheetImages || []).filter(img => img.startsWith('cloud://'))
+  if (cloudImages.length > 0) {
+    try {
+      // @ts-ignore
+      const res = await wx.cloud.getTempFileURL({ fileList: cloudImages })
+      const urlMap: Record<string, string> = {}
+      res.fileList.forEach((item: any) => {
+        if (item.tempFileURL) {
+          urlMap[item.fileID] = item.tempFileURL
+        }
+      })
+      formData.sheetImages = (hw.sheetImages || []).map(img => urlMap[img] || img)
+    } catch (e) {
+      console.error('转换图片 URL 失败:', e)
+      formData.sheetImages = [...(hw.sheetImages || [])]
+    }
+  } else {
+    formData.sheetImages = [...(hw.sheetImages || [])]
+  }
+  
+  // 示范音频
+  formData.demoAudioId = hw.demoAudioUrl || ''
+  if (hw.demoAudioUrl && hw.demoAudioUrl.startsWith('cloud://')) {
+    try {
+      // @ts-ignore
+      const res = await wx.cloud.getTempFileURL({ fileList: [hw.demoAudioUrl] })
+      formData.demoAudioUrl = res.fileList[0]?.tempFileURL || hw.demoAudioUrl
+    } catch (e) {
+      formData.demoAudioUrl = hw.demoAudioUrl
+    }
+  } else {
+    formData.demoAudioUrl = hw.demoAudioUrl || ''
+  }
+  
   showAddModal.value = true
 }
 
@@ -268,7 +307,15 @@ const uploadSheetImage = () => {
           const cloudPath = `sheets/${Date.now()}_${Math.random().toString(36).slice(2)}.jpg`
           // @ts-ignore
           const uploadRes = await wx.cloud.uploadFile({ cloudPath, filePath })
-          formData.sheetImages.push(uploadRes.fileID)
+          
+          // 获取临时 URL 用于预览显示
+          // @ts-ignore
+          const urlRes = await wx.cloud.getTempFileURL({ fileList: [uploadRes.fileID] })
+          const tempUrl = urlRes.fileList[0]?.tempFileURL || filePath
+          
+          // 保存 fileID 和临时 URL
+          formData.sheetImageIds.push(uploadRes.fileID)
+          formData.sheetImages.push(tempUrl)
         } catch (e) {
           console.error('上传图片失败:', e)
         }
@@ -282,6 +329,7 @@ const uploadSheetImage = () => {
 // 移除图片
 const removeImage = (index: number) => {
   formData.sheetImages.splice(index, 1)
+  formData.sheetImageIds.splice(index, 1)
 }
 
 // 上传示范音频
@@ -301,7 +349,15 @@ const uploadDemoAudio = () => {
           cloudPath,
           filePath: file.path
         })
-        formData.demoAudioUrl = uploadRes.fileID
+        
+        // 保存 fileID
+        formData.demoAudioId = uploadRes.fileID
+        
+        // 获取临时 URL 用于播放预览
+        // @ts-ignore
+        const urlRes = await wx.cloud.getTempFileURL({ fileList: [uploadRes.fileID] })
+        formData.demoAudioUrl = urlRes.fileList[0]?.tempFileURL || uploadRes.fileID
+        
         uni.hideLoading()
         uni.showToast({ title: '上传成功', icon: 'success' })
       } catch (e) {
@@ -352,7 +408,9 @@ const resetForm = () => {
   formData.description = ''
   formData.difficulty = 'easy'
   formData.sheetImages = []
+  formData.sheetImageIds = []
   formData.demoAudioUrl = ''
+  formData.demoAudioId = ''
 }
 
 // 保存作业
@@ -372,8 +430,8 @@ const saveHomework = async () => {
       title: formData.title.trim(),
       description: formData.description.trim(),
       difficulty: formData.difficulty,
-      sheetImages: formData.sheetImages,
-      demoAudioUrl: formData.demoAudioUrl,
+      sheetImages: formData.sheetImageIds,      // 保存 fileIDs
+      demoAudioUrl: formData.demoAudioId || formData.demoAudioUrl,  // 保存 fileID
       isPublished: true,
       updatedAt: db.serverDate()
     }
