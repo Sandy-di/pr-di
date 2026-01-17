@@ -284,7 +284,9 @@ const editHomework = async (hw: Homework) => {
   formData.sheetImageIds = [...(hw.sheetImages || [])]
   
   // 转换 cloud:// 为临时 URL 用于显示
-  const cloudImages = (hw.sheetImages || []).filter(img => img.startsWith('cloud://'))
+  const allImages = hw.sheetImages || []
+  const cloudImages = allImages.filter(img => img && img.startsWith('cloud://'))
+  
   if (cloudImages.length > 0) {
     try {
       // @ts-ignore
@@ -295,13 +297,21 @@ const editHomework = async (hw: Homework) => {
           urlMap[item.fileID] = item.tempFileURL
         }
       })
-      formData.sheetImages = (hw.sheetImages || []).map(img => urlMap[img] || img)
+      // 只保留成功转换的图片，过滤掉 cloud:// 开头的
+      formData.sheetImages = allImages.map(img => {
+        if (img && img.startsWith('cloud://')) {
+          return urlMap[img] || ''  // 转换失败则置空
+        }
+        return img
+      }).filter(img => img && !img.startsWith('cloud://'))  // 过滤失败的
     } catch (e) {
       console.error('转换图片 URL 失败:', e)
-      formData.sheetImages = [...(hw.sheetImages || [])]
+      formData.sheetImages = []  // 转换失败，清空图片列表
+      uni.showToast({ title: '图片加载失败', icon: 'none' })
     }
   } else {
-    formData.sheetImages = [...(hw.sheetImages || [])]
+    // 过滤掉可能的 cloud:// URL
+    formData.sheetImages = allImages.filter(img => img && !img.startsWith('cloud://'))
   }
   
   // 示范音频
