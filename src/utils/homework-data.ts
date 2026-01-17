@@ -1,3 +1,5 @@
+import { request } from './api-client'
+
 /**
  * 作业数据 - 静态版本（后续可改为云开发）
  * 
@@ -7,6 +9,7 @@
 
 export interface Homework {
   id: string
+  _id?: string // MongoDB ID
   title: string
   description?: string
   sheetImageUrl?: string       // 单页乐谱图片（兼容旧数据）
@@ -147,61 +150,31 @@ export const getHomeworkById = (id: string): Homework | undefined => {
   return homeworkList.find(hw => hw.id === id)
 }
 
-// 【云端】异步获取作业列表
+// 【API】异步获取作业列表
 export const fetchHomeworkListAsync = async (): Promise<Homework[]> => {
-  // @ts-ignore
-  if (!wx.cloud) {
-    console.warn('云开发不可用，使用本地数据')
-    return homeworkList
-  }
-
   try {
-    // @ts-ignore
-    const db = wx.cloud.database()
-    const res = await db.collection('homework')
-      .where({ isPublished: true })
-      .orderBy('createdAt', 'desc')
-      .get()
-    
-    if (res.data && res.data.length > 0) {
-      // 映射 _id 为 id
-      return res.data.map((item: any) => ({
-        ...item,
-        id: item._id
-      })) as Homework[]
-    }
-    console.warn('云端无数据，使用本地数据')
-    return homeworkList
+    const res = await request<Homework[]>('/homeworks')
+    // 确保 id 字段存在
+    return res.map((item: any) => ({
+      ...item,
+      id: item._id || item.id
+    }))
   } catch (e) {
-    console.error('获取云端作业失败:', e)
-    return homeworkList
+    console.error('获取作业失败:', e)
+    return []
   }
 }
 
-// 【云端】异步获取作业详情
+// 【API】异步获取作业详情
 export const fetchHomeworkByIdAsync = async (id: string): Promise<Homework | null> => {
-  // @ts-ignore
-  if (!wx.cloud) {
-    return getHomeworkById(id) || null
-  }
-
   try {
-    // @ts-ignore
-    const db = wx.cloud.database()
-    // 云数据库的 _id 字段
-    const res = await db.collection('homework').where({ _id: id }).get()
-    
-    if (res.data && res.data.length > 0) {
-      const data = res.data[0]
-      return {
-        ...data,
-        id: data._id
-      } as Homework
+    const res = await request<Homework>(`/homeworks/${id}`)
+    return {
+      ...res,
+      id: res._id || res.id
     }
-    // 尝试本地数据作为回退
-    return getHomeworkById(id) || null
   } catch (e) {
-    console.error('获取云端作业详情失败:', e)
+    console.error('获取作业详情失败:', e)
     return getHomeworkById(id) || null
   }
 }
@@ -233,71 +206,33 @@ export const saveHomeworkProgress = (progress: HomeworkProgress): void => {
   }
 }
 
-// 【云端】同步进度到云数据库
+// 【API】同步进度到后端
 export const syncProgressToCloud = async (progress: HomeworkProgress): Promise<void> => {
-  // @ts-ignore
-  if (!wx.cloud) return
-
   try {
-    // @ts-ignore
-    const db = wx.cloud.database()
-    const collection = db.collection('user_progress')
-    
-    // 查找是否已有记录
-    const existing = await collection.where({
-      homeworkId: progress.homeworkId
-    }).get()
-    
-    if (existing.data && existing.data.length > 0) {
-      // 更新现有记录
-      await collection.doc(existing.data[0]._id).update({
-        data: {
-          ...progress,
-          updatedAt: db.serverDate()
-        }
-      })
-    } else {
-      // 创建新记录
-      await collection.add({
-        data: {
-          ...progress,
-          createdAt: db.serverDate(),
-          updatedAt: db.serverDate()
-        }
-      })
-    }
-    console.log('进度已同步到云端')
+    await request('/progress', 'POST', progress)
+    console.log('进度已同步到后端')
   } catch (e) {
-    console.error('同步进度到云端失败:', e)
+    console.error('同步进度失败:', e)
     throw e
   }
 }
 
-// 【云端】从云数据库获取进度
+// 【API】从后端获取进度
 export const fetchProgressFromCloud = async (homeworkId: string): Promise<HomeworkProgress | null> => {
-  // @ts-ignore
-  if (!wx.cloud) return null
-
   try {
-    // @ts-ignore
-    const db = wx.cloud.database()
-    const res = await db.collection('user_progress').where({
-      homeworkId
-    }).get()
-    
-    if (res.data && res.data.length > 0) {
-      const data = res.data[0]
+    const res = await request<any>(`/progress/${homeworkId}`)
+    if (res && res.homeworkId) {
       return {
-        homeworkId: data.homeworkId,
-        completed: data.completed || false,
-        practiceCount: data.practiceCount || 0,
-        lastPracticeAt: data.lastPracticeAt,
-        recordings: data.recordings || []
+        homeworkId: res.homeworkId,
+        completed: res.completed || false,
+        practiceCount: res.practiceCount || 0,
+        lastPracticeAt: res.lastPracticeAt,
+        recordings: res.recordings || []
       }
     }
     return null
   } catch (e) {
-    console.error('从云端获取进度失败:', e)
+    console.error('从后端获取进度失败:', e)
     return null
   }
 }

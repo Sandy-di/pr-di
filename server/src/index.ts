@@ -33,17 +33,56 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-import mongoose from 'mongoose';
-import { User, Homework } from './models';
+import { User, Homework, UserProgress } from './models';
 
-// ... (现有代码)
+// ... (existing code)
 
-// 连接数据库
-mongoose.connect('mongodb://127.0.0.1:27017/xiaochengxu')
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('MongoDB connection error:', err));
+// 数据库连接
+// ...
 
-// API: 获取作业列表
+// 简单的用户中间件 (模拟登录)
+app.use((req, res, next) => {
+  // 暂时 hardcode，实际应从 Token 解析
+  // @ts-ignore
+  req.user = { openid: req.headers['x-user-id'] || 'test-dev-user' };
+  next();
+});
+
+// ... (other APIs)
+
+// API: 获取作业进度
+app.get('/api/progress/:homeworkId', async (req, res) => {
+  try {
+    // @ts-ignore
+    const openid = req.user.openid;
+    const progress = await UserProgress.findOne({ openid, homeworkId: req.params.homeworkId });
+    res.json(progress || {}); // 如果没有记录返回空对象
+  } catch (e) {
+    res.status(500).json({ error: '获取进度失败' });
+  }
+});
+
+// API: 更新/保存作业进度
+app.post('/api/progress', async (req, res) => {
+  try {
+    // @ts-ignore
+    const openid = req.user.openid;
+    const { homeworkId, ...data } = req.body;
+    
+    // updateOne with upsert
+    await UserProgress.updateOne(
+      { openid, homeworkId },
+      { $set: data, $setOnInsert: { createdAt: new Date() } },
+      { upsert: true }
+    );
+    res.json({ success: true });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: '保存进度失败' });
+  }
+});
+
+// API: 获取作业列表 (Modify existing to support filter by query if needed, but simple is fine)
 app.get('/api/homeworks', async (req, res) => {
   try {
     const homeworks = await Homework.find().sort({ createdAt: -1 });

@@ -34,3 +34,20 @@ const homeworkSchema = new mongoose.Schema({
 });
 
 export const Homework = mongoose.model('Homework', homeworkSchema);
+
+// UserProgress Schema (用户作业进度)
+const userProgressSchema = new mongoose.Schema({
+  openid: { type: String, required: true }, // 用户标识
+  homeworkId: { type: String, required: true },
+  completed: { type: Boolean, default: false },
+  practiceCount: { type: Number, default: 0 },
+  lastPracticeAt: Date,
+  recordings: [String], // 录音 URL 列表
+  
+  updatedAt: { type: Date, default: Date.now }
+});
+
+// 复合索引：快速查找某用户的某作业进度
+userProgressSchema.index({ openid: 1, homeworkId: 1 }, { unique: true });
+
+export const UserProgress = mongoose.model('UserProgress', userProgressSchema);

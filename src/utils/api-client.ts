@@ -18,6 +18,11 @@ export const request = <T = any>(
       url: `${API_BASE_URL}${path}`,
       method: method,
       data: data,
+      header: {
+        'Content-Type': 'application/json',
+        // 模拟用户 ID，实际应从登录状态获取
+        'x-user-id': uni.getStorageSync('userInfo')?.openid || 'anonymous-user'
+      },
       success: (res) => {
         if (res.statusCode >= 200 && res.statusCode < 300) {
           resolve(res.data as T)
