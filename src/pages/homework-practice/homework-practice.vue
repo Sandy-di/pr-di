@@ -27,7 +27,7 @@
           @click="toggleDemo"
         >
           <text>{{ isDemoPlaying ? '⏸' : '▶' }}</text>
-          <text>{{ currentSpeed }}x</text>
+          <text>示范</text>
         </view>
         <!-- 速度选择按钮 -->
         <view 
@@ -35,7 +35,7 @@
           class="control-btn speed-btn"
           @click="cycleSpeed"
         >
-          <text>速度</text>
+          <text>{{ currentSpeed }}x</text>
         </view>
       </view>
       
@@ -549,31 +549,30 @@ const onImageLoad = (e: any) => {
 
 /* 顶部控制按钮通用样式 - 微信胶囊风格 */
 .control-btn {
-  height: 64rpx;
-  padding: 0 24rpx;
+  height: 48rpx;
+  padding: 0 16rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   background: rgba(255,255,255,0.95);
-  border: 2rpx solid rgba(0,0,0,0.15);
-  border-radius: 32rpx;
+  border: 1rpx solid rgba(0,0,0,0.15);
+  border-radius: 24rpx;
   color: #333;
-  font-size: 26rpx;
-  gap: 8rpx;
-  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.1);
+  font-size: 22rpx;
+  gap: 4rpx;
 }
 
 /* 返回按钮 */
 .control-btn.back-btn {
-  width: 64rpx;
+  width: 48rpx;
   padding: 0;
-  font-size: 32rpx;
+  font-size: 26rpx;
   color: #333;
 }
 
 /* 录音按钮 */
 .control-btn.record-btn {
-  min-width: 100rpx;
+  min-width: 80rpx;
 }
 
 .control-btn.record-btn.recording {
@@ -584,8 +583,8 @@ const onImageLoad = (e: any) => {
 
 /* 录音红点 */
 .record-dot {
-  width: 12rpx;
-  height: 12rpx;
+  width: 10rpx;
+  height: 10rpx;
   border-radius: 50%;
   background: #ef4444;
 }
@@ -594,7 +593,7 @@ const onImageLoad = (e: any) => {
 
 /* 示范按钮 */
 .control-btn.demo-btn {
-  min-width: 90rpx;
+  min-width: 80rpx;
   background: rgba(255,255,255,0.95);
 }
 
@@ -606,7 +605,7 @@ const onImageLoad = (e: any) => {
 
 /* 速度按钮 */
 .control-btn.speed-btn {
-  min-width: 80rpx;
+  min-width: 56rpx;
   background: rgba(255,255,255,0.95);
 }
 
