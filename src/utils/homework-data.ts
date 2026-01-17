@@ -186,7 +186,7 @@ export const fetchHomeworkByIdAsync = async (id: string): Promise<Homework | nul
   }
 }
 
-// 获取作业进度
+// 获取作业进度（本地）
 export const getHomeworkProgress = (homeworkId: string): HomeworkProgress | null => {
   try {
     const allProgress = uni.getStorageSync('homeworkProgress') || {}
@@ -196,15 +196,106 @@ export const getHomeworkProgress = (homeworkId: string): HomeworkProgress | null
   }
 }
 
-// 保存作业进度
+// 保存作业进度（本地 + 云端）
 export const saveHomeworkProgress = (progress: HomeworkProgress): void => {
   try {
+    // 保存到本地
     const allProgress = uni.getStorageSync('homeworkProgress') || {}
     allProgress[progress.homeworkId] = progress
     uni.setStorageSync('homeworkProgress', allProgress)
+    
+    // 异步同步到云端（不阻塞）
+    syncProgressToCloud(progress).catch(e => {
+      console.warn('云端同步失败（稍后重试）:', e)
+    })
   } catch (e) {
     console.error('保存作业进度失败:', e)
   }
+}
+
+// 【云端】同步进度到云数据库
+export const syncProgressToCloud = async (progress: HomeworkProgress): Promise<void> => {
+  // @ts-ignore
+  if (!wx.cloud) return
+
+  try {
+    // @ts-ignore
+    const db = wx.cloud.database()
+    const collection = db.collection('user_progress')
+    
+    // 查找是否已有记录
+    const existing = await collection.where({
+      homeworkId: progress.homeworkId
+    }).get()
+    
+    if (existing.data && existing.data.length > 0) {
+      // 更新现有记录
+      await collection.doc(existing.data[0]._id).update({
+        data: {
+          ...progress,
+          updatedAt: db.serverDate()
+        }
+      })
+    } else {
+      // 创建新记录
+      await collection.add({
+        data: {
+          ...progress,
+          createdAt: db.serverDate(),
+          updatedAt: db.serverDate()
+        }
+      })
+    }
+    console.log('进度已同步到云端')
+  } catch (e) {
+    console.error('同步进度到云端失败:', e)
+    throw e
+  }
+}
+
+// 【云端】从云数据库获取进度
+export const fetchProgressFromCloud = async (homeworkId: string): Promise<HomeworkProgress | null> => {
+  // @ts-ignore
+  if (!wx.cloud) return null
+
+  try {
+    // @ts-ignore
+    const db = wx.cloud.database()
+    const res = await db.collection('user_progress').where({
+      homeworkId
+    }).get()
+    
+    if (res.data && res.data.length > 0) {
+      const data = res.data[0]
+      return {
+        homeworkId: data.homeworkId,
+        completed: data.completed || false,
+        practiceCount: data.practiceCount || 0,
+        lastPracticeAt: data.lastPracticeAt,
+        recordings: data.recordings || []
+      }
+    }
+    return null
+  } catch (e) {
+    console.error('从云端获取进度失败:', e)
+    return null
+  }
+}
+
+// 【异步】获取作业进度（优先云端，回退本地）
+export const getHomeworkProgressAsync = async (homeworkId: string): Promise<HomeworkProgress | null> => {
+  // 先尝试从云端获取
+  const cloudProgress = await fetchProgressFromCloud(homeworkId)
+  if (cloudProgress) {
+    // 更新本地缓存
+    const allProgress = uni.getStorageSync('homeworkProgress') || {}
+    allProgress[homeworkId] = cloudProgress
+    uni.setStorageSync('homeworkProgress', allProgress)
+    return cloudProgress
+  }
+  
+  // 回退到本地
+  return getHomeworkProgress(homeworkId)
 }
 
 // 标记作业完成
