@@ -801,6 +801,8 @@ const saveHomework = async () => {
   border-radius: 8rpx;
   font-size: 28rpx;
   box-sizing: border-box;
+  background: #fff;
+  color: #333;
 }
 
 .textarea {
@@ -811,6 +813,8 @@ const saveHomework = async () => {
   border-radius: 8rpx;
   font-size: 28rpx;
   box-sizing: border-box;
+  background: #fff;
+  color: #333;
 }
 
 .difficulty-selector {
