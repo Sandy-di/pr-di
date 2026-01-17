@@ -29,6 +29,13 @@
           <text>{{ isDemoPlaying ? '⏸' : '▶' }}</text>
           <text>示范</text>
         </view>
+        <!-- 播放进度条 -->
+        <view v-if="demoAudioUrl && isDemoPlaying" class="demo-progress">
+          <view class="progress-bar">
+            <view class="progress-fill" :style="{ width: demoProgress + '%' }"></view>
+          </view>
+          <text class="progress-time">{{ formatDemoTime(demoCurrentTime) }}</text>
+        </view>
         <!-- 速度选择按钮 -->
         <view 
           v-if="demoAudioUrl"
@@ -206,6 +213,9 @@ const isDemoPlaying = ref(false)
 const demoAudioUrl = ref<string | null>(null) // 示范音频 URL
 const currentSpeed = ref(1)
 const playbackSpeeds = [0.5, 0.75, 1, 1.25, 1.5]
+const demoProgress = ref(0)       // 播放进度百分比
+const demoCurrentTime = ref(0)    // 当前播放时间（秒）
+const demoDuration = ref(0)       // 总时长（秒）
 let demoAudio: UniApp.InnerAudioContext | null = null
 
 // 钢琴键盘
@@ -346,8 +356,21 @@ const toggleDemo = () => {
       demoAudio.src = demoAudioUrl.value
       demoAudio.playbackRate = currentSpeed.value
       
+      // 监听进度更新
+      demoAudio.onTimeUpdate(() => {
+        if (demoAudio) {
+          demoCurrentTime.value = demoAudio.currentTime || 0
+          demoDuration.value = demoAudio.duration || 0
+          if (demoDuration.value > 0) {
+            demoProgress.value = (demoCurrentTime.value / demoDuration.value) * 100
+          }
+        }
+      })
+      
       demoAudio.onEnded(() => {
         isDemoPlaying.value = false
+        demoProgress.value = 0
+        demoCurrentTime.value = 0
       })
       
       demoAudio.onError((err) => {
@@ -360,6 +383,13 @@ const toggleDemo = () => {
     demoAudio.play()
     isDemoPlaying.value = true
   }
+}
+
+// 格式化示范音频时间
+const formatDemoTime = (seconds: number) => {
+  const mins = Math.floor(seconds / 60)
+  const secs = Math.floor(seconds % 60)
+  return `${mins}:${secs.toString().padStart(2, '0')}`
 }
 
 // 切换播放速度
@@ -588,6 +618,39 @@ const onImageLoad = (e: any) => {
 }
 
 .record-dot.pulse { animation: pulse 1s infinite; }
+
+/* 播放进度条 */
+.demo-progress {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 8px;
+  background: rgba(0,0,0,0.15);
+  border: 0.5px solid rgba(255,255,255,0.25);
+  border-radius: 16px;
+}
+
+.progress-bar {
+  width: 60px;
+  height: 4px;
+  background: rgba(255,255,255,0.3);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #22c55e;
+  border-radius: 2px;
+  transition: width 0.1s linear;
+}
+
+.progress-time {
+  color: #fff;
+  font-size: 11px;
+  min-width: 28px;
+}
 
 /* 示范按钮 */
 .control-btn.demo-btn {
