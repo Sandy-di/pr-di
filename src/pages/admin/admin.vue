@@ -173,6 +173,7 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
+import { uploadToCOS } from '@/utils/cos-upload'
 
 interface Homework {
   id: string
@@ -353,7 +354,7 @@ const deleteHomework = (hw: Homework) => {
   })
 }
 
-// 上传乐谱图片
+// 上传乐谱图片 (使用腾讯云 COS)
 const uploadSheetImage = () => {
   uni.chooseImage({
     count: 9 - formData.sheetImages.length,
@@ -363,23 +364,17 @@ const uploadSheetImage = () => {
       let successCount = 0
       for (const filePath of res.tempFilePaths) {
         try {
-          const cloudPath = `sheets/${Date.now()}_${Math.random().toString(36).slice(2)}.jpg`
-          // @ts-ignore
-          const uploadRes = await wx.cloud.uploadFile({ cloudPath, filePath })
+          // 使用 COS 上传，返回公开访问 URL
+          const publicUrl = await uploadToCOS(filePath, 'sheets', 'image.jpg')
           
-          // 获取临时 URL 用于预览显示
-          // @ts-ignore
-          const urlRes = await wx.cloud.getTempFileURL({ fileList: [uploadRes.fileID] })
-          const tempUrl = urlRes.fileList[0]?.tempFileURL || filePath
-          
-          // 保存 fileID 和临时 URL
-          formData.sheetImageIds.push(uploadRes.fileID)
-          formData.sheetImages.push(tempUrl)
+          // 直接保存公开 URL（不再需要 fileID）
+          formData.sheetImageIds.push(publicUrl)
+          formData.sheetImages.push(publicUrl)
           successCount++
         } catch (e: any) {
           console.error('上传图片失败:', e)
           uni.showToast({ 
-            title: e.errMsg || '上传失败', 
+            title: e.message || '上传失败', 
             icon: 'none',
             duration: 3000
           })
@@ -403,7 +398,7 @@ const removeImage = (index: number) => {
   formData.sheetImageIds.splice(index, 1)
 }
 
-// 上传示范音频
+// 上传示范音频 (使用腾讯云 COS)
 const uploadDemoAudio = () => {
   uni.chooseMessageFile({
     count: 1,
@@ -414,27 +409,20 @@ const uploadDemoAudio = () => {
       
       try {
         const file = res.tempFiles[0]
-        const cloudPath = `demos/${Date.now()}_${file.name}`
-        // @ts-ignore
-        const uploadRes = await wx.cloud.uploadFile({
-          cloudPath,
-          filePath: file.path
-        })
         
-        // 保存 fileID
-        formData.demoAudioId = uploadRes.fileID
+        // 使用 COS 上传，返回公开访问 URL
+        const publicUrl = await uploadToCOS(file.path, 'demos', file.name)
         
-        // 获取临时 URL 用于播放预览
-        // @ts-ignore
-        const urlRes = await wx.cloud.getTempFileURL({ fileList: [uploadRes.fileID] })
-        formData.demoAudioUrl = urlRes.fileList[0]?.tempFileURL || uploadRes.fileID
+        // 直接保存公开 URL
+        formData.demoAudioId = publicUrl
+        formData.demoAudioUrl = publicUrl
         
         uni.hideLoading()
         uni.showToast({ title: '上传成功', icon: 'success' })
-      } catch (e) {
+      } catch (e: any) {
         uni.hideLoading()
         console.error('上传音频失败:', e)
-        uni.showToast({ title: '上传失败', icon: 'none' })
+        uni.showToast({ title: e.message || '上传失败', icon: 'none' })
       }
     }
   })

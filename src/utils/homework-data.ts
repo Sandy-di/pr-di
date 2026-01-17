@@ -68,34 +68,35 @@ const getTempFileURLViaCloudFunction = async (fileList: string[]): Promise<Recor
   return urlMap
 }
 
-// 【异步】获取乐谱图片（自动转换 cloud:// 为临时 URL）
+// 【异步】获取乐谱图片
+// 新上传的使用 COS 公开 URL，旧的使用 cloud:// 需要转换
 export const getSheetImagesAsync = async (homework: Homework): Promise<string[]> => {
   const images = getSheetImages(homework)
   if (images.length === 0) return []
 
-  // 检查是否有 cloud:// 开头的 fileID
   const cleanedImages = images.map(img => img.trim())
+  
+  // COS URL 或 HTTPS URL 直接使用，只处理 cloud:// 开头的旧数据
   const cloudImages = cleanedImages.filter(img => img.startsWith('cloud://'))
   
   if (cloudImages.length === 0) return cleanedImages
 
-  // 通过云函数转换云存储 fileID 为临时 URL
+  // 尝试转换旧的 cloud:// URL（可能会因权限问题失败）
   const urlMap = await getTempFileURLViaCloudFunction(cloudImages)
-
-  // 替换原数组中的 cloud:// 为临时 URL
   return cleanedImages.map(img => urlMap[img] || img)
 }
 
-// 【异步】获取示范音频 URL（自动转换 cloud:// 为临时 URL）
+// 【异步】获取示范音频 URL
+// 新上传的使用 COS 公开 URL，旧的使用 cloud:// 需要转换
 export const getDemoAudioUrlAsync = async (homework: Homework): Promise<string | null> => {
   if (!homework.demoAudioUrl) return null
 
   const url = homework.demoAudioUrl.trim()
   
-  // 如果不是云存储 URL，直接返回
+  // COS URL 或 HTTPS URL 直接返回
   if (!url.startsWith('cloud://')) return url
 
-  // 通过云函数转换云存储 fileID 为临时 URL
+  // 尝试转换旧的 cloud:// URL（可能会因权限问题失败）
   const urlMap = await getTempFileURLViaCloudFunction([url])
   return urlMap[url] || url
 }
