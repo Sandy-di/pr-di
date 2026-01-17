@@ -554,10 +554,10 @@ const onImageLoad = (e: any) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255,255,255,0.8);
-  border: 0.5px solid rgba(0,0,0,0.1);
+  background: rgba(0,0,0,0.15);
+  border: 0.5px solid rgba(255,255,255,0.25);
   border-radius: 16px;
-  color: rgba(0,0,0,0.6);
+  color: #fff;
   font-size: 13px;
   gap: 3px;
 }
@@ -575,8 +575,8 @@ const onImageLoad = (e: any) => {
 }
 
 .control-btn.record-btn.recording {
-  background: rgba(239, 68, 68, 0.1);
-  border-color: rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.3);
+  border-color: rgba(239, 68, 68, 0.5);
 }
 
 /* 录音红点 */
@@ -595,8 +595,8 @@ const onImageLoad = (e: any) => {
 }
 
 .control-btn.demo-btn.playing {
-  background: rgba(34, 197, 94, 0.1);
-  border-color: rgba(34, 197, 94, 0.3);
+  background: rgba(34, 197, 94, 0.3);
+  border-color: rgba(34, 197, 94, 0.5);
 }
 
 /* 速度按钮 */
@@ -729,13 +729,13 @@ const onImageLoad = (e: any) => {
 
 .page-indicator {
   position: absolute;
-  bottom: 10rpx;
-  right: 20rpx;
-  background: rgba(0,0,0,0.5);
+  top: 8rpx;
+  right: 12rpx;
+  background: rgba(0,0,0,0.4);
   color: #fff;
-  padding: 4rpx 12rpx;
-  border-radius: 10rpx;
-  font-size: 20rpx;
+  padding: 2rpx 8rpx;
+  border-radius: 6rpx;
+  font-size: 16rpx;
 }
 
 .sheet-placeholder {
