@@ -197,7 +197,7 @@ const editingId = ref<string | null>(null)
 const isAuthenticated = ref(false)
 const password = ref('')
 const authError = ref('')
-const ADMIN_PASSWORD = '123456'  // 管理密码，可改为更安全的方式
+const ADMIN_PASSWORD = '17122123'  // 管理密码
 
 // 验证密码
 const verifyPassword = () => {
