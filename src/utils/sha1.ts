@@ -80,10 +80,40 @@ function rol(num: number, cnt: number) {
   return (num << cnt) | (num >>> (32 - cnt));
 }
 
+// 16进制转 binb
+function hex2binb(str: string) {
+  var bin = Array();
+  var mask = (1 << 8) - 1;
+  // hex string: 2 chars = 1 byte
+  for (var i = 0; i < str.length * 4; i += 8) {
+     var byte = parseInt(str.substr(i/4, 2), 16);
+     bin[i >> 5] |= (byte & mask) << (24 - i % 32);
+  }
+  return bin;
+}
+
+
 // HMAC-SHA1
 export function hmacSha1(key: string, data: string): string {
   var bkey = str2binb(key);
-  if (bkey.length > 16) bkey = core_sha1(bkey, key.length * 8);
+  if (bkey.length > 16) bkey = core_sha1(bkey, key.length * 8); // key > 64 bytes
+
+  var ipad = Array(16), opad = Array(16);
+  for (var i = 0; i < 16; i++) {
+    ipad[i] = bkey[i] ^ 0x36363636;
+    opad[i] = bkey[i] ^ 0x5C5C5C5C;
+  }
+
+  var hash = core_sha1(ipad.concat(str2binb(data)), 512 + data.length * 8);
+  return binb2hex(core_sha1(opad.concat(hash), 512 + 160));
+}
+
+// HMAC-SHA1 using Hex String as Key (decodes hex to bytes first)
+export function hmacSha1FromHexKey(hexKey: string, data: string): string {
+  var bkey = hex2binb(hexKey);
+  // hexKey length in bytes is hexKey.length / 2
+  // core_sha1 block size is 16 words (64 bytes)
+  if (hexKey.length / 2 > 64) bkey = core_sha1(bkey, hexKey.length * 4); // should not happen for sha1 result (20 bytes)
 
   var ipad = Array(16), opad = Array(16);
   for (var i = 0; i < 16; i++) {
@@ -99,4 +129,4 @@ export function sha1(data: string): string {
     return binb2hex(core_sha1(str2binb(data), data.length * 8));
 }
 
-export default { hmacSha1, sha1 }
+export default { hmacSha1, hmacSha1FromHexKey, sha1 }

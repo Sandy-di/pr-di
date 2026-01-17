@@ -1,4 +1,4 @@
-import { hmacSha1, sha1 } from './sha1'
+import { hmacSha1, hmacSha1FromHexKey, sha1 } from './sha1'
 
 /**
  * 腾讯云 COS 上传工具 (强制刷新版)
@@ -72,11 +72,26 @@ export const uploadToCOS = (
     const policyString = JSON.stringify(policyObj)
     
     // 计算 Signature
-    const signKey = hmacSha1(COS_CONFIG.SecretKey, qKeyTime)
+    // 算法: Signature = HMAC-SHA1(SignKey, StringToSign)
+    // SignKey = HMAC-SHA1(SecretKey, KeyTime)
+    // StringToSign = sha1(PolicyString)
+    
+    // 1. 生成 SignKey (返回 hex string)
+    // 注意：qKeyTime 是 "start;end"
+    const signKeyHex = hmacSha1(COS_CONFIG.SecretKey, qKeyTime)
+    
+    // 2. 生成 StringToSign (对 Policy String 进行 SHA1)
     const stringToSign = sha1(policyString)
-    const qSignature = hmacSha1(signKey, stringToSign)
+    
+    // 3. 计算最终 Signature (使用 Hex Key 进行 HMAC)
+    // 注意：这里必须使用 hmacSha1FromHexKey，因为 signKeyHex 是 hex 字符串，需要还原为 bytes 作为 key
+    // @ts-ignore
+    const qSignature = hmacSha1FromHexKey ? hmacSha1FromHexKey(signKeyHex, stringToSign) : hmacSha1(signKeyHex, stringToSign) // 兼容性回退
     
     console.log('[COS] Starting upload:', key)
+    console.log('[COS] Policy:', policyString)
+    console.log('[COS] StringToSign:', stringToSign)
+    console.log('[COS] Signature:', qSignature)
     
     uni.uploadFile({
       url: url,
@@ -88,8 +103,9 @@ export const uploadToCOS = (
         'q-sign-algorithm': 'sha1',
         'q-ak': COS_CONFIG.SecretId,
         'q-key-time': qKeyTime,
-        'q-sign-time': qSignTime,
-        'q-signature': qSignature
+        'q-sign-time': qSignTime, // POST Policy 签名不需要这个？加上也没事
+        'q-signature': qSignature,
+        // 'signature': qSignature // 有些文档说用这个？POST V4 应该是 q-signature
       },
       success: (res) => {
         if (res.statusCode === 200 || res.statusCode === 204) {
