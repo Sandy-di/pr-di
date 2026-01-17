@@ -547,42 +547,45 @@ const onImageLoad = (e: any) => {
   width: 180rpx;
 }
 
-/* 顶部控制按钮通用样式 */
+/* 顶部控制按钮通用样式 - 微信胶囊风格 */
 .control-btn {
-  height: 36rpx; /* 进一步缩小 */
-  padding: 0 14rpx;
+  height: 64rpx;
+  padding: 0 24rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255,255,255,0.15);
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 18rpx;
-  color: #fff;
-  font-size: 20rpx;
-  gap: 6rpx;
+  background: rgba(255,255,255,0.95);
+  border: 2rpx solid rgba(0,0,0,0.15);
+  border-radius: 32rpx;
+  color: #333;
+  font-size: 26rpx;
+  gap: 8rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.1);
 }
 
 /* 返回按钮 */
 .control-btn.back-btn {
-  width: 36rpx;
+  width: 64rpx;
   padding: 0;
-  font-size: 24rpx;
+  font-size: 32rpx;
+  color: #333;
 }
 
 /* 录音按钮 */
 .control-btn.record-btn {
-  min-width: 80rpx;
+  min-width: 100rpx;
 }
 
 .control-btn.record-btn.recording {
-  background: rgba(239, 68, 68, 0.25);
+  background: rgba(239, 68, 68, 0.15);
   border-color: #ef4444;
+  color: #ef4444;
 }
 
 /* 录音红点 */
 .record-dot {
-  width: 8rpx;
-  height: 8rpx;
+  width: 12rpx;
+  height: 12rpx;
   border-radius: 50%;
   background: #ef4444;
 }
@@ -591,21 +594,20 @@ const onImageLoad = (e: any) => {
 
 /* 示范按钮 */
 .control-btn.demo-btn {
-  min-width: 80rpx;
-  background: rgba(34, 197, 94, 0.15);
-  border-color: rgba(34, 197, 94, 0.3);
+  min-width: 90rpx;
+  background: rgba(255,255,255,0.95);
 }
 
 .control-btn.demo-btn.playing {
-  background: rgba(34, 197, 94, 0.3);
+  background: rgba(34, 197, 94, 0.15);
   border-color: #22c55e;
+  color: #22c55e;
 }
 
 /* 速度按钮 */
 .control-btn.speed-btn {
-  min-width: 60rpx;
-  background: rgba(59, 130, 246, 0.15);
-  border-color: rgba(59, 130, 246, 0.3);
+  min-width: 80rpx;
+  background: rgba(255,255,255,0.95);
 }
 
 /* 作业标题 */
