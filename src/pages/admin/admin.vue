@@ -176,7 +176,8 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
-import { uploadToCOS } from '@/utils/cos-uploader'
+// import { uploadToCOS } from '@/utils/cos-uploader' // 弃用 COS
+import { uploadFile } from '@/utils/api-client' 
 
 interface Homework {
   id: string
@@ -364,30 +365,26 @@ const uploadSheetImage = () => {
     count: 9 - formData.sheetImages.length,
     success: async (res) => {
       uni.showLoading({ title: '上传中...' })
-      
-      let successCount = 0
-      for (const filePath of res.tempFilePaths) {
-        try {
-          // 使用 COS 上传，返回公开访问 URL
-          const publicUrl = await uploadToCOS(filePath, 'sheets', 'image.jpg')
-          
-          // 直接保存公开 URL（不再需要 fileID）
-          formData.sheetImageIds.push(publicUrl)
-          formData.sheetImages.push(publicUrl)
-          successCount++
-        } catch (e: any) {
-          console.error('上传图片失败:', e)
-          uni.showToast({ 
-            title: e.message || '上传失败', 
-            icon: 'none',
-            duration: 3000
-          })
-        }
-      }
-      
-      uni.hideLoading()
-      if (successCount > 0) {
-        uni.showToast({ title: `已上传 ${successCount} 张`, icon: 'success' })
+      try {
+        const filePaths = res.tempFilePaths as string[]
+        // 并发上传到自建后端
+        const uploadPromises = filePaths.map(path => uploadFile(path))
+        const urls = await Promise.all(uploadPromises)
+        
+        // 保存 URL
+        formData.sheetImageIds.push(...urls)
+        formData.sheetImages.push(...urls)
+        
+        uni.hideLoading()
+        uni.showToast({ title: `已上传 ${urls.length} 张`, icon: 'success' })
+      } catch (e: any) {
+        uni.hideLoading()
+        console.error('上传图片失败:', e)
+        uni.showToast({ 
+          title: e.message || '上传失败', 
+          icon: 'none',
+          duration: 3000
+        })
       }
     },
     fail: (err) => {
@@ -412,14 +409,10 @@ const uploadDemoAudio = () => {
       uni.showLoading({ title: '上传中...' })
       
       try {
-        const file = res.tempFiles[0]
-        
-        // 使用 COS 上传，返回公开访问 URL
-        const publicUrl = await uploadToCOS(file.path, 'demos', file.name)
-        
-        // 直接保存公开 URL
-        formData.demoAudioId = publicUrl
-        formData.demoAudioUrl = publicUrl
+        const tempFilePath = res.tempFiles[0].path
+        const url = await uploadFile(tempFilePath)
+        formData.demoAudioId = url
+        formData.demoAudioUrl = url
         
         uni.hideLoading()
         uni.showToast({ title: '上传成功', icon: 'success' })
