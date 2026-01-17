@@ -143,6 +143,19 @@
         </view>
       </view>
       
+      <!-- 老师专区 -->
+      <view class="setting-group glass animate-fade-in" style="animation-delay: 0.25s">
+        <view class="group-header">
+          <svg-icon name="star" size="32rpx" color="var(--divine-gold)" />
+          <text class="group-title">老师专区</text>
+        </view>
+        
+        <view class="setting-item no-border" @click="goToAdmin">
+          <text class="setting-label">作业管理</text>
+          <svg-icon name="arrow-right" size="28rpx" color="var(--text-muted)" />
+        </view>
+      </view>
+      
       <!-- 危险区域 -->
       <view class="setting-group glass danger-zone animate-fade-in" style="animation-delay: 0.3s">
         <view class="group-header">
@@ -283,6 +296,11 @@ const toggleAutoNext = (e: any) => {
 const toggleShowHint = (e: any) => {
   settings.showHint = e.detail.value
   saveSettings()
+}
+
+// 跳转到管理页面
+const goToAdmin = () => {
+  uni.navigateTo({ url: '/pages/admin/admin' })
 }
 
 const clearStatistics = () => {

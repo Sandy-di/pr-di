@@ -86,6 +86,13 @@
         "navigationBarTitleText": "设置",
         "navigationStyle": "custom"
       }
+    },
+    {
+      "path": "pages/admin/admin",
+      "style": {
+        "navigationBarTitleText": "作业管理",
+        "navigationStyle": "custom"
+      }
     }
   ],
   "globalStyle": {
