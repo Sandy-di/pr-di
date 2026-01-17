@@ -297,15 +297,17 @@ const loadStats = () => {
   }
 }
 
-// 页面跳转
 const navigateTo = (url: string) => {
-  // tabBar 页面列表
-  const tabBarPages = ['/pages/index/index', '/pages/piano/piano', '/pages/ear-training/ear-training', '/pages/settings/settings']
+  // 底部 TabBar 页面列表
+  const tabBarPages = [
+    '/pages/index/index',
+    '/pages/piano/piano',
+    '/pages/homework-list/homework-list',
+    '/pages/settings/settings'
+  ]
   
-  // 检查是否是 tabBar 页面（不带参数时）
-  const basePath = url.split('?')[0]
-  if (tabBarPages.includes(basePath) && !url.includes('?')) {
-    uni.switchTab({ url: basePath })
+  if (tabBarPages.some(page => url.startsWith(page))) {
+    uni.switchTab({ url })
   } else {
     uni.navigateTo({ url })
   }
