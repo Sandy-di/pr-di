@@ -7,7 +7,33 @@
 // 模拟器使用 http://localhost:3000
 const API_BASE_URL = 'http://localhost:3000/api'
 
+// 通用请求封装
+export const request = <T = any>(
+  path: string, 
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET',
+  data?: any
+): Promise<T> => {
+  return new Promise((resolve, reject) => {
+    uni.request({
+      url: `${API_BASE_URL}${path}`,
+      method: method,
+      data: data,
+      success: (res) => {
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          resolve(res.data as T)
+        } else {
+          reject(new Error(`API Error: ${res.statusCode}`))
+        }
+      },
+      fail: (err) => {
+        reject(err)
+      }
+    })
+  })
+}
+
 export const uploadFile = (filePath: string): Promise<string> => {
+// ...
   return new Promise((resolve, reject) => {
     uni.uploadFile({
       url: `${API_BASE_URL}/upload`,

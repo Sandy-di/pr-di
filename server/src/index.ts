@@ -33,12 +33,71 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// API: 健康检查
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date() });
+import mongoose from 'mongoose';
+import { User, Homework } from './models';
+
+// ... (现有代码)
+
+// 连接数据库
+mongoose.connect('mongodb://127.0.0.1:27017/xiaochengxu')
+  .then(() => console.log('Connected to MongoDB'))
+  .catch(err => console.error('MongoDB connection error:', err));
+
+// API: 获取作业列表
+app.get('/api/homeworks', async (req, res) => {
+  try {
+    const homeworks = await Homework.find().sort({ createdAt: -1 });
+    res.json(homeworks);
+  } catch (e) {
+    res.status(500).json({ error: '获取作业失败' });
+  }
+});
+
+// API: 获取单个作业
+app.get('/api/homeworks/:id', async (req, res) => {
+  try {
+    const homework = await Homework.findById(req.params.id);
+    if (!homework) return res.status(404).json({ error: '未找到作业' });
+    res.json(homework);
+  } catch (e) {
+    res.status(500).json({ error: '获取详情失败' });
+  }
+});
+
+// API: 创建作业
+app.post('/api/homeworks', async (req, res) => {
+  try {
+    const homework = new Homework(req.body);
+    await homework.save();
+    res.json(homework);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: '创建作业失败' });
+  }
+});
+
+// API: 更新作业
+app.put('/api/homeworks/:id', async (req, res) => {
+  try {
+    const homework = await Homework.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(homework);
+  } catch (e) {
+    res.status(500).json({ error: '更新失败' });
+  }
+});
+
+// API: 删除作业
+app.delete('/api/homeworks/:id', async (req, res) => {
+  try {
+    await Homework.findByIdAndDelete(req.params.id);
+    res.json({ success: true });
+  } catch (e) {
+    res.status(500).json({ error: '删除失败' });
+  }
 });
 
 // API: 文件上传 (图片 & 音频)
+// ... (保留现有上传代码)
 app.post('/api/upload', upload.single('file'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: '没有文件上传' });

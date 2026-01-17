@@ -177,7 +177,7 @@
 import { ref, reactive } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 // import { uploadToCOS } from '@/utils/cos-uploader' // 弃用 COS
-import { uploadFile } from '@/utils/api-client' 
+import { uploadFile, request } from '@/utils/api-client' 
 
 interface Homework {
   id: string
@@ -210,7 +210,7 @@ const verifyPassword = () => {
     isAuthenticated.value = true
     authError.value = ''
     // 验证成功后加载数据
-    loadHomeworkList()
+    fetchHomeworkList()
   } else {
     authError.value = '密码错误，请重试'
     password.value = ''
@@ -243,18 +243,13 @@ let demoAudioContext: UniApp.InnerAudioContext | null = null
 // 不再自动加载，改为验证成功后加载
 
 // 加载作业列表
-const loadHomeworkList = async () => {
+const fetchHomeworkList = async () => {
   isLoading.value = true
   try {
-    // @ts-ignore
-    const db = wx.cloud.database()
-    const res = await db.collection('homework')
-      .orderBy('createdAt', 'desc')
-      .get()
-    
-    homeworkList.value = res.data.map((item: any) => ({
+    const res = await request<Homework[]>('/homeworks')
+    homeworkList.value = res.map(item => ({
       ...item,
-      id: item._id
+      id: item._id || item.id // Ensure 'id' field is present
     }))
   } catch (e) {
     console.error('加载作业列表失败:', e)
@@ -344,11 +339,9 @@ const deleteHomework = (hw: Homework) => {
     success: async (res) => {
       if (res.confirm) {
         try {
-          // @ts-ignore
-          const db = wx.cloud.database()
-          await db.collection('homework').doc(hw.id).remove()
-          uni.showToast({ title: '删除成功', icon: 'success' })
-          loadHomeworkList()
+          await request(`/homeworks/${hw.id}`, 'DELETE')
+          uni.showToast({ title: '已删除', icon: 'success' })
+          fetchHomeworkList()
         } catch (e) {
           console.error('删除失败:', e)
           uni.showToast({ title: '删除失败', icon: 'none' })
@@ -448,6 +441,7 @@ const playDemoAudio = async () => {
 // 移除音频
 const removeAudio = () => {
   formData.demoAudioUrl = ''
+  formData.demoAudioId = ''
 }
 
 // 关闭弹窗
@@ -479,37 +473,27 @@ const saveHomework = async () => {
   isSaving.value = true
   
   try {
-    // @ts-ignore
-    const db = wx.cloud.database()
-    
     const data = {
       title: formData.title.trim(),
       description: formData.description.trim(),
       difficulty: formData.difficulty,
       sheetImages: formData.sheetImageIds,      // 保存 fileIDs
-      demoAudioUrl: formData.demoAudioId || formData.demoAudioUrl,  // 保存 fileID
+      demoAudioUrl: formData.demoAudioId,  // 保存 fileID
       isPublished: true,
-      updatedAt: db.serverDate()
     }
     
     if (isEditing.value && editingId.value) {
       // 更新
-      await db.collection('homework').doc(editingId.value).update({ data })
+      await request(`/homeworks/${editingId.value}`, 'PUT', data)
       uni.showToast({ title: '更新成功', icon: 'success' })
     } else {
       // 新增
-      await db.collection('homework').add({
-        data: {
-          ...data,
-          createdAt: db.serverDate()
-        }
-      })
+      await request('/homeworks', 'POST', data)
       uni.showToast({ title: '添加成功', icon: 'success' })
     }
-    
-    closeModal()
-    loadHomeworkList()
-  } catch (e) {
+    showAddModal.value = false
+    fetchHomeworkList()
+  } catch (e: any) {
     console.error('保存失败:', e)
     uni.showToast({ title: '保存失败', icon: 'none' })
   } finally {
