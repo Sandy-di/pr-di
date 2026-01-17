@@ -176,7 +176,7 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
-import { uploadToCOS } from '@/utils/cos-upload'
+import { uploadToCOS } from '@/utils/cos-uploader'
 
 interface Homework {
   id: string
