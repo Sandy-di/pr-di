@@ -57,9 +57,13 @@
         </view>
         
         <view class="recording-actions">
-          <view class="action-btn share-btn" @click.stop="shareRecording(recording)">
+          <button 
+            class="action-btn share-btn" 
+            open-type="share"
+            @click="prepareShare(recording)"
+          >
             <text>分享</text>
-          </view>
+          </button>
           <view class="action-btn delete-btn" @click.stop="deleteRecording(recording)">
             <text>删除</text>
           </view>
@@ -225,7 +229,8 @@ const seekTo = (e: any) => {
   audioContext.seek(percent * currentRecording.value.duration / 1000)
 }
 
-const shareRecording = async (recording: Recording) => {
+// 准备分享（上传录音到服务器）
+const prepareShare = async (recording: Recording) => {
   if (!recording.voicePath) {
     uni.showToast({ title: '录音文件不存在', icon: 'none' })
     return
@@ -259,12 +264,7 @@ const shareRecording = async (recording: Recording) => {
     // 设置待分享的录音（用于 onShareAppMessage）
     pendingShareRecording.value = { ...recording, id: shareResult.shareId }
     
-    // 提示用户点击分享
-    uni.showShareMenu({
-      withShareTicket: true,
-      menus: ['shareAppMessage']
-    })
-    uni.showToast({ title: '点击右上角分享', icon: 'none', duration: 2000 })
+    // button 的 open-type="share" 会自动触发分享
     
   } catch (err) {
     uni.hideLoading()
@@ -600,9 +600,16 @@ const formatDate = (isoString: string | undefined): string => {
 }
 
 .share-btn {
-  background: rgba(6, 182, 212, 0.2);
+  background: rgba(6, 182, 212, 0.2) !important;
   color: #06b6d4;
-  border: 1px solid rgba(6, 182, 212, 0.3);
+  border: 1px solid rgba(6, 182, 212, 0.3) !important;
+  /* 重置 button 默认样式 */
+  margin: 0;
+  line-height: normal;
+}
+
+.share-btn::after {
+  border: none;
 }
 
 .share-btn text {
