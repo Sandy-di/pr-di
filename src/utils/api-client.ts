@@ -3,9 +3,9 @@
  * 负责与 Node.js 后端服务通信
  */
 
-// 本地开发地址 (真机调试需要换成局域网 IP，如 http://192.168.1.x:3000)
-// 模拟器使用 http://localhost:3000
-const API_BASE_URL = 'http://localhost:3000/api'
+// 本地开发: http://localhost:3000/api
+// 云服务器: https://xinximassage.site/api
+const API_BASE_URL = 'https://xinximassage.site/api'
 
 // 通用请求封装
 export const request = <T = any>(

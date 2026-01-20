@@ -144,9 +144,8 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
   }
   
   // 返回完整的访问 URL
-  // 在本地测试时是 http://localhost:3000/uploads/filename
-  // 部署后是 http://your-domain.com/uploads/filename
-  const baseUrl = `${req.protocol}://${req.get('host')}`;
+  // 使用固定域名确保 HTTPS
+  const baseUrl = 'https://xinximassage.site';
   const fileUrl = `${baseUrl}/uploads/${req.file.filename}`;
   
   res.json({
