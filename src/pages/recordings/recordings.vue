@@ -109,16 +109,19 @@ const pendingShareRecording = ref<Recording | null>(null)
 onShareAppMessage(() => {
   if (pendingShareRecording.value && pendingShareRecording.value.cloudUrl) {
     // 分享特定录音
-    return {
+    const shareData = {
       title: `🎵 ${pendingShareRecording.value.name}`,
       path: `/pages/share-play/share-play?id=${pendingShareRecording.value.id}`,
-      imageUrl: '' // 可以添加封面图
+      imageUrl: ''
     }
+    // 分享后清除待分享录音
+    pendingShareRecording.value = null
+    return shareData
   }
-  // 默认分享
+  // 默认分享到首页（不是录音管理页面）
   return {
-    title: '🎵 我的练习录音 - 视唱练耳助手',
-    path: '/pages/recordings/recordings'
+    title: '🎵 视唱练耳助手 - 让练习更有效',
+    path: '/pages/index/index'
   }
 })
 
@@ -597,13 +600,22 @@ const formatDate = (isoString: string | undefined): string => {
 }
 
 .share-btn {
-  background: rgba(6, 182, 212, 0.1);
-  color: var(--accent-cyan);
-  margin-right: 12rpx;
+  background: rgba(6, 182, 212, 0.2);
+  color: #06b6d4;
+  border: 1px solid rgba(6, 182, 212, 0.3);
+}
+
+.share-btn text {
+  color: #06b6d4;
 }
 
 .delete-btn {
-  background: rgba(239, 68, 68, 0.1);
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.delete-btn text {
   color: #ef4444;
 }
 

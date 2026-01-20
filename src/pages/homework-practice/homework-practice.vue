@@ -388,6 +388,13 @@ const toggleDemo = () => {
     
     demoAudio.play()
     isDemoPlaying.value = true
+    
+    // 微信小程序需要在 play 后再次设置 playbackRate 才能生效
+    setTimeout(() => {
+      if (demoAudio) {
+        demoAudio.playbackRate = currentSpeed.value
+      }
+    }, 100)
   }
 }
 
