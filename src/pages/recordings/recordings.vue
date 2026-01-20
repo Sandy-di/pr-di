@@ -99,13 +99,28 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { onShareAppMessage } from '@dcloudio/uni-app'
 import RecorderService, { type Recording } from '@/utils/recorder-manager'
+import { request } from '@/utils/api-client'
 import SvgIcon from '@/components/SvgIcon.vue'
 
+// 当前要分享的录音
+const pendingShareRecording = ref<Recording | null>(null)
+
 // 分享
-onShareAppMessage(() => ({
-  title: '🎵 我的练习录音 - 视唱练耳助手',
-  path: '/pages/recordings/recordings'
-}))
+onShareAppMessage(() => {
+  if (pendingShareRecording.value && pendingShareRecording.value.cloudUrl) {
+    // 分享特定录音
+    return {
+      title: `🎵 ${pendingShareRecording.value.name}`,
+      path: `/pages/share-play/share-play?id=${pendingShareRecording.value.id}`,
+      imageUrl: '' // 可以添加封面图
+    }
+  }
+  // 默认分享
+  return {
+    title: '🎵 我的练习录音 - 视唱练耳助手',
+    path: '/pages/recordings/recordings'
+  }
+})
 
 const statusBarHeight = ref(20)
 const recordings = ref<Recording[]>([])
@@ -207,26 +222,52 @@ const seekTo = (e: any) => {
   audioContext.seek(percent * currentRecording.value.duration / 1000)
 }
 
-const shareRecording = (recording: Recording) => {
+const shareRecording = async (recording: Recording) => {
   if (!recording.voicePath) {
     uni.showToast({ title: '录音文件不存在', icon: 'none' })
     return
   }
   
-  uni.shareFileMessage({
-    filePath: recording.voicePath,
-    fileName: `${recording.name}.mp3`,
-    success: () => uni.showToast({ title: '分享成功', icon: 'success' }),
-    fail: (err) => {
-      console.error('分享失败:', err)
-      // 如果 shareFileMessage 失败，回退到传统方式
-      uni.showShareMenu({
-        withShareTicket: true,
-        menus: ['shareAppMessage']
-      })
-      uni.showToast({ title: '点击右上角分享', icon: 'none' })
+  uni.showLoading({ title: '准备分享...' })
+  
+  try {
+    // 如果还没有云端URL，先上传
+    let cloudUrl = recording.cloudUrl
+    if (!cloudUrl) {
+      const updatedRecording = await RecorderService.uploadToCloud(recording)
+      cloudUrl = updatedRecording.cloudUrl
+      recording = updatedRecording
     }
-  })
+    
+    if (!cloudUrl) {
+      throw new Error('上传失败')
+    }
+    
+    // 创建分享记录
+    const shareResult = await request<{ shareId: string }>('/share', 'POST', {
+      name: recording.name,
+      audioUrl: cloudUrl,
+      duration: recording.duration,
+      homeworkId: recording.homeworkId
+    })
+    
+    uni.hideLoading()
+    
+    // 设置待分享的录音（用于 onShareAppMessage）
+    pendingShareRecording.value = { ...recording, id: shareResult.shareId }
+    
+    // 提示用户点击分享
+    uni.showShareMenu({
+      withShareTicket: true,
+      menus: ['shareAppMessage']
+    })
+    uni.showToast({ title: '点击右上角分享', icon: 'none', duration: 2000 })
+    
+  } catch (err) {
+    uni.hideLoading()
+    console.error('分享失败:', err)
+    uni.showToast({ title: '分享失败，请重试', icon: 'none' })
+  }
 }
 
 const showOptions = (recording: Recording) => {

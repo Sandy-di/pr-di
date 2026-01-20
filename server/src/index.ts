@@ -34,7 +34,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 import mongoose from 'mongoose';
-import { User, Homework, UserProgress } from './models';
+import { User, Homework, UserProgress, SharedRecording } from './models';
 
 // 连接 MongoDB 数据库
 mongoose.connect('mongodb://127.0.0.1:27017/xiaochengxu')
@@ -154,6 +154,52 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
     mimetype: req.file.mimetype,
     size: req.file.size
   });
+});
+
+// API: 创建分享录音
+app.post('/api/share', async (req, res) => {
+  try {
+    // @ts-ignore
+    const openid = req.user.openid;
+    const { name, audioUrl, duration, homeworkId, homeworkTitle } = req.body;
+    
+    // 生成唯一分享ID
+    const shareId = Date.now().toString(36) + Math.random().toString(36).substring(2, 8);
+    
+    const sharedRecording = new SharedRecording({
+      shareId,
+      openid,
+      name,
+      audioUrl,
+      duration,
+      homeworkId,
+      homeworkTitle
+    });
+    
+    await sharedRecording.save();
+    res.json({ shareId, success: true });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: '创建分享失败' });
+  }
+});
+
+// API: 获取分享录音详情 (无需登录)
+app.get('/api/share/:shareId', async (req, res) => {
+  try {
+    const shared = await SharedRecording.findOne({ shareId: req.params.shareId });
+    if (!shared) {
+      return res.status(404).json({ error: '分享不存在或已过期' });
+    }
+    
+    // 增加播放次数
+    shared.viewCount = (shared.viewCount || 0) + 1;
+    await shared.save();
+    
+    res.json(shared);
+  } catch (e) {
+    res.status(500).json({ error: '获取分享失败' });
+  }
 });
 
 // 启动服务器

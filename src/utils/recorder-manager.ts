@@ -1,7 +1,8 @@
 /**
  * 录音管理器
- * 封装微信小程序录音 API + 云存储上传
+ * 封装微信小程序录音 API + 后端上传
  */
+import { uploadFile } from './api-client'
 
 export interface Recording {
   id: string
@@ -293,54 +294,30 @@ class RecorderService {
   }
 
   /**
-   * 上传录音到云存储
+   * 上传录音到后端服务器
    * @param recording 录音对象
    * @param homeworkId 可选，关联的作业ID
    * @returns 更新后的录音对象（包含云端URL）
    */
   async uploadToCloud(recording: Recording, homeworkId?: string): Promise<Recording> {
-    // @ts-ignore
-    if (!wx.cloud) {
-      throw new Error('云开发不可用')
-    }
-
     try {
-      const timestamp = Date.now()
-      const cloudPath = `recordings/${homeworkId || 'free'}/${timestamp}_${recording.id}.mp3`
-
-      // @ts-ignore
-      const uploadResult = await wx.cloud.uploadFile({
-        cloudPath,
-        filePath: recording.voicePath
-      })
-
-      if (uploadResult.fileID) {
-        // 获取临时访问 URL
-        // @ts-ignore
-        const urlResult = await wx.cloud.getTempFileURL({
-          fileList: [uploadResult.fileID]
-        })
-
-        const cloudUrl = urlResult.fileList[0]?.tempFileURL || ''
-
-        // 更新录音对象
-        const updatedRecording: Recording = {
-          ...recording,
-          cloudFileId: uploadResult.fileID,
-          cloudUrl,
-          homeworkId
-        }
-
-        // 更新本地存储中的录音记录
-        this.updateRecordingInStorage(updatedRecording)
-
-        console.log('录音上传成功:', uploadResult.fileID)
-        return updatedRecording
+      // 使用自建后端上传
+      const cloudUrl = await uploadFile(recording.voicePath)
+      
+      // 更新录音对象
+      const updatedRecording: Recording = {
+        ...recording,
+        cloudUrl,
+        homeworkId
       }
 
-      throw new Error('上传失败：未获取到 fileID')
+      // 更新本地存储中的录音记录
+      this.updateRecordingInStorage(updatedRecording)
+
+      console.log('录音上传成功:', cloudUrl)
+      return updatedRecording
     } catch (error) {
-      console.error('上传录音到云存储失败:', error)
+      console.error('上传录音失败:', error)
       throw error
     }
   }

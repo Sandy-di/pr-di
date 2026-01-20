@@ -51,3 +51,18 @@ const userProgressSchema = new mongoose.Schema({
 userProgressSchema.index({ openid: 1, homeworkId: 1 }, { unique: true });
 
 export const UserProgress = mongoose.model('UserProgress', userProgressSchema);
+
+// SharedRecording Schema (分享的录音)
+const sharedRecordingSchema = new mongoose.Schema({
+  shareId: { type: String, required: true, unique: true }, // 分享唯一标识
+  openid: { type: String, required: true }, // 分享者
+  name: { type: String, required: true },   // 录音名称
+  audioUrl: { type: String, required: true }, // 音频文件 URL
+  duration: { type: Number, required: true }, // 时长(ms)
+  homeworkId: String,                        // 关联作业ID
+  homeworkTitle: String,                     // 关联作业标题
+  createdAt: { type: Date, default: Date.now },
+  viewCount: { type: Number, default: 0 }    // 播放次数
+});
+
+export const SharedRecording = mongoose.model('SharedRecording', sharedRecordingSchema);

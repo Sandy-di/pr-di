@@ -93,6 +93,13 @@
         "navigationBarTitleText": "作业管理",
         "navigationStyle": "custom"
       }
+    },
+    {
+      "path": "pages/share-play/share-play",
+      "style": {
+        "navigationBarTitleText": "分享的录音",
+        "navigationStyle": "custom"
+      }
     }
   ],
   "globalStyle": {
