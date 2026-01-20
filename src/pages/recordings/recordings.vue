@@ -57,11 +57,11 @@
         </view>
         
         <view class="recording-actions">
-          <view class="action-btn" @click="shareRecording(recording)">
-            <svg-icon name="arrow-right" size="28rpx" color="var(--text-muted)" style="transform: rotate(-45deg)" />
+          <view class="action-btn share-btn" @click.stop="shareRecording(recording)">
+            <text>分享</text>
           </view>
-          <view class="action-btn" @click="showOptions(recording)">
-            <svg-icon name="more" size="28rpx" color="var(--text-muted)" />
+          <view class="action-btn delete-btn" @click.stop="deleteRecording(recording)">
+            <text>删除</text>
           </view>
         </view>
       </view>
@@ -586,17 +586,30 @@ const formatDate = (isoString: string | undefined): string => {
 }
 
 .action-btn {
-  width: 72rpx;
-  height: 72rpx;
+  padding: 12rpx 24rpx;
+  border-radius: 100rpx;
+  font-size: 24rpx;
+  font-weight: 500;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  transition: background 0.2s;
+  transition: all 0.2s;
+}
+
+.share-btn {
+  background: rgba(6, 182, 212, 0.1);
+  color: var(--accent-cyan);
+  margin-right: 12rpx;
+}
+
+.delete-btn {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
 }
 
 .action-btn:active {
-  background: rgba(255, 255, 255, 0.1);
+  opacity: 0.8;
+  transform: scale(0.95);
 }
 
 /* 播放器栏 */
