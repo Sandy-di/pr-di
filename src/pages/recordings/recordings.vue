@@ -57,13 +57,9 @@
         </view>
         
         <view class="recording-actions">
-          <button 
-            class="action-btn share-btn" 
-            open-type="share"
-            @click="prepareShare(recording)"
-          >
+          <view class="action-btn share-btn" @click.stop="prepareShare(recording)">
             <text>分享</text>
-          </button>
+          </view>
           <view class="action-btn delete-btn" @click.stop="deleteRecording(recording)">
             <text>删除</text>
           </view>
@@ -229,48 +225,23 @@ const seekTo = (e: any) => {
   audioContext.seek(percent * currentRecording.value.duration / 1000)
 }
 
-// 准备分享（上传录音到服务器）
-const prepareShare = async (recording: Recording) => {
+// 分享录音文件到群
+const prepareShare = (recording: Recording) => {
   if (!recording.voicePath) {
     uni.showToast({ title: '录音文件不存在', icon: 'none' })
     return
   }
   
-  uni.showLoading({ title: '准备分享...' })
-  
-  try {
-    // 如果还没有云端URL，先上传
-    let cloudUrl = recording.cloudUrl
-    if (!cloudUrl) {
-      const updatedRecording = await RecorderService.uploadToCloud(recording)
-      cloudUrl = updatedRecording.cloudUrl
-      recording = updatedRecording
+  // 直接分享音频文件
+  uni.shareFileMessage({
+    filePath: recording.voicePath,
+    fileName: `${recording.name}.mp3`,
+    success: () => uni.showToast({ title: '分享成功', icon: 'success' }),
+    fail: (err) => {
+      console.error('分享失败:', err)
+      uni.showToast({ title: '分享失败', icon: 'none' })
     }
-    
-    if (!cloudUrl) {
-      throw new Error('上传失败')
-    }
-    
-    // 创建分享记录
-    const shareResult = await request<{ shareId: string }>('/share', 'POST', {
-      name: recording.name,
-      audioUrl: cloudUrl,
-      duration: recording.duration,
-      homeworkId: recording.homeworkId
-    })
-    
-    uni.hideLoading()
-    
-    // 设置待分享的录音（用于 onShareAppMessage）
-    pendingShareRecording.value = { ...recording, id: shareResult.shareId }
-    
-    // button 的 open-type="share" 会自动触发分享
-    
-  } catch (err) {
-    uni.hideLoading()
-    console.error('分享失败:', err)
-    uni.showToast({ title: '分享失败，请重试', icon: 'none' })
-  }
+  })
 }
 
 const showOptions = (recording: Recording) => {
@@ -600,16 +571,9 @@ const formatDate = (isoString: string | undefined): string => {
 }
 
 .share-btn {
-  background: rgba(6, 182, 212, 0.2) !important;
+  background: rgba(6, 182, 212, 0.2);
   color: #06b6d4;
-  border: 1px solid rgba(6, 182, 212, 0.3) !important;
-  /* 重置 button 默认样式 */
-  margin: 0;
-  line-height: normal;
-}
-
-.share-btn::after {
-  border: none;
+  border: 1px solid rgba(6, 182, 212, 0.3);
 }
 
 .share-btn text {
