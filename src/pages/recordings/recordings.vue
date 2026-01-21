@@ -225,53 +225,23 @@ const seekTo = (e: any) => {
   audioContext.seek(percent * currentRecording.value.duration / 1000)
 }
 
-// 分享录音
-const prepareShare = async (recording: Recording) => {
+// 分享录音文件到群
+const prepareShare = (recording: Recording) => {
   if (!recording.voicePath) {
     uni.showToast({ title: '录音文件不存在', icon: 'none' })
     return
   }
   
-  uni.showLoading({ title: '准备分享...' })
-  
-  try {
-    // 如果还没有云端URL，先上传
-    let cloudUrl = recording.cloudUrl
-    if (!cloudUrl) {
-      const updatedRecording = await RecorderService.uploadToCloud(recording)
-      cloudUrl = updatedRecording.cloudUrl
-      recording = updatedRecording
+  // 直接分享音频文件
+  uni.shareFileMessage({
+    filePath: recording.voicePath,
+    fileName: `${recording.name}.mp3`,
+    success: () => uni.showToast({ title: '分享成功', icon: 'success' }),
+    fail: (err) => {
+      console.error('分享失败:', err)
+      uni.showToast({ title: '分享失败', icon: 'none' })
     }
-    
-    if (!cloudUrl) {
-      throw new Error('上传失败')
-    }
-    
-    // 创建分享记录
-    const shareResult = await request<{ shareId: string }>('/share', 'POST', {
-      name: recording.name,
-      audioUrl: cloudUrl,
-      duration: recording.duration,
-      homeworkId: recording.homeworkId
-    })
-    
-    uni.hideLoading()
-    
-    // 设置待分享的录音（用于 onShareAppMessage）
-    pendingShareRecording.value = { ...recording, id: shareResult.shareId }
-    
-    // 提示用户点击分享
-    uni.showShareMenu({
-      withShareTicket: true,
-      menus: ['shareAppMessage']
-    })
-    uni.showToast({ title: '点击右上角分享', icon: 'none', duration: 2000 })
-    
-  } catch (err) {
-    uni.hideLoading()
-    console.error('分享失败:', err)
-    uni.showToast({ title: '分享失败，请重试', icon: 'none' })
-  }
+  })
 }
 
 const showOptions = (recording: Recording) => {
