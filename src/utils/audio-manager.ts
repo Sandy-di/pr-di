@@ -30,9 +30,11 @@ export interface PianoKey {
 class AudioManager {
   private audioContext: any = null
   private sampleBuffers: Map<number, AudioBuffer> = new Map()
+  private woodblockBuffers: { high: AudioBuffer | null, low: AudioBuffer | null } = { high: null, low: null }
   private gainNode: any = null
   private isInitialized = false
-  private masterVolume = 0.8
+  private masterVolume = 1.0
+  private samplesLoaded = false
   
   // 关键采样点（每隔12个半音采样一次，减少文件数量）
   private sampleMidiNotes = [36, 48, 60, 72, 84] // C2, C3, C4, C5, C6
@@ -62,12 +64,12 @@ class AudioManager {
       this.gainNode.gain.value = this.masterVolume
       this.gainNode.connect(this.audioContext.destination)
       
-      // 预加载采样（如果有真实采样文件）
-      // await this.preloadSamples()
+      // 预加载真实采样文件
+      await this.preloadSamples()
+      await this.preloadWoodblockSamples()
       
-      // 如果没有采样文件，使用合成音色
       this.isInitialized = true
-      console.log('音频引擎初始化成功')
+      console.log('音频引擎初始化成功，采样已加载')
       return true
     } catch (error) {
       console.error('音频引擎初始化失败:', error)
@@ -79,23 +81,48 @@ class AudioManager {
    * 预加载钢琴采样
    */
   async preloadSamples(): Promise<void> {
-    const loadPromises = this.sampleMidiNotes.map(async (midi) => {
-      const noteName = this.midiToNoteName(midi)
+    const noteNames = ['C2', 'C3', 'C4', 'C5', 'C6']
+    const loadPromises = this.sampleMidiNotes.map(async (midi, index) => {
+      const noteName = noteNames[index]
       const filePath = `/static/audio/piano/${noteName}.mp3`
       
       try {
         // 使用 uni.getFileSystemManager 读取文件
         const fs = uni.getFileSystemManager()
         const arrayBuffer = fs.readFileSync(filePath) as ArrayBuffer
-        const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer)
+        const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer.slice(0))
         this.sampleBuffers.set(midi, audioBuffer)
-        console.log(`加载采样成功: ${noteName}`)
+        console.log(`加载钢琴采样成功: ${noteName}`)
       } catch (error) {
-        console.warn(`加载采样失败: ${noteName}`, error)
+        console.warn(`加载钢琴采样失败: ${noteName}`, error)
       }
     })
     
     await Promise.all(loadPromises)
+    this.samplesLoaded = this.sampleBuffers.size > 0
+    console.log(`钢琴采样加载完成，共 ${this.sampleBuffers.size} 个`)
+  }
+  
+  /**
+   * 预加载节拍器木鱼采样
+   */
+  async preloadWoodblockSamples(): Promise<void> {
+    const files = [
+      { key: 'high', path: '/static/audio/metronome/woodblock-high.mp3' },
+      { key: 'low', path: '/static/audio/metronome/woodblock-low.mp3' }
+    ]
+    
+    for (const file of files) {
+      try {
+        const fs = uni.getFileSystemManager()
+        const arrayBuffer = fs.readFileSync(file.path) as ArrayBuffer
+        const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer.slice(0))
+        this.woodblockBuffers[file.key as 'high' | 'low'] = audioBuffer
+        console.log(`加载节拍器采样成功: ${file.key}`)
+      } catch (error) {
+        console.warn(`加载节拍器采样失败: ${file.key}`, error)
+      }
+    }
   }
   
   /**
@@ -366,6 +393,118 @@ class AudioManager {
         // 忽略已停止的错误
       }
     }, (releaseTime + 0.05) * 1000)
+  }
+  
+  /**
+   * 播放木鱼声音 - 用于节拍器
+   * @param isStrong 是否为强拍（强拍音高更高）
+   * @param velocity 力度 (0-1)
+   */
+  playWoodblock(isStrong = false, velocity = 0.8): void {
+    if (!this.isInitialized || !this.audioContext) {
+      console.warn('音频引擎未初始化')
+      return
+    }
+    
+    try {
+      // 优先使用真实采样
+      const buffer = isStrong ? this.woodblockBuffers.high : this.woodblockBuffers.low
+      if (buffer) {
+        this.playWoodblockSample(buffer, velocity)
+        return
+      }
+      
+      // 回退到合成音色
+      this.playWoodblockSynth(isStrong, velocity)
+    } catch (error) {
+      console.error('播放木鱼声音失败:', error)
+    }
+  }
+  
+  /**
+   * 使用采样播放木鱼声
+   */
+  private playWoodblockSample(buffer: AudioBuffer, velocity: number): void {
+    const source = this.audioContext.createBufferSource()
+    const gainNode = this.audioContext.createGain()
+    
+    source.buffer = buffer
+    gainNode.gain.value = velocity * this.masterVolume
+    
+    source.connect(gainNode)
+    gainNode.connect(this.audioContext.destination)
+    
+    source.start()
+  }
+  
+  /**
+   * 使用合成器播放木鱼声（备用方案）
+   */
+  private playWoodblockSynth(isStrong: boolean, velocity: number): void {
+    const now = this.audioContext.currentTime
+    
+    // 木鱼的基频 - 强拍用更高的音
+    const baseFrequency = isStrong ? 800 : 600
+    
+    // 创建主振荡器 - 使用三角波模拟木质音色
+    const osc1 = this.audioContext.createOscillator()
+    osc1.type = 'triangle'
+    osc1.frequency.value = baseFrequency
+    
+    // 创建第二振荡器 - 添加谐波丰富音色
+    const osc2 = this.audioContext.createOscillator()
+    osc2.type = 'sine'
+    osc2.frequency.value = baseFrequency * 2.5
+    
+    // 创建带通滤波器 - 模拟木质共鸣
+    const filter = this.audioContext.createBiquadFilter()
+    filter.type = 'bandpass'
+    filter.frequency.value = baseFrequency * 1.5
+    filter.Q.value = 8
+    
+    // 创建增益节点
+    const gainNode1 = this.audioContext.createGain()
+    const gainNode2 = this.audioContext.createGain()
+    const masterGain = this.audioContext.createGain()
+    
+    // 连接节点
+    osc1.connect(gainNode1)
+    osc2.connect(gainNode2)
+    gainNode1.connect(filter)
+    gainNode2.connect(filter)
+    filter.connect(masterGain)
+    masterGain.connect(this.gainNode)
+    
+    // 木鱼的音色特点：极短的起音，快速衰减
+    const peakGain = velocity * 0.6
+    const attackTime = 0.003  // 3ms 极短起音
+    const decayTime = 0.08   // 80ms 快速衰减
+    
+    // 主振荡器包络
+    gainNode1.gain.setValueAtTime(0.001, now)
+    gainNode1.gain.exponentialRampToValueAtTime(peakGain, now + attackTime)
+    gainNode1.gain.exponentialRampToValueAtTime(0.001, now + decayTime)
+    
+    // 第二振荡器包络（更快衰减）
+    gainNode2.gain.setValueAtTime(0.001, now)
+    gainNode2.gain.exponentialRampToValueAtTime(peakGain * 0.3, now + attackTime)
+    gainNode2.gain.exponentialRampToValueAtTime(0.001, now + decayTime * 0.5)
+    
+    // 主增益
+    masterGain.gain.value = this.masterVolume
+    
+    // 频率滑动 - 模拟敲击后的音高下降
+    osc1.frequency.setValueAtTime(baseFrequency * 1.2, now)
+    osc1.frequency.exponentialRampToValueAtTime(baseFrequency, now + 0.02)
+    
+    // 启动振荡器
+    osc1.start(now)
+    osc2.start(now)
+    
+    // 停止振荡器
+    const stopTime = now + 0.15
+    osc1.stop(stopTime)
+    osc2.stop(stopTime)
   }
   
   /**

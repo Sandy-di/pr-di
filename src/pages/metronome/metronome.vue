@@ -254,9 +254,8 @@ const tick = () => {
 }
 
 const playTickSound = (isStrong: boolean) => {
-  // 使用不同音高区分强弱拍
-  const pitch = isStrong ? 80 : 72  // C6 vs C5
-  AudioManager.playNote(pitch, 0.8)
+  // 使用木鱼声音
+  AudioManager.playWoodblock(isStrong, 0.8)
 }
 
 // 录音功能
@@ -279,7 +278,11 @@ const startRecording = () => {
   uni.authorize({
     scope: 'scope.record',
     success: () => {
-      RecorderService.start({ mode: recordMode.value === 'mixed' ? 'mixed' : 'voice-only' })
+      RecorderService.start({ 
+        mode: recordMode.value === 'mixed' ? 'mixed' : 'voice-only',
+        pageName: '节拍器',
+        tempo: bpm.value
+      })
       isRecording.value = true
       recordingDuration.value = 0
       recordingTimer = setInterval(() => {

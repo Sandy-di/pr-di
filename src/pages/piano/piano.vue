@@ -204,6 +204,10 @@ onShow(() => {
 onUnmounted(() => {
   stopRecordingTimer()
   stopMetronome()
+  // 退出页面时自动停止录音
+  if (isRecording.value) {
+    RecorderService.stop()
+  }
 })
 
 const onKeyPress = (key: KeyData) => {
@@ -271,12 +275,8 @@ const stopMetronome = () => {
 }
 
 const playMetronomeClick = () => {
-  // 使用 AudioManager 播放一个短促的高音作为节拍器声音
-  const handle = AudioManager.playNote(84, 0.5, 0) // C6，短促的点击声
-  if (handle) {
-    setTimeout(() => AudioManager.releaseNote(handle), 50)
-  }
-  // 移除震动反馈
+  // 使用木鱼声音作为节拍器
+  AudioManager.playWoodblock(false, 0.5)
 }
 
 const shareRecording = () => {
@@ -295,7 +295,7 @@ const handleRecordClick = () => {
         const mode = res.tapIndex === 0 ? 'voice-only' : 'mixed'
         uni.authorize({
           scope: 'scope.record',
-          success: () => RecorderService.start({ mode }),
+          success: () => RecorderService.start({ mode, pageName: '钢琴' }),
           fail: () => uni.showModal({
             title: '需要录音权限',
             confirmText: '去设置',

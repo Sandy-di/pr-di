@@ -141,6 +141,7 @@
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { onShareAppMessage } from '@dcloudio/uni-app'
 import SvgIcon from '@/components/SvgIcon.vue'
+import AudioManager from '@/utils/audio-manager'
 
 // 分享配置
 onShareAppMessage(() => ({
@@ -169,7 +170,6 @@ const beatsOptions = ['4/4', '3/4', '2/4', '6/8']
 const currentBeat = ref(0)
 const currentBeats = ref(4)
 let metronomeTimer: any = null
-let audioContext: any = null
 
 // 统计
 const weekStats = reactive({
@@ -224,12 +224,12 @@ const toggleMetronome = (e: any) => {
   }
 }
 
-const startMetronome = () => {
+const startMetronome = async () => {
   currentBeat.value = 0
   const interval = 60000 / bpm.value
   
-  // 初始化音频
-  audioContext = uni.createWebAudioContext()
+  // 初始化音频管理器
+  await AudioManager.init()
   
   metronomeTimer = setInterval(() => {
     currentBeat.value = (currentBeat.value % currentBeats.value) + 1
@@ -250,24 +250,8 @@ const stopMetronome = () => {
 }
 
 const playClick = (isStrong: boolean) => {
-  if (!audioContext) return
-  
-  const oscillator = audioContext.createOscillator()
-  const gainNode = audioContext.createGain()
-  
-  oscillator.type = 'sine'
-  oscillator.frequency.value = isStrong ? 1000 : 800
-  
-  gainNode.gain.value = 0.5
-  
-  oscillator.connect(gainNode)
-  gainNode.connect(audioContext.destination)
-  
-  oscillator.start()
-  
-  // 短促的点击声
-  gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.05)
-  oscillator.stop(audioContext.currentTime + 0.05)
+  // 使用木鱼声音
+  AudioManager.playWoodblock(isStrong, 0.6)
 }
 
 const increaseBpm = () => {

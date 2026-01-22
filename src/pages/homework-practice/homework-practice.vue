@@ -529,7 +529,11 @@ const startRecording = () => {
   uni.authorize({
     scope: 'scope.record',
     success: () => {
-      RecorderService.start({ mode: 'mixed' })
+      RecorderService.start({ 
+        mode: 'mixed', 
+        pageName: '作业练习',
+        homeworkName: homework.value?.title
+      })
       isRecording.value = true
       recordingDuration.value = 0
       recordingTimer = setInterval(() => {

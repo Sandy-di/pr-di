@@ -3,6 +3,7 @@
  * 封装微信小程序录音 API + 后端上传
  */
 import { uploadFile } from './api-client'
+import UserService from './user-service'
 
 export interface Recording {
   id: string
@@ -25,6 +26,12 @@ class RecorderService {
   private recordingMode: 'voice-only' | 'mixed' = 'voice-only'
   private startTime = 0
   private pausedDuration = 0
+  // 录音上下文信息
+  private recordingContext: {
+    pageName?: string      // 页面名称：钢琴、节拍器、练习等
+    homeworkName?: string  // 作业名称
+    tempo?: number         // 节拍器速度
+  } = {}
   
   // 回调函数
   private onStartCallback: (() => void) | null = null
@@ -61,7 +68,7 @@ class RecorderService {
       
       const recording: Recording = {
         id: Date.now().toString(),
-        name: `录音_${new Date().toLocaleString('zh-CN')}`,
+        name: this.generateRecordingName(),
         voicePath: res.tempFilePath,
         duration: res.duration,
         mode: this.recordingMode,
@@ -108,6 +115,9 @@ class RecorderService {
     mode?: 'voice-only' | 'mixed'
     duration?: number
     sampleRate?: number
+    pageName?: string       // 页面名称
+    homeworkName?: string   // 作业名称
+    tempo?: number          // 节拍器速度
   }): void {
     if (!this.recorderManager) {
       console.error('录音管理器未初始化')
@@ -121,6 +131,12 @@ class RecorderService {
     
     this.recordingMode = options?.mode || 'voice-only'
     this.pausedDuration = 0
+    // 保存录音上下文
+    this.recordingContext = {
+      pageName: options?.pageName,
+      homeworkName: options?.homeworkName,
+      tempo: options?.tempo
+    }
     
     const recordOptions: UniApp.RecorderManagerStartOptions = {
       duration: options?.duration || 300000, // 默认最长5分钟
@@ -172,6 +188,44 @@ class RecorderService {
       isPaused: this.isPaused,
       duration
     }
+  }
+  
+  /**
+   * 生成录音文件名
+   * 格式：姓名_页面_作业名_日期时间[_节拍速度]
+   */
+  private generateRecordingName(): string {
+    const now = new Date()
+    
+    // 中文日期格式，不含时区
+    const dateStr = `${now.getFullYear()}年${now.getMonth() + 1}月${now.getDate()}日`
+    const timeStr = `${now.getHours().toString().padStart(2, '0')}时${now.getMinutes().toString().padStart(2, '0')}分`
+    
+    // 获取用户名
+    const userName = UserService.getDisplayName() || '用户'
+    
+    // 构建文件名部分
+    const parts: string[] = [userName]
+    
+    // 页面名称
+    if (this.recordingContext.pageName) {
+      parts.push(this.recordingContext.pageName)
+    }
+    
+    // 作业名称
+    if (this.recordingContext.homeworkName) {
+      parts.push(this.recordingContext.homeworkName)
+    }
+    
+    // 日期时间
+    parts.push(`${dateStr}${timeStr}`)
+    
+    // 节拍器速度（仅节拍器页面）
+    if (this.recordingContext.tempo && this.recordingContext.pageName === '节拍器') {
+      parts.push(`${this.recordingContext.tempo}BPM`)
+    }
+    
+    return parts.join('_')
   }
   
   /**
