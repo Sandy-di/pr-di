@@ -19,7 +19,7 @@
             <text class="hero-subtitle">每天坚持，音乐之路更进一步</text>
           </view>
           <view class="hero-icon-wrapper animate-float">
-            <svg-icon name="piano" size="120rpx" color="rgba(255,255,255,0.9)" />
+            <svg-icon name="piano" size="120rpx" color="#FFFFFF" />
           </view>
         </view>
       </view>
@@ -27,8 +27,7 @@
       <!-- 功能入口 -->
       <view class="feature-grid">
         <view class="feature-card glass glass-hover" @click="navigateTo('/pages/piano/piano')">
-          <view class="card-glow" style="background: var(--divine-gold);"></view>
-          <view class="feature-icon-box" style="background: rgba(212, 175, 55, 0.15); color: var(--divine-gold);">
+          <view class="feature-icon-box neu-icon-box">
             <svg-icon name="piano" size="48rpx" />
           </view>
           <text class="feature-title">自由弹奏</text>
@@ -36,8 +35,7 @@
         </view>
         
         <view class="feature-card glass glass-hover" @click="navigateTo('/pages/homework-list/homework-list')">
-          <view class="card-glow" style="background: var(--divine-gold);"></view>
-          <view class="feature-icon-box" style="background: rgba(212, 175, 55, 0.15); color: var(--divine-gold);">
+          <view class="feature-icon-box neu-icon-box">
             <svg-icon name="music-note" size="48rpx" />
           </view>
           <text class="feature-title">作业练习</text>
@@ -45,8 +43,7 @@
         </view>
         
         <view class="feature-card glass glass-hover" @click="navigateTo('/pages/metronome/metronome')">
-          <view class="card-glow" style="background: var(--divine-gold);"></view>
-          <view class="feature-icon-box" style="background: rgba(212, 175, 55, 0.15); color: var(--divine-gold);">
+          <view class="feature-icon-box neu-icon-box">
             <svg-icon name="metronome" size="48rpx" />
           </view>
           <text class="feature-title">节拍器</text>
@@ -54,8 +51,7 @@
         </view>
         
         <view class="feature-card glass glass-hover" @click="navigateTo('/pages/ear-training/ear-training')">
-          <view class="card-glow" style="background: var(--divine-gold);"></view>
-          <view class="feature-icon-box" style="background: rgba(212, 175, 55, 0.15); color: var(--divine-gold);">
+          <view class="feature-icon-box neu-icon-box">
             <svg-icon name="ear" size="48rpx" />
           </view>
           <text class="feature-title">视唱练耳</text>
@@ -63,8 +59,7 @@
         </view>
         
         <view class="feature-card glass glass-hover" @click="navigateTo('/pages/recordings/recordings')">
-          <view class="card-glow" style="background: var(--divine-gold);"></view>
-          <view class="feature-icon-box" style="background: rgba(212, 175, 55, 0.15); color: var(--divine-gold);">
+          <view class="feature-icon-box neu-icon-box">
             <svg-icon name="mic" size="48rpx" />
           </view>
           <text class="feature-title">录音管理</text>
@@ -72,8 +67,7 @@
         </view>
         
         <view class="feature-card glass glass-hover" @click="navigateTo('/pages/settings/settings')">
-          <view class="card-glow" style="background: var(--divine-gold);"></view>
-          <view class="feature-icon-box" style="background: rgba(212, 175, 55, 0.15); color: var(--divine-gold);">
+          <view class="feature-icon-box neu-icon-box">
             <svg-icon name="settings" size="48rpx" />
           </view>
           <text class="feature-title">设置</text>
@@ -134,7 +128,7 @@
       <view v-if="showLoginModal" class="login-modal-overlay animate-fade-in">
         <view class="login-modal glass animate-slide-up">
           <view class="login-icon-large">
-             <svg-icon name="user" size="80rpx" color="var(--divine-gold)" />
+             <svg-icon name="user" size="80rpx" color="var(--neu-gold)" />
           </view>
           <text class="login-title">欢迎回来</text>
           <text class="login-desc">登录以同步您的练习记录和数据</text>
@@ -152,7 +146,7 @@
       <view v-if="showNameModal" class="login-modal-overlay animate-fade-in">
         <view class="login-modal glass animate-slide-up">
           <view class="login-icon-large">
-             <svg-icon name="user" size="80rpx" color="var(--divine-gold)" />
+             <svg-icon name="user" size="80rpx" color="var(--neu-gold)" />
           </view>
           <text class="login-title">设置您的姓名</text>
           <text class="login-desc">请使用中文姓名，方便老师识别</text>
@@ -327,13 +321,12 @@ const startRecording = () => {
 <style scoped>
 .container {
   min-height: 100vh;
-  background: var(--divine-gradient);
+  background: var(--bg-main);
 }
 
 .custom-navbar {
   height: 88rpx;
-  background: rgba(26, 38, 52, 0.9);
-  backdrop-filter: blur(20px);
+  background: var(--bg-main);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -357,8 +350,8 @@ const startRecording = () => {
 .navbar-badge {
   font-size: 18rpx;
   font-weight: 700;
-  color: var(--divine-blue);
-  background: var(--divine-gold);
+  color: #FFFFFF;
+  background: var(--neu-gold);
   padding: 2rpx 12rpx;
   border-radius: 8rpx;
 }
@@ -368,15 +361,17 @@ const startRecording = () => {
   padding-bottom: 180rpx;
 }
 
-/* 英雄横幅 */
+/* 英雄横幅 - 新拟物金色横幅 */
 .hero-banner {
   position: relative;
-  height: 300rpx;
-  background: linear-gradient(135deg, #2c3e50 0%, #3d566e 100%);
+  height: 280rpx;
+  background: var(--gold-gradient);
   border-radius: var(--radius-xl);
   margin-bottom: 48rpx;
   overflow: hidden;
-  box-shadow: var(--shadow-gold);
+  box-shadow: 
+    -6rpx -6rpx 16rpx rgba(255, 255, 255, 0.8),
+    6rpx 6rpx 16rpx rgba(184, 134, 11, 0.25);
   display: flex;
   align-items: center;
   padding: 0 48rpx;
@@ -437,14 +432,7 @@ const startRecording = () => {
   overflow: hidden;
 }
 
-.card-glow {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 6rpx;
-  opacity: 0.8;
-}
+/* 功能卡片顶部金色指示条已移除，使用新拟物阴影 */
 
 .feature-icon-box {
   width: 88rpx;
@@ -473,7 +461,7 @@ const startRecording = () => {
 .section-header {
   margin-bottom: 24rpx;
   padding-left: 8rpx;
-  border-left: 6rpx solid var(--accent-blue);
+  border-left: 6rpx solid var(--neu-gold);
 }
 
 .section-title {
@@ -531,7 +519,7 @@ const startRecording = () => {
   align-items: center;
   margin-bottom: 32rpx;
   padding-bottom: 20rpx;
-  border-bottom: 1px solid var(--glass-border);
+  border-bottom: 2rpx solid rgba(174, 174, 192, 0.2);
 }
 
 .stats-title-box {
@@ -549,7 +537,7 @@ const startRecording = () => {
 .stats-date {
   font-size: 24rpx;
   color: var(--text-muted);
-  background: rgba(255,255,255,0.05);
+  background: rgba(174, 174, 192, 0.15);
   padding: 4rpx 12rpx;
   border-radius: 100rpx;
 }
@@ -581,7 +569,7 @@ const startRecording = () => {
 .stat-divider {
   width: 2rpx;
   height: 50rpx;
-  background: var(--glass-border);
+  background: rgba(174, 174, 192, 0.2);
 }/* 登录弹窗样式 */
 .login-modal-overlay {
   position: fixed;
@@ -607,27 +595,29 @@ const startRecording = () => {
   flex-direction: column;
   align-items: center;
   position: relative;
-  box-shadow: 0 20rpx 50rpx rgba(0,0,0,0.5);
-  border: 1px solid var(--divine-gold-alpha);
+  box-shadow: 
+    -10rpx -10rpx 30rpx #FFFFFF,
+    10rpx 10rpx 30rpx rgba(174, 174, 192, 0.5);
 }
 
 .login-icon-large {
   width: 160rpx;
   height: 160rpx;
   border-radius: 50%;
-  background: rgba(212, 175, 55, 0.1);
+  background: var(--bg-main);
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 40rpx;
-  border: 2rpx solid var(--divine-gold);
-  box-shadow: 0 0 30rpx rgba(212, 175, 55, 0.2);
+  box-shadow: 
+    -6rpx -6rpx 16rpx #FFFFFF,
+    6rpx 6rpx 16rpx rgba(174, 174, 192, 0.4);
 }
 
 .login-title {
   font-size: 40rpx;
   font-weight: 700;
-  color: #fff;
+  color: var(--text-primary);
   margin-bottom: 16rpx;
 }
 
@@ -665,19 +655,22 @@ const startRecording = () => {
   padding: 20rpx;
 }
 
-/* 用户名输入框 */
+/* 用户名输入框 - 新拟物凹陷 */
 .name-input {
   width: 100%;
   height: 96rpx;
   padding: 0 32rpx;
-  background: rgba(255,255,255,0.1);
-  border: 2rpx solid rgba(255,255,255,0.2);
+  background: var(--bg-main);
+  border: none;
   border-radius: 24rpx;
-  color: #fff;
+  color: var(--text-primary);
   font-size: 32rpx;
   text-align: center;
   margin-bottom: 40rpx;
   box-sizing: border-box;
+  box-shadow: 
+    inset 4rpx 4rpx 10rpx rgba(174, 174, 192, 0.3),
+    inset -4rpx -4rpx 10rpx #FFFFFF;
 }
 
 .name-input::placeholder {

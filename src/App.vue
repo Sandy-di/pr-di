@@ -28,68 +28,78 @@ onHide(() => {
 
 <style>
 /* ========================================
-   神圣主题 - Divine Theme
-   配色: 深邃蓝 #2c3e50 | 圣洁金 #d4af37 | 纯净白 #fcfcfc
+   新拟物主题 - Neumorphism Theme
+   配色: 柔和灰白 #F0F0F3 | 暗金 #B8860B | 深灰文字 #2D2D2D
    ======================================== */
 
 page {
-  color: #fcfcfc;
+  color: #2D2D2D;
   
-  /* 神圣配色 */
-  --divine-blue: #2c3e50;
-  --divine-gold: #d4af37;
-  --divine-white: #fcfcfc;
-  --divine-gold-light: #f4e4bc;
+  /* 新拟物配色 */
+  --neu-bg: #F0F0F3;
+  --neu-bg-dark: #E4E4E7;
+  --neu-white: #FFFFFF;
+  --neu-gold: #B8860B;
+  --neu-gold-light: #D4AF37;
+  --neu-gold-dark: #8B6914;
+  
+  /* 向后兼容 - 深色主题变量（保留给特殊页面如钢琴/节拍器） */
+  --bg-dark: #0A0A0F;
+  --divine-gold: #B8860B;
+  --divine-gold-light: #D4AF37;
+  --divine-blue: #1E3A5F;
   
   /* 渐变 */
-  --gold-gradient: linear-gradient(135deg, #d4af37 0%, #f4e4bc 100%);
-  --blue-gradient: linear-gradient(135deg, #2c3e50 0%, #3d566e 100%);
-  --divine-gradient: linear-gradient(180deg, #1a2634 0%, #2c3e50 100%);
+  --gold-gradient: linear-gradient(145deg, #D4AF37, #B8860B);
+  --neu-gradient: linear-gradient(145deg, #FAFAFA, #E8E8E8);
   
   /* 背景 */
-  --bg-dark: #1a2634;
-  --bg-card: rgba(44, 62, 80, 0.6);
-  --bg-card-hover: rgba(44, 62, 80, 0.85);
+  --bg-main: #F0F0F3;
+  --bg-card: #F0F0F3;
+  --bg-card-pressed: #E8E8EB;
   
-  /* 无边框设计 - 使用柔和阴影 */
-  --glass-border: rgba(212, 175, 55, 0.15);
-  --glass-blur: 20px;
-  --glass-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.25);
+  /* 新拟物阴影 - 核心效果 */
+  --neu-shadow-light: -8rpx -8rpx 20rpx #FFFFFF;
+  --neu-shadow-dark: 8rpx 8rpx 20rpx rgba(174, 174, 192, 0.4);
+  --neu-shadow-inset-light: inset -4rpx -4rpx 10rpx #FFFFFF;
+  --neu-shadow-inset-dark: inset 4rpx 4rpx 10rpx rgba(174, 174, 192, 0.3);
   
-  /* 文字 */
-  --text-primary: #fcfcfc;
-  --text-secondary: rgba(252, 252, 252, 0.75);
-  --text-muted: rgba(252, 252, 252, 0.45);
-  --text-gold: #d4af37;
+  /* 金色阴影 */
+  --shadow-gold: 0 4rpx 16rpx rgba(184, 134, 11, 0.25);
+  --shadow-gold-glow: 0 0 20rpx rgba(184, 134, 11, 0.3);
   
-  /* 金色强调 */
-  --accent-gold: #d4af37;
-  --accent-gold-glow: rgba(212, 175, 55, 0.4);
+  /* 文字 - 深色系 */
+  --text-primary: #2D2D2D;
+  --text-secondary: #5A5A5A;
+  --text-muted: #8A8A8A;
+  --text-gold: #B8860B;
+  
+  /* 强调色 */
+  --accent-gold: #B8860B;
+  --accent-blue: #4A90D9;
+  --accent-purple: #8B5CF6;
+  --accent-pink: #EC4899;
+  --accent-cyan: #06B6D4;
+  --accent-orange: #F59E0B;
   
   /* 状态色 */
-  --success-color: #27ae60;
-  --warning-color: #f39c12;
-  --error-color: #e74c3c;
+  --success-color: #22C55E;
+  --warning-color: #F59E0B;
+  --error-color: #EF4444;
   
-  /* 钢琴键 */
-  --key-white: linear-gradient(180deg, #fcfcfc 0%, #e8e8e8 90%, #d0d0d0 100%);
-  --key-white-pressed: linear-gradient(180deg, #d0d0d0 0%, #b8b8b8 100%);
-  --key-black: linear-gradient(180deg, #2c3e50 0%, #1a2634 100%);
-  --key-black-pressed: linear-gradient(180deg, #1a2634 0%, #0d1318 100%);
+  /* 钢琴键 - 保持原样 */
+  --key-white: linear-gradient(180deg, #FFFFFF 0%, #F0F0F0 90%, #E0E0E0 100%);
+  --key-white-pressed: linear-gradient(180deg, #E0E0E0 0%, #D0D0D0 100%);
+  --key-black: linear-gradient(180deg, #3D3D3D 0%, #1A1A1A 100%);
+  --key-black-pressed: linear-gradient(180deg, #1A1A1A 0%, #0D0D0D 100%);
   
-  /* 圆角 */
-  --radius-sm: 8rpx;
-  --radius-md: 16rpx;
-  --radius-lg: 24rpx;
-  --radius-xl: 32rpx;
+  /* 圆角 - 更大更柔和 */
+  --radius-sm: 12rpx;
+  --radius-md: 20rpx;
+  --radius-lg: 28rpx;
+  --radius-xl: 36rpx;
   
-  /* 阴影 - 柔和分层 */
-  --shadow-sm: 0 2rpx 12rpx rgba(0, 0, 0, 0.15);
-  --shadow-md: 0 6rpx 24rpx rgba(0, 0, 0, 0.2);
-  --shadow-lg: 0 12rpx 40rpx rgba(0, 0, 0, 0.25);
-  --shadow-gold: 0 0 24rpx rgba(212, 175, 55, 0.35);
-  
-  background: var(--divine-gradient);
+  background: var(--bg-main);
   font-family: 'PingFang SC', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 28rpx;
   line-height: 1.6;
@@ -107,40 +117,47 @@ page {
 
 .container {
   min-height: 100vh;
-  background: var(--divine-gradient);
+  background: var(--bg-main);
 }
 
+/* 新拟物导航栏 */
 .custom-navbar {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 88rpx;
   padding: 0 32rpx;
-  background: var(--bg-dark);
+  background: var(--bg-main);
   position: relative;
 }
 
 .navbar-title {
   font-size: 36rpx;
   font-weight: 600;
-  color: var(--divine-white);
+  color: var(--text-primary);
   letter-spacing: 2rpx;
 }
 
-/* 无边框卡片 - 柔和阴影分层 */
-.card {
+/* ===== 新拟物卡片 - 凸起效果 ===== */
+.card, .neu-card {
   background: var(--bg-card);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
   border-radius: var(--radius-xl);
   padding: 32rpx;
   margin: 24rpx;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
   border: none;
 }
 
-/* 按钮 */
-.btn {
+/* ===== 新拟物凹陷卡片 ===== */
+.neu-card-inset {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 24rpx;
+  box-shadow: var(--neu-shadow-inset-light), var(--neu-shadow-inset-dark);
+}
+
+/* ===== 新拟物按钮 - 凸起 ===== */
+.btn, .neu-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -148,41 +165,52 @@ page {
   border-radius: var(--radius-lg);
   font-size: 32rpx;
   font-weight: 500;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.15s ease;
   border: none;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
 }
 
-.btn-primary {
+.btn:active, .neu-btn:active {
+  box-shadow: var(--neu-shadow-inset-light), var(--neu-shadow-inset-dark);
+}
+
+/* ===== 金色主按钮 ===== */
+.btn-primary, .neu-btn-gold {
   background: var(--gold-gradient);
-  color: var(--divine-blue);
-  box-shadow: var(--shadow-gold);
+  color: #FFFFFF;
+  box-shadow: 
+    -4rpx -4rpx 12rpx rgba(255, 255, 255, 0.6),
+    4rpx 4rpx 12rpx rgba(184, 134, 11, 0.3);
 }
 
-.btn-primary:active {
-  transform: translateY(-4rpx);
-  box-shadow: 0 8rpx 32rpx rgba(212, 175, 55, 0.5);
+.btn-primary:active, .neu-btn-gold:active {
+  box-shadow: 
+    inset 2rpx 2rpx 6rpx rgba(139, 105, 20, 0.4),
+    inset -2rpx -2rpx 6rpx rgba(255, 255, 255, 0.3);
 }
 
 .btn-secondary {
   background: var(--bg-card);
-  color: var(--divine-white);
-  border: 1px solid var(--glass-border);
+  color: var(--text-primary);
 }
 
-/* 动画 */
-@keyframes goldenGlow {
-  0%, 100% { box-shadow: 0 0 16rpx rgba(212, 175, 55, 0.3); }
-  50% { box-shadow: 0 0 32rpx rgba(212, 175, 55, 0.6); }
+/* ===== 动画 ===== */
+@keyframes neuPulse {
+  0%, 100% { 
+    box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
+  }
+  50% { 
+    box-shadow: 
+      -6rpx -6rpx 16rpx #FFFFFF,
+      6rpx 6rpx 16rpx rgba(174, 174, 192, 0.5);
+  }
 }
 
-@keyframes graceFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8rpx); }
-}
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.03); opacity: 0.9; }
+@keyframes goldGlow {
+  0%, 100% { box-shadow: var(--shadow-gold); }
+  50% { box-shadow: var(--shadow-gold-glow); }
 }
 
 @keyframes fadeIn {
@@ -190,49 +218,79 @@ page {
   to { opacity: 1; transform: translateY(0); }
 }
 
-.animate-golden-glow {
-  animation: goldenGlow 2s ease-in-out infinite;
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.03); opacity: 0.9; }
 }
 
-.animate-grace-float {
-  animation: graceFloat 3s ease-in-out infinite;
+.animate-neu-pulse {
+  animation: neuPulse 2s ease-in-out infinite;
 }
 
-.animate-pulse {
-  animation: pulse 2s ease-in-out infinite;
+.animate-gold-glow {
+  animation: goldGlow 2s ease-in-out infinite;
 }
 
 .animate-fade-in {
   animation: fadeIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-/* 玻璃拟态 - 无边框设计 */
-.glass {
-  background: var(--bg-card);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  box-shadow: var(--shadow-md);
-  border: none;
+.animate-pulse {
+  animation: pulse 2s ease-in-out infinite;
 }
 
-/* 恩典上浮效果 */
+/* 减少动画偏好 */
+@media (prefers-reduced-motion: reduce) {
+  .animate-neu-pulse,
+  .animate-gold-glow,
+  .animate-fade-in,
+  .animate-pulse {
+    animation: none;
+  }
+}
+
+/* ===== 新拟物玻璃效果（兼容旧代码） ===== */
+.glass {
+  background: var(--bg-card);
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
+  border: none;
+  border-radius: var(--radius-lg);
+}
+
 .glass-hover {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.15s ease;
 }
 
 .glass-hover:active {
-  transform: translateY(-4rpx);
-  box-shadow: var(--shadow-gold);
-  background: var(--bg-card-hover);
+  box-shadow: var(--neu-shadow-inset-light), var(--neu-shadow-inset-dark);
 }
 
-/* 金色强调边框 */
+/* ===== 金色强调 ===== */
 .gold-accent {
-  border-left: 3rpx solid var(--divine-gold);
+  border-left: 4rpx solid var(--neu-gold);
 }
 
-/* 金色文字 */
 .text-gold {
-  color: var(--divine-gold);
+  color: var(--neu-gold);
+}
+
+/* ===== 图标容器 - 新拟物风格 ===== */
+.neu-icon-box {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-card);
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
+  color: var(--neu-gold);
+}
+
+/* ===== 分隔线 ===== */
+.neu-divider {
+  height: 2rpx;
+  background: linear-gradient(90deg, transparent, rgba(174, 174, 192, 0.3), transparent);
+  margin: 24rpx 0;
 }
 </style>

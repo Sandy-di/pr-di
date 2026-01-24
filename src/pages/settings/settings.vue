@@ -15,7 +15,7 @@
         <!-- 未登录状态 -->
         <view v-if="!userInfo" class="login-prompt">
           <view class="login-icon-box">
-            <svg-icon name="user" size="64rpx" color="var(--divine-gold)" />
+            <svg-icon name="user" size="64rpx" color="var(--neu-gold)" />
           </view>
           <text class="login-text">登录后可同步练习记录</text>
           <view class="login-btn" @click="handleLogin">
@@ -60,7 +60,7 @@
       <!-- 音频设置 -->
       <view class="setting-group glass animate-fade-in">
         <view class="group-header">
-          <svg-icon name="piano" size="32rpx" color="var(--divine-gold)" />
+          <svg-icon name="piano" size="32rpx" color="var(--neu-gold)" />
           <text class="group-title">声音设置</text>
         </view>
         
@@ -72,10 +72,10 @@
           <slider 
             :value="settings.pianoVolume" 
             @change="updateVolume" 
-            activeColor="#d4af37" 
-            backgroundColor="rgba(255,255,255,0.1)"
+            activeColor="#B8860B" 
+            backgroundColor="rgba(174, 174, 192, 0.2)"
             block-size="20"
-            block-color="#ffffff"
+            block-color="#B8860B"
             class="custom-slider"
           />
         </view>
@@ -87,7 +87,7 @@
           <switch 
             :checked="settings.enableVibration" 
             @change="toggleVibration" 
-            color="#d4af37" 
+            color="#B8860B" 
             style="transform: scale(0.8)" 
           />
         </view>
@@ -96,7 +96,7 @@
       <!-- 练耳设置 -->
       <view class="setting-group glass animate-fade-in" style="animation-delay: 0.1s">
         <view class="group-header">
-          <svg-icon name="ear" size="32rpx" color="var(--divine-gold)" />
+          <svg-icon name="ear" size="32rpx" color="var(--neu-gold)" />
           <text class="group-title">练耳偏好</text>
         </view>
         
@@ -128,7 +128,7 @@
       <!-- 数据管理 -->
       <view class="setting-group glass animate-fade-in" style="animation-delay: 0.2s">
         <view class="group-header">
-          <svg-icon name="chart" size="32rpx" color="var(--divine-gold)" />
+          <svg-icon name="chart" size="32rpx" color="var(--neu-gold)" />
           <text class="group-title">数据管理</text>
         </view>
         
@@ -146,7 +146,7 @@
       <!-- 老师专区 -->
       <view class="setting-group glass animate-fade-in" style="animation-delay: 0.25s">
         <view class="group-header">
-          <svg-icon name="star" size="32rpx" color="var(--divine-gold)" />
+          <svg-icon name="star" size="32rpx" color="var(--neu-gold)" />
           <text class="group-title">老师专区</text>
         </view>
         
@@ -367,22 +367,17 @@ const resetAll = () => {
   min-height: 100vh;
   width: 100%;
   max-width: 100vw;
-  background: var(--bg-dark);
+  background: var(--bg-main);
   overflow-x: hidden;
   box-sizing: border-box;
-  background-image: 
-    radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 40%),
-    radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 40%);
 }
 
 .custom-navbar {
   height: 88rpx;
-  background: rgba(15, 15, 26, 0.8);
-  backdrop-filter: blur(20px);
+  background: var(--bg-main);
   position: sticky;
   top: 0;
   z-index: 100;
-  border-bottom: 1px solid var(--glass-border);
 }
 
 .navbar-content {
@@ -403,8 +398,8 @@ const resetAll = () => {
 .navbar-badge {
   font-size: 18rpx;
   font-weight: 700;
-  color: var(--divine-blue);
-  background: var(--divine-gold);
+  color: #FFFFFF;
+  background: var(--neu-gold);
   padding: 2rpx 12rpx;
   border-radius: 8rpx;
 }
@@ -449,10 +444,10 @@ const resetAll = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(212, 175, 55, 0.1);
+  background: var(--bg-main);
   border-radius: 50%;
   margin-bottom: 24rpx;
-  border: 1px solid rgba(212, 175, 55, 0.2);
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
 }
 
 .login-text {
@@ -490,8 +485,8 @@ const resetAll = () => {
   width: 120rpx;
   height: 120rpx;
   border-radius: 50%;
-  border: 4rpx solid var(--divine-gold);
-  background: var(--bg-card);
+  border: 4rpx solid var(--neu-gold);
+  background: var(--bg-main);
 }
 
 .user-details {
@@ -513,7 +508,7 @@ const resetAll = () => {
 
 .edit-hint {
   font-size: 32rpx;
-  color: var(--divine-gold);
+  color: var(--neu-gold);
   opacity: 0.8;
 }
 
@@ -523,8 +518,8 @@ const resetAll = () => {
 
 .user-status {
   font-size: 24rpx;
-  color: var(--divine-gold);
-  background: rgba(212, 175, 55, 0.1);
+  color: var(--neu-gold);
+  background: rgba(184, 134, 11, 0.1);
   padding: 4rpx 12rpx;
   border-radius: 8rpx;
   display: inline-block;
@@ -532,11 +527,11 @@ const resetAll = () => {
 
 .logout-btn {
   padding: 16rpx 32rpx;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--bg-main);
   border-radius: 32rpx;
   font-size: 26rpx;
   color: var(--text-secondary);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
 }
 
 /* 弹窗样式 */
@@ -562,6 +557,9 @@ const resetAll = () => {
   display: flex;
   flex-direction: column;
   align-items: center;
+  box-shadow: 
+    -10rpx -10rpx 30rpx #FFFFFF,
+    10rpx 10rpx 30rpx rgba(174, 174, 192, 0.5);
 }
 
 .modal-title {
@@ -574,15 +572,16 @@ const resetAll = () => {
 .name-input {
   width: 100%;
   height: 88rpx;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-main);
+  border: none;
   border-radius: 16rpx;
   padding: 0 24rpx;
-  color: #fff;
+  color: var(--text-primary);
   font-size: 32rpx;
   margin-bottom: 48rpx;
   box-sizing: border-box;
   text-align: center;
+  box-shadow: var(--neu-shadow-inset-light), var(--neu-shadow-inset-dark);
 }
 
 .modal-actions {
@@ -603,13 +602,14 @@ const resetAll = () => {
 }
 
 .modal-btn.cancel {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--bg-main);
   color: var(--text-secondary);
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
 }
 
 .modal-btn.confirm {
   background: var(--gold-gradient);
-  color: var(--divine-blue);
+  color: #FFFFFF;
   box-shadow: var(--shadow-gold);
 }
 
@@ -618,7 +618,7 @@ const resetAll = () => {
   align-items: center;
   gap: 16rpx;
   padding: 24rpx 0;
-  border-bottom: 1px solid var(--glass-border);
+  border-bottom: 2rpx solid rgba(174, 174, 192, 0.2);
   margin-bottom: 16rpx;
 }
 
@@ -633,7 +633,7 @@ const resetAll = () => {
   align-items: center;
   justify-content: space-between;
   padding: 24rpx 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 2rpx solid rgba(174, 174, 192, 0.1);
 }
 
 .setting-item.no-border {
@@ -684,10 +684,10 @@ const resetAll = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--bg-main);
   border-radius: 32rpx;
   margin-bottom: 24rpx;
-  border: 1px solid var(--glass-border);
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
 }
 
 .app-name {

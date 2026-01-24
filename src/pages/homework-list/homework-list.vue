@@ -125,13 +125,13 @@ const goToPractice = (id: string) => {
 <style scoped>
 .homework-page {
   min-height: 100vh;
-  background: var(--divine-gradient);
+  background: var(--bg-main);
   display: flex;
   flex-direction: column;
 }
 
 .navbar {
-  background: var(--bg-dark);
+  background: var(--bg-main);
   padding-bottom: 16rpx;
 }
 
@@ -149,23 +149,24 @@ const goToPractice = (id: string) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255,255,255,0.1);
+  background: var(--bg-main);
   border-radius: 50%;
-  color: #fff;
+  color: var(--text-primary);
   font-size: 32rpx;
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
 }
 
 .navbar-title {
   font-size: 36rpx;
   font-weight: 600;
-  color: #fff;
+  color: var(--text-primary);
   flex: 1;
 }
 
 .navbar-badge {
   font-size: 24rpx;
-  background: var(--divine-gold);
-  color: var(--divine-blue);
+  background: var(--neu-gold);
+  color: #FFFFFF;
   padding: 4rpx 16rpx;
   border-radius: 20rpx;
   font-weight: 600;
@@ -189,6 +190,8 @@ const goToPractice = (id: string) => {
   border-radius: 24rpx;
   position: relative;
   gap: 24rpx;
+  background: var(--bg-main);
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
 }
 
 .difficulty-tag {
@@ -224,7 +227,7 @@ const goToPractice = (id: string) => {
 .homework-title {
   font-size: 34rpx;
   font-weight: 700;
-  color: #fff;
+  color: var(--text-primary);
   display: block;
   margin-bottom: 8rpx;
 }
@@ -257,7 +260,7 @@ const goToPractice = (id: string) => {
 
 .arrow-icon {
   font-size: 32rpx;
-  color: var(--divine-gold);
+  color: var(--neu-gold);
 }
 
 .empty-state {

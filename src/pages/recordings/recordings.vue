@@ -4,7 +4,7 @@
     <view class="custom-navbar" :style="{ paddingTop: statusBarHeight + 'px' }">
       <view class="navbar-content">
         <view class="nav-back" @click="goBack">
-          <svg-icon name="back" size="24rpx" color="#fff" />
+          <text>←</text>
         </view>
         <text class="navbar-title">我的录音</text>
         <view class="navbar-badge">记录</view>
@@ -15,13 +15,13 @@
     <scroll-view class="recording-list" scroll-y>
       <view v-if="recordings.length === 0" class="empty-state animate-fade-in">
         <view class="empty-icon-wrapper animate-float">
-          <svg-icon name="mic" size="120rpx" color="rgba(255,255,255,0.2)" />
+          <svg-icon name="mic" size="120rpx" color="var(--text-muted)" />
         </view>
         <text class="empty-text">暂无录音</text>
         <text class="empty-hint">记录你的每一次进步</text>
         <view class="empty-btn" @click="goToPiano">
           <view class="empty-btn-content">
-            <svg-icon name="piano" size="36rpx" color="#fff" />
+            <svg-icon name="piano" size="36rpx" color="#FFFFFF" />
             <text>去钢琴页录制</text>
           </view>
           <view class="btn-glow"></view>
@@ -36,7 +36,7 @@
       >
         <view class="recording-info" @click="playRecording(recording)">
           <view class="recording-icon-box">
-            <svg-icon :name="playingId === recording.id ? 'pause' : 'play'" size="32rpx" :color="playingId === recording.id ? '#fff' : 'var(--divine-gold)'" />
+            <svg-icon :name="playingId === recording.id ? 'pause' : 'play'" size="32rpx" :color="playingId === recording.id ? '#fff' : 'var(--neu-gold)'" />
             <view v-if="playingId === recording.id" class="playing-indicator">
               <view class="bar"></view>
               <view class="bar"></view>
@@ -88,7 +88,7 @@
       
       <view class="player-controls">
         <view class="control-btn glass-hover" @click="stopPlaying">
-          <svg-icon name="stop" size="32rpx" color="#fff" />
+          <svg-icon name="stop" size="32rpx" color="var(--text-primary)" />
         </view>
       </view>
     </view>
@@ -329,20 +329,15 @@ const formatDate = (isoString: string | undefined): string => {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: var(--bg-dark);
-  background-image: 
-    radial-gradient(circle at 10% 90%, rgba(6, 182, 212, 0.1) 0%, transparent 40%),
-    radial-gradient(circle at 90% 10%, rgba(59, 130, 246, 0.1) 0%, transparent 40%);
+  background: var(--bg-main);
 }
 
 .custom-navbar {
   height: 88rpx;
-  background: rgba(15, 15, 26, 0.8);
-  backdrop-filter: blur(20px);
+  background: var(--bg-main);
   position: sticky;
   top: 0;
   z-index: 100;
-  border-bottom: 1px solid var(--glass-border);
 }
 
 .navbar-content {
@@ -359,8 +354,11 @@ const formatDate = (isoString: string | undefined): string => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255,255,255,0.1);
+  background: var(--bg-main);
   border-radius: 50%;
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
+  color: var(--text-primary);
+  font-size: 32rpx;
 }
 
 .navbar-title {
@@ -373,8 +371,8 @@ const formatDate = (isoString: string | undefined): string => {
 .navbar-badge {
   font-size: 18rpx;
   font-weight: 700;
-  color: var(--bg-dark);
-  background: var(--accent-cyan);
+  color: #FFFFFF;
+  background: var(--neu-gold);
   padding: 2rpx 8rpx;
   border-radius: 8rpx;
 }
@@ -414,10 +412,10 @@ const formatDate = (isoString: string | undefined): string => {
 .empty-btn {
   position: relative;
   padding: 28rpx 56rpx;
-  background: var(--primary-gradient);
+  background: var(--gold-gradient);
   border-radius: 100rpx;
   overflow: hidden;
-  box-shadow: 0 8rpx 24rpx rgba(212, 175, 55, 0.3);
+  box-shadow: var(--shadow-gold);
 }
 
 .empty-btn-content {
@@ -441,20 +439,20 @@ const formatDate = (isoString: string | undefined): string => {
   animation: shine 3s infinite;
 }
 
-/* 录音项 */
+/* 录音项 - 新拟物卡片 */
 .recording-item {
   display: flex;
   align-items: center;
   padding: 24rpx;
   border-radius: var(--radius-lg);
   margin-bottom: 20rpx;
-  background: rgba(26, 26, 46, 0.4);
-  transition: all 0.3s ease;
+  background: var(--bg-main);
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
+  transition: all 0.15s ease;
 }
 
 .recording-item.item-playing {
-  background: rgba(6, 182, 212, 0.1);
-  border-color: rgba(6, 182, 212, 0.3);
+  box-shadow: var(--neu-shadow-inset-light), var(--neu-shadow-inset-dark);
 }
 
 .recording-info {
@@ -468,17 +466,18 @@ const formatDate = (isoString: string | undefined): string => {
   width: 88rpx;
   height: 88rpx;
   border-radius: 24rpx;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--bg-main);
   display: flex;
   align-items: center;
   justify-content: center;
   margin-right: 24rpx;
-  transition: all 0.3s ease;
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
+  transition: all 0.15s ease;
 }
 
 .item-playing .recording-icon-box {
-  background: var(--accent-cyan);
-  box-shadow: 0 0 20rpx rgba(6, 182, 212, 0.4);
+  background: var(--neu-gold);
+  box-shadow: var(--shadow-gold-glow);
 }
 
 .playing-indicator {
@@ -523,7 +522,7 @@ const formatDate = (isoString: string | undefined): string => {
 }
 
 .recording-name.text-active {
-  color: var(--accent-cyan);
+  color: var(--neu-gold);
 }
 
 .recording-meta {
@@ -538,13 +537,13 @@ const formatDate = (isoString: string | undefined): string => {
 
 .meta-divider {
   margin: 0 12rpx;
-  color: var(--glass-border);
+  color: rgba(174, 174, 192, 0.3);
 }
 
 .meta-badge {
   margin-left: 12rpx;
   padding: 2rpx 10rpx;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(184, 134, 11, 0.1);
   border-radius: 8rpx;
 }
 
@@ -595,17 +594,18 @@ const formatDate = (isoString: string | undefined): string => {
   transform: scale(0.95);
 }
 
-/* 播放器栏 */
+/* 播放器栏 - 新拟物 */
 .player-bar {
   position: fixed;
   bottom: 30rpx;
   left: 24rpx;
   right: 24rpx;
   padding: 24rpx;
-  background: rgba(26, 26, 46, 0.95);
+  background: var(--bg-main);
   border-radius: 32rpx;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 16rpx 48rpx rgba(0, 0, 0, 0.4);
+  box-shadow: 
+    -8rpx -8rpx 24rpx #FFFFFF,
+    8rpx 8rpx 24rpx rgba(174, 174, 192, 0.4);
   z-index: 100;
 }
 
@@ -647,8 +647,8 @@ const formatDate = (isoString: string | undefined): string => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--bg-main);
   border-radius: 50%;
-  color: #fff;
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
 }
 </style>

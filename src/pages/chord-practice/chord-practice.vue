@@ -255,7 +255,7 @@ const goBack = () => uni.navigateBack()
 <style scoped>
 .practice-page {
   min-height: 100vh;
-  background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-dark) 100%);
+  background: var(--bg-main);
 }
 
 .navbar {
@@ -263,7 +263,7 @@ const goBack = () => uni.navigateBack()
   align-items: center;
   justify-content: space-between;
   padding: 16rpx 32rpx;
-  background: var(--bg-dark);
+  background: var(--bg-main);
 }
 
 .nav-back {
@@ -272,21 +272,22 @@ const goBack = () => uni.navigateBack()
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255,255,255,0.1);
+  background: var(--bg-main);
   border-radius: 50%;
-  color: #fff;
+  color: var(--text-primary);
   font-size: 32rpx;
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
 }
 
 .nav-title {
   font-size: 36rpx;
   font-weight: 600;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 .nav-progress {
   font-size: 28rpx;
-  color: var(--divine-gold);
+  color: var(--neu-gold);
   font-weight: 600;
 }
 
@@ -342,24 +343,24 @@ const goBack = () => uni.navigateBack()
 
 .mode-btn {
   padding: 12rpx 32rpx;
-  background: rgba(255,255,255,0.1);
+  background: var(--bg-main);
   border-radius: 20rpx;
-  border: 2rpx solid transparent;
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
 }
 
 .mode-btn.active {
-  background: rgba(212, 175, 55, 0.3);
-  border-color: var(--divine-gold);
+  background: rgba(184, 134, 11, 0.3);
+  box-shadow: var(--neu-shadow-inset-light), var(--neu-shadow-inset-dark);
 }
 
 .mode-btn text {
   font-size: 24rpx;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 .hint {
   font-size: 28rpx;
-  color: #b0b0c0;
+  color: var(--text-muted);
 }
 
 /* 选项区域 */
@@ -376,10 +377,10 @@ const goBack = () => uni.navigateBack()
   align-items: center;
   justify-content: center;
   padding: 28rpx 16rpx;
-  background: var(--bg-dark);
-  border: 2rpx solid rgba(255,255,255,0.1);
+  background: var(--bg-main);
   border-radius: 16rpx;
   transition: all 0.2s;
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
 }
 
 .option-btn.disabled {
@@ -387,8 +388,8 @@ const goBack = () => uni.navigateBack()
 }
 
 .option-btn.selected {
-  border-color: var(--divine-gold);
-  background: rgba(212, 175, 55, 0.2);
+  background: rgba(184, 134, 11, 0.2);
+  box-shadow: var(--neu-shadow-inset-light), var(--neu-shadow-inset-dark);
 }
 
 .option-btn.correct {
@@ -403,14 +404,14 @@ const goBack = () => uni.navigateBack()
 
 .option-name {
   font-size: 28rpx;
-  color: #fff;
+  color: var(--text-primary);
   font-weight: 600;
   margin-bottom: 4rpx;
 }
 
 .option-desc {
   font-size: 22rpx;
-  color: #b0b0c0;
+  color: var(--text-muted);
 }
 
 /* 反馈区域 */
@@ -428,13 +429,13 @@ const goBack = () => uni.navigateBack()
 
 .feedback-text {
   font-size: 30rpx;
-  color: #fff;
+  color: var(--text-primary);
   margin-bottom: 12rpx;
 }
 
 .chord-notes {
   font-size: 24rpx;
-  color: #b0b0c0;
+  color: var(--text-muted);
 }
 
 /* 下一题按钮 */
@@ -468,16 +469,17 @@ const goBack = () => uni.navigateBack()
 
 .result-card {
   width: 100%;
-  background: var(--bg-dark);
+  background: var(--bg-main);
   border-radius: 32rpx;
   padding: 60rpx 40rpx;
   text-align: center;
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
 }
 
 .result-title {
   font-size: 48rpx;
   font-weight: 700;
-  color: #fff;
+  color: var(--text-primary);
   margin-bottom: 40rpx;
 }
 
@@ -497,12 +499,12 @@ const goBack = () => uni.navigateBack()
 .stat-value {
   font-size: 56rpx;
   font-weight: 700;
-  color: var(--divine-gold);
+  color: var(--neu-gold);
 }
 
 .stat-label {
   font-size: 26rpx;
-  color: #b0b0c0;
+  color: var(--text-muted);
   margin-top: 8rpx;
 }
 
@@ -517,10 +519,11 @@ const goBack = () => uni.navigateBack()
   align-items: center;
   justify-content: center;
   padding: 32rpx;
-  background: rgba(255,255,255,0.1);
+  background: var(--bg-main);
   border-radius: 16rpx;
   font-size: 32rpx;
-  color: #fff;
+  color: var(--text-primary);
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
 }
 
 .action-btn.primary {

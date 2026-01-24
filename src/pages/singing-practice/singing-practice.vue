@@ -332,7 +332,7 @@ const goBack = () => uni.navigateBack()
 <style scoped>
 .practice-page {
   min-height: 100vh;
-  background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-dark) 100%);
+  background: var(--bg-main);
 }
 
 .navbar {
@@ -340,7 +340,7 @@ const goBack = () => uni.navigateBack()
   align-items: center;
   justify-content: space-between;
   padding: 16rpx 32rpx;
-  background: var(--bg-dark);
+  background: var(--bg-main);
 }
 
 .nav-back {
@@ -349,16 +349,17 @@ const goBack = () => uni.navigateBack()
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255,255,255,0.1);
+  background: var(--bg-main);
   border-radius: 50%;
-  color: #fff;
+  color: var(--text-primary);
   font-size: 32rpx;
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
 }
 
 .nav-title {
   font-size: 36rpx;
   font-weight: 600;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 .nav-score {
@@ -373,16 +374,17 @@ const goBack = () => uni.navigateBack()
 
 /* 题目卡片 */
 .question-card {
-  background: var(--bg-dark);
+  background: var(--bg-main);
   border-radius: 24rpx;
   padding: 40rpx;
   margin-bottom: 32rpx;
   text-align: center;
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
 }
 
 .question-label {
   font-size: 28rpx;
-  color: #b0b0c0;
+  color: var(--text-muted);
   margin-bottom: 24rpx;
 }
 
@@ -399,9 +401,10 @@ const goBack = () => uni.navigateBack()
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255,255,255,0.1);
+  background: var(--bg-main);
   border-radius: 16rpx;
   transition: all 0.3s;
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
 }
 
 .note-item.played {
@@ -424,7 +427,7 @@ const goBack = () => uni.navigateBack()
 .note-text {
   font-size: 36rpx;
   font-weight: 700;
-  color: #fff;
+  color: var(--text-primary);
   line-height: 1;
   margin: 4rpx 0;
 }
@@ -444,7 +447,7 @@ const goBack = () => uni.navigateBack()
 
 .dot {
   font-size: 20rpx;
-  color: #fff;
+  color: var(--text-primary);
   line-height: 0.5;
 }
 
@@ -519,13 +522,13 @@ const goBack = () => uni.navigateBack()
 
 .record-text {
   font-size: 24rpx;
-  color: #fff;
+  color: var(--text-primary);
   margin-top: 12rpx;
 }
 
 .record-hint {
   font-size: 26rpx;
-  color: #b0b0c0;
+  color: var(--text-muted);
   margin-top: 24rpx;
 }
 
@@ -544,7 +547,7 @@ const goBack = () => uni.navigateBack()
 .progress-bar {
   flex: 1;
   height: 8rpx;
-  background: rgba(255,255,255,0.1);
+  background: var(--bg-card-pressed);
   border-radius: 4rpx;
   overflow: hidden;
 }
@@ -557,19 +560,20 @@ const goBack = () => uni.navigateBack()
 
 .progress-text {
   font-size: 24rpx;
-  color: #b0b0c0;
+  color: var(--text-muted);
 }
 
 /* 难度选择 */
 .difficulty-section {
-  background: var(--bg-dark);
+  background: var(--bg-main);
   border-radius: 24rpx;
   padding: 24rpx;
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
 }
 
 .section-label {
   font-size: 26rpx;
-  color: #b0b0c0;
+  color: var(--text-muted);
   margin-bottom: 16rpx;
 }
 
@@ -581,20 +585,20 @@ const goBack = () => uni.navigateBack()
 .difficulty-btn {
   flex: 1;
   padding: 16rpx;
-  background: rgba(255,255,255,0.1);
+  background: var(--bg-main);
   border-radius: 12rpx;
   text-align: center;
-  border: 2rpx solid transparent;
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
 }
 
 .difficulty-btn.active {
-  background: rgba(212, 175, 55, 0.2);
-  border-color: var(--divine-gold);
+  background: rgba(184, 134, 11, 0.2);
+  box-shadow: var(--neu-shadow-inset-light), var(--neu-shadow-inset-dark);
 }
 
 .difficulty-btn text {
   font-size: 26rpx;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 /* 结果弹窗 */
@@ -613,16 +617,17 @@ const goBack = () => uni.navigateBack()
 
 .result-content {
   width: 600rpx;
-  background: var(--bg-dark);
+  background: var(--bg-main);
   border-radius: 32rpx;
   padding: 48rpx;
   text-align: center;
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
 }
 
 .result-title {
   font-size: 48rpx;
   font-weight: 700;
-  color: #fff;
+  color: var(--text-primary);
   margin-bottom: 32rpx;
 }
 
@@ -633,12 +638,12 @@ const goBack = () => uni.navigateBack()
 .score-value {
   font-size: 80rpx;
   font-weight: 700;
-  color: var(--divine-gold);
+  color: var(--neu-gold);
 }
 
 .score-label {
   font-size: 26rpx;
-  color: #b0b0c0;
+  color: var(--text-muted);
   display: block;
 }
 
@@ -658,12 +663,12 @@ const goBack = () => uni.navigateBack()
 .stat-value {
   font-size: 40rpx;
   font-weight: 700;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 .stat-label {
   font-size: 24rpx;
-  color: #b0b0c0;
+  color: var(--text-muted);
 }
 
 .result-actions {
@@ -674,10 +679,11 @@ const goBack = () => uni.navigateBack()
 
 .action-btn {
   padding: 28rpx;
-  background: rgba(255,255,255,0.1);
+  background: var(--bg-main);
   border-radius: 16rpx;
   font-size: 30rpx;
-  color: #fff;
+  color: var(--text-primary);
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
 }
 
 .action-btn.primary {

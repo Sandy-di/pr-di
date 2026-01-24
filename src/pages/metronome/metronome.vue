@@ -313,7 +313,7 @@ const formatTime = (ms: number): string => {
 <style scoped>
 .metronome-page {
   min-height: 100vh;
-  background: var(--divine-gradient);
+  background: var(--bg-main);
   display: flex;
   flex-direction: column;
   padding-bottom: env(safe-area-inset-bottom);
@@ -324,7 +324,7 @@ const formatTime = (ms: number): string => {
   align-items: center;
   justify-content: space-between;
   padding: 16rpx 32rpx;
-  background: var(--bg-dark);
+  background: var(--bg-main);
 }
 
 .nav-back, .nav-placeholder {
@@ -336,16 +336,17 @@ const formatTime = (ms: number): string => {
 }
 
 .nav-back {
-  background: rgba(255,255,255,0.1);
+  background: var(--bg-main);
   border-radius: 50%;
-  color: #fff;
+  color: var(--text-primary);
   font-size: 32rpx;
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
 }
 
 .nav-title {
   font-size: 36rpx;
   font-weight: 600;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 /* 摆锤区域 */
@@ -369,7 +370,7 @@ const formatTime = (ms: number): string => {
   left: 50%;
   width: 8rpx;
   height: 280rpx;
-  background: linear-gradient(180deg, var(--divine-gold) 0%, #8B6914 100%);
+  background: linear-gradient(180deg, var(--neu-gold) 0%, #8B6914 100%);
   transform-origin: top center;
   margin-left: -4rpx;
   border-radius: 4rpx;
@@ -396,7 +397,7 @@ const formatTime = (ms: number): string => {
   background: var(--bg-card);
   border-radius: 12rpx;
   transform: translateX(-50%);
-  border: 2rpx solid var(--divine-gold);
+  border: 2rpx solid var(--neu-gold);
 }
 
 /* 节拍指示灯 */
@@ -412,14 +413,15 @@ const formatTime = (ms: number): string => {
   width: 32rpx;
   height: 32rpx;
   border-radius: 50%;
-  background: rgba(255,255,255,0.2);
-  border: 2rpx solid rgba(255,255,255,0.3);
+  background: var(--bg-card);
+  border: 2rpx solid var(--text-muted);
   transition: all 0.1s;
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
 }
 
 .beat-dot.active {
-  background: var(--divine-gold);
-  box-shadow: 0 0 20rpx var(--divine-gold);
+  background: var(--neu-gold);
+  box-shadow: 0 0 20rpx var(--neu-gold);
   transform: scale(1.2);
 }
 
@@ -456,7 +458,7 @@ const formatTime = (ms: number): string => {
 .bpm-value {
   font-size: 56rpx;
   font-weight: 700;
-  color: var(--divine-gold);
+  color: var(--neu-gold);
 }
 
 .bpm-buttons {
@@ -471,15 +473,16 @@ const formatTime = (ms: number): string => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255,255,255,0.1);
+  background: var(--bg-main);
   border-radius: 12rpx;
   font-size: 28rpx;
-  color: #fff;
-  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--text-primary);
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
 }
 
 .bpm-btn:active {
-  background: rgba(212, 175, 55, 0.2);
+  background: var(--bg-card-pressed);
+  box-shadow: var(--neu-shadow-inset-light), var(--neu-shadow-inset-dark);
 }
 
 .bpm-slider {
@@ -496,18 +499,18 @@ const formatTime = (ms: number): string => {
 
 .beat-option {
   padding: 16rpx 32rpx;
-  background: rgba(255,255,255,0.1);
+  background: var(--bg-main);
   border-radius: 32rpx;
   font-size: 28rpx;
   color: var(--text-secondary);
-  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
 }
 
 .beat-option.active {
   background: var(--gold-gradient);
-  color: var(--divine-blue);
+  color: #fff;
   font-weight: 600;
-  border-color: var(--divine-gold);
+  box-shadow: var(--shadow-gold);
 }
 
 /* 控制按钮 */
@@ -541,7 +544,7 @@ const formatTime = (ms: number): string => {
 .btn-text {
   font-size: 32rpx;
   font-weight: 600;
-  color: var(--divine-blue);
+  color: #fff;
 }
 
 .main-btn.playing .btn-text {
@@ -565,7 +568,7 @@ const formatTime = (ms: number): string => {
 .record-title {
   font-size: 32rpx;
   font-weight: 600;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 .record-hint {
@@ -590,11 +593,11 @@ const formatTime = (ms: number): string => {
   align-items: center;
   gap: 12rpx;
   padding: 16rpx 32rpx;
-  background: rgba(255,255,255,0.1);
+  background: var(--bg-main);
   border-radius: 32rpx;
   font-size: 28rpx;
-  color: #fff;
-  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--text-primary);
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
 }
 
 .record-btn.disabled {
@@ -630,16 +633,16 @@ const formatTime = (ms: number): string => {
 
 .mode-option {
   padding: 12rpx 24rpx;
-  background: rgba(255,255,255,0.05);
+  background: var(--bg-main);
   border-radius: 20rpx;
   font-size: 24rpx;
   color: var(--text-muted);
-  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
 }
 
 .mode-option.active {
-  background: rgba(212, 175, 55, 0.15);
-  color: var(--divine-gold);
-  border-color: rgba(212, 175, 55, 0.3);
+  background: rgba(184, 134, 11, 0.15);
+  color: var(--neu-gold);
+  box-shadow: inset 2rpx 2rpx 6rpx rgba(184, 134, 11, 0.2);
 }
 </style>

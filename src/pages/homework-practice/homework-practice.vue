@@ -618,16 +618,16 @@ const onImageLoad = (e: any) => {
   overflow: hidden;
 }
 
-/* 顶部控制栏 (15%) */
+/* 顶部控制栏 (15%) - 新拟物风格 */
 .top-bar {
   height: 15vh;
   flex-shrink: 0;
   display: flex;
-  align-items: center; /* 垂直居中，上下都有留空 */
+  align-items: center;
   justify-content: space-between;
   padding: 0 24rpx;
-  background: var(--bg-dark);
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  background: var(--bg-main);
+  border-bottom: 1px solid rgba(0,0,0,0.05);
   z-index: 100;
   box-sizing: border-box;
 }
@@ -644,19 +644,19 @@ const onImageLoad = (e: any) => {
   width: 180rpx;
 }
 
-/* 顶部控制按钮通用样式 - 与微信胶囊一致 */
+/* 顶部控制按钮通用样式 - 新拟物风格 */
 .control-btn {
   height: 32px;
   padding: 0 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0,0,0,0.15);
-  border: 0.5px solid rgba(255,255,255,0.25);
+  background: var(--bg-main);
   border-radius: 16px;
-  color: #fff;
+  color: var(--text-primary);
   font-size: 13px;
   gap: 3px;
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
 }
 
 /* 返回按钮 */
@@ -672,8 +672,8 @@ const onImageLoad = (e: any) => {
 }
 
 .control-btn.record-btn.recording {
-  background: rgba(239, 68, 68, 0.3);
-  border-color: rgba(239, 68, 68, 0.5);
+  background: rgba(239, 68, 68, 0.2);
+  box-shadow: inset 2rpx 2rpx 6rpx rgba(239, 68, 68, 0.3);
 }
 
 /* 录音红点 */

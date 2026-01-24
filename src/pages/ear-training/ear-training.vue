@@ -3,8 +3,14 @@
     <!-- 自定义导航栏 -->
     <view class="custom-navbar" :style="{ paddingTop: statusBarHeight + 'px' }">
       <view class="navbar-content">
-        <text class="navbar-title">视唱练耳</text>
-        <view class="navbar-badge">训练</view>
+        <view class="nav-back" @click="goBack">
+          <text>←</text>
+        </view>
+        <view class="navbar-center">
+          <text class="navbar-title">视唱练耳</text>
+          <view class="navbar-badge">训练</view>
+        </view>
+        <view class="nav-placeholder"></view>
       </view>
     </view>
     
@@ -15,7 +21,7 @@
         <view class="progress-glow"></view>
         <view class="progress-header">
           <view class="progress-info">
-            <svg-icon name="chart" size="32rpx" color="var(--divine-gold)" />
+            <svg-icon name="chart" size="32rpx" color="var(--neu-gold)" />
             <text class="progress-title">今日目标</text>
           </view>
           <text class="progress-count">{{ progress.completed }}/{{ progress.total }}</text>
@@ -34,8 +40,7 @@
       
       <view class="module-grid">
         <view class="module-card glass glass-hover" @click="startPractice('interval')">
-          <view class="card-glow" style="background: var(--divine-gold);"></view>
-          <view class="module-icon-box" style="background: rgba(212, 175, 55, 0.15); color: var(--divine-gold);">
+          <view class="module-icon-box neu-icon-box">
             <svg-icon name="music-note" size="48rpx" />
           </view>
           <text class="module-title">音程听辨</text>
@@ -44,8 +49,7 @@
         </view>
         
         <view class="module-card glass glass-hover" @click="startPractice('scale')">
-          <view class="card-glow" style="background: var(--divine-gold);"></view>
-          <view class="module-icon-box" style="background: rgba(212, 175, 55, 0.15); color: var(--divine-gold);">
+          <view class="module-icon-box neu-icon-box">
             <svg-icon name="piano" size="48rpx" />
           </view>
           <text class="module-title">音阶练习</text>
@@ -53,8 +57,7 @@
         </view>
         
         <view class="module-card glass glass-hover" @click="startPractice('singing')">
-          <view class="card-glow" style="background: var(--divine-gold);"></view>
-          <view class="module-icon-box" style="background: rgba(212, 175, 55, 0.15); color: var(--divine-gold);">
+          <view class="module-icon-box neu-icon-box">
             <svg-icon name="mic" size="48rpx" />
           </view>
           <text class="module-title">跟唱模式</text>
@@ -62,8 +65,7 @@
         </view>
         
         <view class="module-card glass glass-hover coming-soon" @click="startPractice('chord')">
-          <view class="card-glow" style="background: var(--text-muted);"></view>
-          <view class="module-icon-box" style="background: rgba(255, 255, 255, 0.1); color: var(--text-muted);">
+          <view class="module-icon-box neu-icon-box" style="opacity: 0.5;">
             <svg-icon name="grid" size="48rpx" />
           </view>
           <text class="module-title">和弦听辨</text>
@@ -78,10 +80,10 @@
         
         <view class="metronome-header">
           <view class="metronome-title-box">
-            <svg-icon name="metronome" size="40rpx" color="var(--divine-gold)" />
+            <svg-icon name="metronome" size="40rpx" color="var(--neu-gold)" />
             <text class="metronome-title">节拍器</text>
           </view>
-          <switch :checked="metronomeOn" @change="toggleMetronome" color="#d4af37" style="transform: scale(0.8)" />
+          <switch :checked="metronomeOn" @change="toggleMetronome" color="#B8860B" style="transform: scale(0.8)" />
         </view>
         
         <view class="metronome-controls">
@@ -283,6 +285,11 @@ const changeBeats = (e: any) => {
     startMetronome()
   }
 }
+
+// 返回上一页
+const goBack = () => {
+  uni.navigateBack()
+}
 </script>
 
 <style scoped>
@@ -292,30 +299,49 @@ const changeBeats = (e: any) => {
   min-height: 100vh;
   width: 100%;
   max-width: 100vw;
-  background: var(--bg-dark);
+  background: var(--bg-main);
   overflow-x: hidden;
   box-sizing: border-box;
-  background-image: 
-    radial-gradient(circle at 100% 0%, rgba(139, 92, 246, 0.1) 0%, transparent 30%),
-    radial-gradient(circle at 0% 100%, rgba(6, 182, 212, 0.1) 0%, transparent 30%);
 }
 
 .custom-navbar {
   height: 88rpx;
-  background: rgba(15, 15, 26, 0.8);
-  backdrop-filter: blur(20px);
+  background: var(--bg-main);
   position: sticky;
   top: 0;
   z-index: 100;
-  border-bottom: 1px solid var(--glass-border);
 }
 
 .navbar-content {
   height: 100%;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  padding: 0 32rpx;
+}
+
+.nav-back {
+  width: 56rpx;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
   justify-content: center;
-  gap: 16rpx;
+  background: var(--bg-main);
+  border-radius: 50%;
+  color: var(--text-primary);
+  font-size: 32rpx;
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
+}
+
+.nav-placeholder {
+  width: 56rpx;
+  height: 56rpx;
+}
+
+.navbar-center {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
 }
 
 .navbar-title {
@@ -328,8 +354,8 @@ const changeBeats = (e: any) => {
 .navbar-badge {
   font-size: 18rpx;
   font-weight: 700;
-  color: var(--bg-dark);
-  background: var(--accent-purple);
+  color: #FFFFFF;
+  background: var(--neu-gold);
   padding: 2rpx 8rpx;
   border-radius: 8rpx;
 }
@@ -359,7 +385,7 @@ const changeBeats = (e: any) => {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+  background: linear-gradient(90deg, rgba(184, 134, 11, 0.05), rgba(212, 175, 55, 0.08));
   z-index: 0;
 }
 
@@ -395,7 +421,7 @@ const changeBeats = (e: any) => {
   position: relative;
   z-index: 1;
   height: 16rpx;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(174, 174, 192, 0.2);
   border-radius: 8rpx;
   overflow: hidden;
 }
@@ -403,7 +429,7 @@ const changeBeats = (e: any) => {
 .progress-fill {
   position: relative;
   height: 100%;
-  background: linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
+  background: var(--gold-gradient);
   border-radius: 8rpx;
   transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -422,7 +448,7 @@ const changeBeats = (e: any) => {
 .section-header {
   margin-bottom: 24rpx;
   padding-left: 8rpx;
-  border-left: 6rpx solid var(--accent-purple);
+  border-left: 6rpx solid var(--neu-gold);
 }
 
 .section-title {
@@ -449,14 +475,7 @@ const changeBeats = (e: any) => {
   overflow: hidden;
 }
 
-.card-glow {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 6rpx;
-  opacity: 0.8;
-}
+/* 卡片顶部进度条已移除 */
 
 .module-icon-box {
   width: 88rpx;
@@ -485,7 +504,7 @@ const changeBeats = (e: any) => {
 .module-badge {
   align-self: flex-start;
   padding: 4rpx 12rpx;
-  background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
+  background: var(--gold-gradient);
   border-radius: 8rpx;
   font-size: 20rpx;
   color: #ffffff;
@@ -493,7 +512,7 @@ const changeBeats = (e: any) => {
 }
 
 .badge-gray {
-  background: rgba(255,255,255,0.1);
+  background: rgba(174, 174, 192, 0.2);
   color: var(--text-muted);
 }
 
@@ -517,7 +536,7 @@ const changeBeats = (e: any) => {
   transform: translate(-50%, -50%);
   width: 0;
   height: 0;
-  background: radial-gradient(circle, rgba(249, 115, 22, 0.2) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(184, 134, 11, 0.15) 0%, transparent 70%);
   transition: all 0.2s;
   pointer-events: none;
 }
@@ -571,11 +590,11 @@ const changeBeats = (e: any) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--bg-main);
   border-radius: 50%;
   font-size: 40rpx;
   color: var(--text-primary);
-  border: 1px solid var(--glass-border);
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
 }
 
 .bpm-display {
@@ -588,7 +607,7 @@ const changeBeats = (e: any) => {
 .bpm-value {
   font-size: 56rpx;
   font-weight: 700;
-  color: var(--accent-orange);
+  color: var(--neu-gold);
   font-variant-numeric: tabular-nums;
   line-height: 1;
 }
@@ -601,11 +620,11 @@ const changeBeats = (e: any) => {
 
 .beats-picker {
   padding: 12rpx 32rpx;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--bg-main);
   border-radius: 12rpx;
   font-size: 28rpx;
   color: var(--text-primary);
-  border: 1px solid var(--glass-border);
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
 }
 
 .beat-indicator {
@@ -621,15 +640,15 @@ const changeBeats = (e: any) => {
 .beat-dot {
   width: 16rpx;
   height: 16rpx;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(174, 174, 192, 0.3);
   border-radius: 50%;
   transition: all 0.1s ease;
 }
 
 .beat-dot.active {
-  background: var(--accent-orange);
+  background: var(--neu-gold);
   transform: scale(1.5);
-  box-shadow: 0 0 20rpx var(--accent-orange);
+  box-shadow: var(--shadow-gold-glow);
 }
 
 /* 统计 */

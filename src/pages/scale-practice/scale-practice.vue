@@ -106,7 +106,7 @@
           :min="60" 
           :max="180" 
           :step="10"
-          activeColor="var(--divine-gold)"
+          activeColor="var(--neu-gold)"
           block-size="12"
           @change="onSpeedChange"
         />
@@ -294,7 +294,7 @@ const goBack = () => uni.navigateBack()
   flex-direction: column;
 }
 
-/* 顶部区域 - 单行布局 */
+/* 顶部区域 - 新拟物风格 */
 .top-section {
   height: 56rpx;
   flex-shrink: 0;
@@ -302,7 +302,7 @@ const goBack = () => uni.navigateBack()
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  background: var(--bg-dark);
+  background: var(--bg-main);
   padding: 6rpx 16rpx;
   padding-top: calc(6rpx + env(safe-area-inset-top));
   gap: 12rpx;
@@ -316,10 +316,11 @@ const goBack = () => uni.navigateBack()
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255,255,255,0.1);
+  background: var(--bg-main);
   border-radius: 50%;
-  color: #fff;
+  color: var(--text-primary);
   font-size: 22rpx;
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
 }
 
 /* 右侧留空给微信胶囊 */
@@ -338,19 +339,19 @@ const goBack = () => uni.navigateBack()
 
 .scale-btn {
   padding: 4rpx 16rpx;
-  background: rgba(255,255,255,0.08);
+  background: var(--bg-main);
   border-radius: 16rpx;
-  border: 1px solid rgba(255,255,255,0.15);
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
 }
 
 .scale-btn.active {
-  background: rgba(212, 175, 55, 0.25);
-  border-color: var(--divine-gold);
+  background: rgba(184, 134, 11, 0.25);
+  box-shadow: var(--neu-shadow-inset-light), var(--neu-shadow-inset-dark);
 }
 
 .scale-btn text {
   font-size: 18rpx;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 /* 中间区域 - 钢琴键盘（填满剩余空间） */
@@ -405,8 +406,8 @@ const goBack = () => uni.navigateBack()
   gap: 1rpx;
 }
 
-.white-key .dot { font-size: 16rpx; color: var(--divine-gold); line-height: 0.5; }
-.white-key .notation { font-size: 28rpx; font-weight: 700; color: var(--divine-gold); margin: 2rpx 0; }
+.white-key .dot { font-size: 16rpx; color: var(--neu-gold); line-height: 0.5; }
+.white-key .notation { font-size: 28rpx; font-weight: 700; color: var(--neu-gold); margin: 2rpx 0; }
 .white-key.current .notation { color: #fff; }
 
 .black-key {
@@ -462,7 +463,7 @@ const goBack = () => uni.navigateBack()
   color: #fff;
 }
 
-/* 底部区域 - 控制按钮 */
+/* 底部区域 - 控制按钮 - 新拟物风格 */
 .bottom-section {
   height: 80rpx;
   min-height: 80rpx;
@@ -474,7 +475,7 @@ const goBack = () => uni.navigateBack()
   gap: 16rpx;
   padding: 8rpx 24rpx;
   padding-bottom: calc(8rpx + env(safe-area-inset-bottom));
-  background: var(--bg-dark);
+  background: var(--bg-main);
 }
 
 .control-btn {
@@ -484,12 +485,12 @@ const goBack = () => uni.navigateBack()
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(212, 175, 55, 0.25);
+  background: var(--bg-main);
   border-radius: 28rpx;
-  border: 1px solid rgba(212, 175, 55, 0.4);
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
 }
 
-.btn-text { font-size: 24rpx; color: #fff; font-weight: 500; }
+.btn-text { font-size: 24rpx; color: var(--text-primary); font-weight: 500; }
 
 .speed-box {
   flex: 1.5;
@@ -500,11 +501,12 @@ const goBack = () => uni.navigateBack()
   align-items: center;
   justify-content: center;
   gap: 8rpx;
-  background: rgba(212, 175, 55, 0.15);
+  background: var(--bg-main);
   border-radius: 28rpx;
   padding: 0 16rpx;
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
 }
 
-.speed-value { font-size: 22rpx; color: var(--divine-gold); font-weight: 600; }
+.speed-value { font-size: 22rpx; color: var(--neu-gold); font-weight: 600; }
 .speed-slider { flex: 1; margin: 0; }
 </style>

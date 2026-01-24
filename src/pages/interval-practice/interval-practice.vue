@@ -237,7 +237,7 @@ const goBack = () => {
 <style scoped>
 .practice-page {
   min-height: 100vh;
-  background: var(--divine-gradient);
+  background: var(--bg-main);
 }
 
 .navbar {
@@ -245,7 +245,7 @@ const goBack = () => {
   align-items: center;
   justify-content: space-between;
   padding: 16rpx 32rpx;
-  background: var(--bg-dark);
+  background: var(--bg-main);
 }
 
 .nav-back {
@@ -254,21 +254,22 @@ const goBack = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255,255,255,0.1);
+  background: var(--bg-main);
   border-radius: 50%;
-  color: #fff;
+  color: var(--text-primary);
   font-size: 32rpx;
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
 }
 
 .nav-title {
   font-size: 36rpx;
   font-weight: 600;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 .nav-progress {
   font-size: 28rpx;
-  color: var(--divine-gold);
+  color: var(--neu-gold);
   font-weight: 600;
 }
 
@@ -317,7 +318,7 @@ const goBack = () => {
 
 .hint {
   font-size: 28rpx;
-  color: #b0b0c0;
+  color: var(--text-muted);
   margin-top: 40rpx;
 }
 
@@ -334,10 +335,10 @@ const goBack = () => {
   align-items: center;
   justify-content: center;
   padding: 32rpx 16rpx;
-  background: var(--bg-card);
-  border: 1px solid rgba(212, 175, 55, 0.15);
+  background: var(--bg-main);
   border-radius: 16rpx;
   transition: all 0.2s;
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
 }
 
 .option-btn.disabled {
@@ -345,8 +346,8 @@ const goBack = () => {
 }
 
 .option-btn.selected {
-  border-color: var(--divine-gold);
-  background: rgba(212, 175, 55, 0.15);
+  background: rgba(184, 134, 11, 0.15);
+  box-shadow: var(--neu-shadow-inset-light), var(--neu-shadow-inset-dark);
 }
 
 .option-btn.correct {
@@ -361,7 +362,7 @@ const goBack = () => {
 
 .option-name {
   font-size: 28rpx;
-  color: #fff;
+  color: var(--text-primary);
   font-weight: 500;
 }
 
@@ -380,7 +381,7 @@ const goBack = () => {
 
 .feedback-text {
   font-size: 32rpx;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 /* 下一题按钮 */
@@ -400,7 +401,7 @@ const goBack = () => {
 
 .next-btn text {
   font-size: 32rpx;
-  color: var(--divine-blue);
+  color: #fff;
   font-weight: 600;
 }
 
@@ -425,7 +426,7 @@ const goBack = () => {
 .result-title {
   font-size: 48rpx;
   font-weight: 700;
-  color: #fff;
+  color: var(--text-primary);
   margin-bottom: 40rpx;
 }
 
@@ -445,12 +446,12 @@ const goBack = () => {
 .stat-value {
   font-size: 56rpx;
   font-weight: 700;
-  color: var(--divine-gold);
+  color: var(--neu-gold);
 }
 
 .stat-label {
   font-size: 26rpx;
-  color: #b0b0c0;
+  color: var(--text-muted);
   margin-top: 8rpx;
 }
 
@@ -465,14 +466,16 @@ const goBack = () => {
   align-items: center;
   justify-content: center;
   padding: 32rpx;
-  background: rgba(255,255,255,0.1);
+  background: var(--bg-main);
   border-radius: 16rpx;
   font-size: 32rpx;
-  color: #fff;
+  color: var(--text-primary);
+  box-shadow: var(--neu-shadow-light), var(--neu-shadow-dark);
 }
 
 .action-btn.primary {
   background: var(--gold-gradient);
-  color: var(--divine-blue);
+  color: #fff;
+  box-shadow: var(--shadow-gold);
 }
 </style>

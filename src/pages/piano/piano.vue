@@ -9,20 +9,20 @@
         </view>
         
         <view class="capsule-btn record-btn" :class="{ 'recording': isRecording }" @click="handleRecordClick">
-          <svg-icon :name="isRecording ? 'stop' : 'record'" size="22rpx" :color="isRecording ? '#fff' : '#ef4444'" />
+          <svg-icon :name="isRecording ? 'stop' : 'record'" size="22rpx" :color="isRecording ? '#fff' : '#fff'" />
           <text class="btn-text">{{ isRecording ? formatTime(recordingDuration) : '录' }}</text>
         </view>
         
         <!-- 分享按钮 - 只在录音结束后显示 -->
         <view class="capsule-btn share-btn" v-if="showShareBtn && !isRecording" @click="shareRecording">
-          <svg-icon name="share" size="22rpx" color="#d4af37" />
+          <svg-icon name="share" size="22rpx" color="#fff" />
         </view>
       </view>
       
       <!-- 中间：节拍器 -->
       <view class="center-controls">
         <view class="capsule-btn metronome-btn" :class="{ 'active': metronomeOn }" @click="toggleMetronome">
-          <svg-icon name="metronome" size="24rpx" :color="metronomeOn ? '#22c55e' : '#888'" />
+          <svg-icon name="metronome" size="24rpx" :color="metronomeOn ? '#fff' : 'rgba(255,255,255,0.6)'" />
         </view>
         <text class="tempo-text" @click="setTempo">{{ metronomeTempo }}</text>
       </view>
@@ -325,10 +325,9 @@ const formatTime = (ms: number) => { const s = Math.floor(ms / 1000); return `${
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8rpx 16rpx;
-  padding-top: calc(8rpx + env(safe-area-inset-top));
-  background: rgba(30, 30, 30, 0.95);
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding: 6rpx 16rpx;
+  padding-top: calc(6rpx + env(safe-area-inset-top));
+  background: #7D6B4F;
   flex-shrink: 0;
   z-index: 100;
 }
@@ -340,16 +339,15 @@ const formatTime = (ms: number) => { const s = Math.floor(ms / 1000); return `${
   gap: 12rpx;
 }
 
-/* 统一胶囊按钮样式 - 全部正方形 52x52 */
+/* 统一胶囊按钮样式 - 扁平风格 */
 .capsule-btn {
-  width: 52rpx;
-  height: 52rpx;
+  width: 36rpx;
+  height: 36rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, rgba(44, 62, 80, 0.8), rgba(44, 62, 80, 0.5));
-  border-radius: 26rpx;
-  border: 1px solid rgba(212, 175, 55, 0.25);
+  background: transparent;
+  border-radius: 8rpx;
 }
 
 /* 返回按钮 */
@@ -357,23 +355,22 @@ const formatTime = (ms: number) => { const s = Math.floor(ms / 1000); return `${
   /* 继承基础样式 */
 }
 
-/* 录音按钮 - 可以稍宽一点显示文字 */
+/* 录音按钮 - 稍宽一点显示文字 */
 .record-btn {
   width: auto;
-  min-width: 52rpx;
-  padding: 0 16rpx;
-  gap: 6rpx;
+  height: 36rpx;
+  min-width: 36rpx;
+  padding: 0 12rpx;
+  gap: 4rpx;
 }
 
 .record-btn.recording {
-  background: linear-gradient(135deg, rgba(239, 68, 68, 0.3), rgba(239, 68, 68, 0.15));
-  border-color: rgba(239, 68, 68, 0.5);
+  background: rgba(255,255,255,0.15);
 }
 
-/* 分享按钮 - 金色 */
+/* 分享按钮 */
 .share-btn {
-  background: linear-gradient(135deg, rgba(212, 175, 55, 0.25), rgba(212, 175, 55, 0.1));
-  border-color: rgba(212, 175, 55, 0.5);
+  background: transparent;
 }
 
 /* 节拍器按钮 */
@@ -382,13 +379,11 @@ const formatTime = (ms: number) => { const s = Math.floor(ms / 1000); return `${
 }
 
 .metronome-btn.active {
-  background: linear-gradient(135deg, rgba(212, 175, 55, 0.35), rgba(212, 175, 55, 0.15));
-  border-color: rgba(212, 175, 55, 0.6);
-  box-shadow: 0 0 12rpx rgba(212, 175, 55, 0.3);
+  background: rgba(255,255,255,0.15);
 }
 
 .btn-text {
-  font-size: 22rpx;
+  font-size: 18rpx;
   font-weight: 500;
   color: #fff;
   font-variant-numeric: tabular-nums;
@@ -402,10 +397,11 @@ const formatTime = (ms: number) => { const s = Math.floor(ms / 1000); return `${
 }
 
 .tempo-text {
-  font-size: 22rpx;
-  color: #888;
-  min-width: 50rpx;
+  font-size: 18rpx;
+  color: rgba(255,255,255,0.9);
+  min-width: 40rpx;
   text-align: center;
+  font-weight: 500;
 }
 
 /* 右侧留空给微信胶囊按钮 */
